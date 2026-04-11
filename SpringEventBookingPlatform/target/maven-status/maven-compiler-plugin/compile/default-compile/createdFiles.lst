@@ -1,0 +1,6 @@
+com\group3\springeventbookingplatform\resources\JakartaEE11Resource.class
+com\group3\springeventbookingplatform\JakartaRestConfiguration.class
+com\group3\configs\DispatcherServletInit.class
+com\group3\configs\WebAppContextConfigs.class
+com\group3\configs\HibernateConfigs.class
+com\group3\configs\ThymeleafConfigs.class
