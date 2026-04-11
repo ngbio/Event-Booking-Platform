@@ -13,7 +13,6 @@
 ### Backend
 * **Ngôn ngữ:** Java
 * **Framework:** Spring MVC (Spring Framework)
-* **Cấu hình:** applicationContext.xml
 * **ORM:** Hibernate
 * **Security:** Spring Security
 * **IDE:** NetBeans
