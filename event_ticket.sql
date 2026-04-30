@@ -1,402 +1,233 @@
--- MySQL dump 10.13  Distrib 8.0.45, for Win64 (x86_64)
---
--- Host: localhost    Database: event_ticket_db
+-- ======================================================
+-- PROJECT: EVENT TICKET MANAGEMENT SYSTEM
+-- DATA: MASSIVE DUMMY DATA FOR TESTING
+-- ======================================================
+
+DROP DATABASE IF EXISTS `event_ticket_db`;
+CREATE DATABASE `event_ticket_db` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+USE `event_ticket_db`;
+
 -- ------------------------------------------------------
--- Server version	8.0.45
+-- 1. TẠO BẢNG CẤU TRÚC
+-- ------------------------------------------------------
+CREATE TABLE `role` ( `id` int PRIMARY KEY, `name` varchar(50) NOT NULL );
+CREATE TABLE `statususer` ( `id` int PRIMARY KEY, `name` varchar(50) NOT NULL );
+CREATE TABLE `statusevent` ( `id` int PRIMARY KEY, `name` varchar(50) NOT NULL );
+CREATE TABLE `statusbooking` ( `id` int PRIMARY KEY, `name` varchar(50) NOT NULL );
+CREATE TABLE `statuspay` ( `id` int PRIMARY KEY, `name` varchar(50) NOT NULL );
+CREATE TABLE `statusticket` ( `id` int PRIMARY KEY, `name` varchar(50) NOT NULL );
 
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!50503 SET NAMES utf8 */;
-/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
-/*!40103 SET TIME_ZONE='+00:00' */;
-/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
-/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-
---
--- Table structure for table `booking`
---
-
-DROP TABLE IF EXISTS `booking`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `booking` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `event_id` int NOT NULL,
-  `user_id` int NOT NULL,
-  `status_id` int NOT NULL,
-  `quantity` int NOT NULL DEFAULT '1',
-  `unitPrice` decimal(10,2) NOT NULL,
-  `totalPrice` decimal(10,2) NOT NULL,
-  `createdAt` datetime DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`),
-  KEY `event_id` (`event_id`),
-  KEY `user_id` (`user_id`),
-  KEY `status_id` (`status_id`),
-  CONSTRAINT `booking_ibfk_1` FOREIGN KEY (`event_id`) REFERENCES `event` (`id`),
-  CONSTRAINT `booking_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`),
-  CONSTRAINT `booking_ibfk_3` FOREIGN KEY (`status_id`) REFERENCES `statusbooking` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `booking`
---
-
-LOCK TABLES `booking` WRITE;
-/*!40000 ALTER TABLE `booking` DISABLE KEYS */;
-/*!40000 ALTER TABLE `booking` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `category`
---
-
-DROP TABLE IF EXISTS `category`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `category` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `name` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `name` (`name`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
+  `id` int PRIMARY KEY AUTO_INCREMENT,
+  `name` varchar(100) NOT NULL,
+  `active` tinyint(1) DEFAULT 1,
+  `createdAt` datetime DEFAULT CURRENT_TIMESTAMP,
+  `updatedAt` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
 
---
--- Dumping data for table `category`
---
+CREATE TABLE `user` (
+  `id` int PRIMARY KEY AUTO_INCREMENT,
+  `role_id` int NOT NULL,
+  `status_id` int NOT NULL,
+  `username` varchar(50) NOT NULL UNIQUE,
+  `password` varchar(255) NOT NULL,
+  `email` varchar(100) NOT NULL UNIQUE,
+  `fullName` varchar(100) NOT NULL,
+  `phone` varchar(20),
+  `avatar` varchar(255),
+  `active` tinyint(1) DEFAULT 1,
+  `createdAt` datetime DEFAULT CURRENT_TIMESTAMP,
+  `updatedAt` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  FOREIGN KEY (`role_id`) REFERENCES `role` (`id`),
+  FOREIGN KEY (`status_id`) REFERENCES `statususer` (`id`)
+);
 
-LOCK TABLES `category` WRITE;
-/*!40000 ALTER TABLE `category` DISABLE KEYS */;
-INSERT INTO `category` VALUES (1,'Âm nhạc'),(4,'Công nghệ'),(2,'Hội thảo'),(3,'Thể thao');
-/*!40000 ALTER TABLE `category` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `event`
---
-
-DROP TABLE IF EXISTS `event`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `event` (
-  `id` int NOT NULL AUTO_INCREMENT,
+  `id` int PRIMARY KEY AUTO_INCREMENT,
   `organizer_id` int NOT NULL,
   `status_id` int NOT NULL,
-  `title` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `description` text COLLATE utf8mb4_unicode_ci,
-  `imageUrl` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `videoUrl` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `title` varchar(255) NOT NULL,
+  `description` text,
+  `imageUrl` varchar(255),
+  `videoUrl` varchar(255),
   `startTime` datetime NOT NULL,
   `endTime` datetime NOT NULL,
-  `location` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `totalTickets` int NOT NULL DEFAULT '0',
-  `price` decimal(10,2) DEFAULT '0.00',
-  PRIMARY KEY (`id`),
-  KEY `organizer_id` (`organizer_id`),
-  KEY `status_id` (`status_id`),
-  CONSTRAINT `event_ibfk_1` FOREIGN KEY (`organizer_id`) REFERENCES `user` (`id`),
-  CONSTRAINT `event_ibfk_2` FOREIGN KEY (`status_id`) REFERENCES `statusevent` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
+  `location` varchar(255) NOT NULL,
+  `totalTickets` int NOT NULL DEFAULT 0,
+  `price` decimal(10,2) DEFAULT 0.00,
+  `active` tinyint(1) DEFAULT 1,
+  `createdAt` datetime DEFAULT CURRENT_TIMESTAMP,
+  `updatedAt` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  FOREIGN KEY (`organizer_id`) REFERENCES `user` (`id`),
+  FOREIGN KEY (`status_id`) REFERENCES `statusevent` (`id`)
+);
 
---
--- Dumping data for table `event`
---
-
-LOCK TABLES `event` WRITE;
-/*!40000 ALTER TABLE `event` DISABLE KEYS */;
-/*!40000 ALTER TABLE `event` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `eventcategory`
---
-
-DROP TABLE IF EXISTS `eventcategory`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `eventcategory` (
   `event_id` int NOT NULL,
   `category_id` int NOT NULL,
-  PRIMARY KEY (`event_id`,`category_id`),
-  KEY `category_id` (`category_id`),
-  CONSTRAINT `eventcategory_ibfk_1` FOREIGN KEY (`event_id`) REFERENCES `event` (`id`) ON DELETE CASCADE,
-  CONSTRAINT `eventcategory_ibfk_2` FOREIGN KEY (`category_id`) REFERENCES `category` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
+  PRIMARY KEY (`event_id`, `category_id`),
+  FOREIGN KEY (`event_id`) REFERENCES `event` (`id`) ON DELETE CASCADE,
+  FOREIGN KEY (`category_id`) REFERENCES `category` (`id`) ON DELETE CASCADE
+);
 
---
--- Dumping data for table `eventcategory`
---
+CREATE TABLE `booking` (
+  `id` int PRIMARY KEY AUTO_INCREMENT,
+  `event_id` int NOT NULL,
+  `user_id` int NOT NULL,
+  `status_id` int NOT NULL,
+  `quantity` int NOT NULL DEFAULT 1,
+  `unitPrice` decimal(10,2) NOT NULL,
+  `totalPrice` decimal(10,2) NOT NULL,
+  `active` tinyint(1) DEFAULT 1,
+  `createdAt` datetime DEFAULT CURRENT_TIMESTAMP,
+  `updatedAt` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  FOREIGN KEY (`event_id`) REFERENCES `event` (`id`),
+  FOREIGN KEY (`user_id`) REFERENCES `user` (`id`),
+  FOREIGN KEY (`status_id`) REFERENCES `statusbooking` (`id`)
+);
 
-LOCK TABLES `eventcategory` WRITE;
-/*!40000 ALTER TABLE `eventcategory` DISABLE KEYS */;
-/*!40000 ALTER TABLE `eventcategory` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `payment`
---
-
-DROP TABLE IF EXISTS `payment`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `payment` (
-  `id` int NOT NULL AUTO_INCREMENT,
+  `id` int PRIMARY KEY AUTO_INCREMENT,
   `booking_id` int NOT NULL,
   `user_id` int NOT NULL,
   `status_id` int NOT NULL,
   `amount` decimal(10,2) NOT NULL,
-  `method` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `transaction_id` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `method` varchar(50) NOT NULL,
+  `transaction_id` varchar(255),
+  `active` tinyint(1) DEFAULT 1,
   `createdAt` datetime DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`),
-  KEY `booking_id` (`booking_id`),
-  KEY `user_id` (`user_id`),
-  KEY `status_id` (`status_id`),
-  CONSTRAINT `payment_ibfk_1` FOREIGN KEY (`booking_id`) REFERENCES `booking` (`id`),
-  CONSTRAINT `payment_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`),
-  CONSTRAINT `payment_ibfk_3` FOREIGN KEY (`status_id`) REFERENCES `statuspay` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
+  `updatedAt` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  FOREIGN KEY (`booking_id`) REFERENCES `booking` (`id`),
+  FOREIGN KEY (`user_id`) REFERENCES `user` (`id`),
+  FOREIGN KEY (`status_id`) REFERENCES `statuspay` (`id`)
+);
 
---
--- Dumping data for table `payment`
---
-
-LOCK TABLES `payment` WRITE;
-/*!40000 ALTER TABLE `payment` DISABLE KEYS */;
-/*!40000 ALTER TABLE `payment` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `role`
---
-
-DROP TABLE IF EXISTS `role`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `role` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `name` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `name` (`name`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `role`
---
-
-LOCK TABLES `role` WRITE;
-/*!40000 ALTER TABLE `role` DISABLE KEYS */;
-INSERT INTO `role` VALUES (1,'ADMIN'),(3,'ATTENDEE'),(2,'ORGANIZER');
-/*!40000 ALTER TABLE `role` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `statusbooking`
---
-
-DROP TABLE IF EXISTS `statusbooking`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `statusbooking` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `name` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `name` (`name`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `statusbooking`
---
-
-LOCK TABLES `statusbooking` WRITE;
-/*!40000 ALTER TABLE `statusbooking` DISABLE KEYS */;
-INSERT INTO `statusbooking` VALUES (3,'CANCELLED'),(2,'PAID'),(1,'PENDING_PAYMENT');
-/*!40000 ALTER TABLE `statusbooking` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `statusevent`
---
-
-DROP TABLE IF EXISTS `statusevent`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `statusevent` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `name` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `name` (`name`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `statusevent`
---
-
-LOCK TABLES `statusevent` WRITE;
-/*!40000 ALTER TABLE `statusevent` DISABLE KEYS */;
-INSERT INTO `statusevent` VALUES (4,'CANCELLED'),(1,'DRAFT'),(2,'PENDING_REVIEW'),(3,'PUBLISHED');
-/*!40000 ALTER TABLE `statusevent` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `statuspay`
---
-
-DROP TABLE IF EXISTS `statuspay`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `statuspay` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `name` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `name` (`name`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `statuspay`
---
-
-LOCK TABLES `statuspay` WRITE;
-/*!40000 ALTER TABLE `statuspay` DISABLE KEYS */;
-INSERT INTO `statuspay` VALUES (3,'FAILED'),(1,'PENDING'),(2,'SUCCESS');
-/*!40000 ALTER TABLE `statuspay` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `statusticket`
---
-
-DROP TABLE IF EXISTS `statusticket`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `statusticket` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `name` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `name` (`name`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `statusticket`
---
-
-LOCK TABLES `statusticket` WRITE;
-/*!40000 ALTER TABLE `statusticket` DISABLE KEYS */;
-INSERT INTO `statusticket` VALUES (2,'CHECKED_IN'),(1,'VALID');
-/*!40000 ALTER TABLE `statusticket` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `statususer`
---
-
-DROP TABLE IF EXISTS `statususer`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `statususer` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `name` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `name` (`name`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `statususer`
---
-
-LOCK TABLES `statususer` WRITE;
-/*!40000 ALTER TABLE `statususer` DISABLE KEYS */;
-INSERT INTO `statususer` VALUES (2,'ACTIVE'),(3,'BANNED'),(1,'PENDING');
-/*!40000 ALTER TABLE `statususer` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `ticketdetail`
---
-
-DROP TABLE IF EXISTS `ticketdetail`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `ticketdetail` (
-  `id` int NOT NULL AUTO_INCREMENT,
+  `id` int PRIMARY KEY AUTO_INCREMENT,
   `booking_id` int NOT NULL,
-  `qrCode` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `qrCode` varchar(255) NOT NULL UNIQUE,
   `status_id` int NOT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `qrCode` (`qrCode`),
-  KEY `booking_id` (`booking_id`),
-  KEY `status_id` (`status_id`),
-  CONSTRAINT `ticketdetail_ibfk_1` FOREIGN KEY (`booking_id`) REFERENCES `booking` (`id`) ON DELETE CASCADE,
-  CONSTRAINT `ticketdetail_ibfk_2` FOREIGN KEY (`status_id`) REFERENCES `statusticket` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `ticketdetail`
---
-
-LOCK TABLES `ticketdetail` WRITE;
-/*!40000 ALTER TABLE `ticketdetail` DISABLE KEYS */;
-/*!40000 ALTER TABLE `ticketdetail` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `user`
---
-
-DROP TABLE IF EXISTS `user`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `user` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `role_id` int NOT NULL,
-  `status_id` int NOT NULL,
-  `username` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `password` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `email` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `fullName` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `phone` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `avatarUrl` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `active` tinyint(1) DEFAULT 1,
   `createdAt` datetime DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `username` (`username`),
-  UNIQUE KEY `email` (`email`),
-  KEY `role_id` (`role_id`),
-  KEY `status_id` (`status_id`),
-  CONSTRAINT `user_ibfk_1` FOREIGN KEY (`role_id`) REFERENCES `role` (`id`),
-  CONSTRAINT `user_ibfk_2` FOREIGN KEY (`status_id`) REFERENCES `statususer` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
+  `updatedAt` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  FOREIGN KEY (`booking_id`) REFERENCES `booking` (`id`) ON DELETE CASCADE,
+  FOREIGN KEY (`status_id`) REFERENCES `statusticket` (`id`)
+);
 
---
--- Dumping data for table `user`
---
+-- ------------------------------------------------------
+-- 2. DỮ LIỆU TỪ ĐIỂN (DICTIONARY DATA)
+-- ------------------------------------------------------
+INSERT INTO `role` VALUES (1, 'ADMIN'), (2, 'ORGANIZER'), (3, 'ATTENDEE');
+INSERT INTO `statususer` VALUES (1, 'PENDING'), (2, 'ACTIVE'), (3, 'BANNED');
+INSERT INTO `statusevent` VALUES (1, 'DRAFT'), (2, 'PENDING_REVIEW'), (3, 'PUBLISHED'), (4, 'CANCELLED'), (5, 'COMPLETED');
+INSERT INTO `statusbooking` VALUES (1, 'PENDING_PAYMENT'), (2, 'PAID'), (3, 'CANCELLED');
+INSERT INTO `statuspay` VALUES (1, 'PENDING'), (2, 'SUCCESS'), (3, 'FAILED');
+INSERT INTO `statusticket` VALUES (1, 'VALID'), (2, 'CHECKED_IN');
 
-LOCK TABLES `user` WRITE;
-/*!40000 ALTER TABLE `user` DISABLE KEYS */;
-/*!40000 ALTER TABLE `user` ENABLE KEYS */;
-UNLOCK TABLES;
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+INSERT INTO `category` (`name`) VALUES 
+('Âm nhạc'), ('Hội thảo'), ('Thể thao'), ('Nghệ thuật'), ('Du lịch'), 
+('Cộng đồng'), ('Giáo dục'), ('Công nghệ'), ('Kinh doanh'), ('Giải trí');
 
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
-/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+-- ------------------------------------------------------
+-- 3. DỮ LIỆU NGƯỜI DÙNG (20 Users: 1 Admin, 4 Orgs, 15 Attendees)
+-- ------------------------------------------------------
+INSERT INTO `user` (`role_id`, `status_id`, `username`, `password`, `email`, `fullName`, `phone`) VALUES 
+(1, 2, 'admin', '123456', 'admin@event.vn', 'Hệ thống Quản trị', '0900000000'),
+(2, 2, 'org_vibe', '123456', 'contact@vibemusic.vn', 'Vibe Music Entertainment', '0911000111'),
+(2, 2, 'org_tech', '123456', 'hello@techhub.vn', 'TechHub Vietnam', '0922000222'),
+(2, 2, 'org_run', '123456', 'info@vnmarathon.com', 'Vietnam Marathon Club', '0933000333'),
+(2, 1, 'org_art', '123456', 'art@gallery.vn', 'SaiGon Art Gallery', '0944000444'), -- Đang chờ duyệt
+(3, 2, 'user01', '123456', 'nguyenvana@gmail.com', 'Nguyễn Văn An', '0955111222'),
+(3, 2, 'user02', '123456', 'tranthib@gmail.com', 'Trần Thị Bình', '0955222333'),
+(3, 2, 'user03', '123456', 'leminhc@gmail.com', 'Lê Minh Cường', '0955333444'),
+(3, 2, 'user04', '123456', 'phamthid@gmail.com', 'Phạm Thị Dung', '0955444555'),
+(3, 2, 'user05', '123456', 'hoangvane@gmail.com', 'Hoàng Văn Em', '0955555666'),
+(3, 2, 'user06', '123456', 'vothif@gmail.com', 'Võ Thị Phương', '0955666777'),
+(3, 2, 'user07', '123456', 'dangvang@gmail.com', 'Đặng Văn Giang', '0955777888'),
+(3, 2, 'user08', '123456', 'buithih@gmail.com', 'Bùi Thị Hoa', '0955888999'),
+(3, 3, 'user09', '123456', 'spammer@gmail.com', 'Kẻ Gian Lận', '0955999000'), -- Banned User
+(3, 2, 'user10', '123456', 'lyvank@gmail.com', 'Lý Văn Khoa', '0966111222'),
+(3, 2, 'user11', '123456', 'daothil@gmail.com', 'Đào Thị Lan', '0966222333'),
+(3, 2, 'user12', '123456', 'mai_thanh_hai', 'Mai Thanh Hải', '0966333444'),
+(3, 2, 'user13', '123456', 'ngo_van_n@gmail.com', 'Ngô Văn Nam', '0966444555'),
+(3, 2, 'user14', '123456', 'chu_thi_o@gmail.com', 'Chu Thị Oanh', '0966555666'),
+(3, 2, 'user15', '123456', 'phan_van_p@gmail.com', 'Phan Văn Phú', '0966666777');
 
--- Dump completed on 2026-04-27 22:17:11
+-- ------------------------------------------------------
+-- 4. DỮ LIỆU SỰ KIỆN (15 Sự kiện đa dạng)
+-- ------------------------------------------------------
+INSERT INTO `event` (`organizer_id`, `status_id`, `title`, `description`, `startTime`, `endTime`, `location`, `totalTickets`, `price`) VALUES 
+(2, 3, 'The Eras Tour Vietnam - Đêm Nhạc Indie', 'Đêm nhạc hội tụ các band Indie hot nhất.', '2026-06-15 19:00:00', '2026-06-15 23:00:00', 'Nhà thi đấu Quân Khu 7, TP.HCM', 500, 350000.00),
+(2, 3, 'Acoustic Chill Lắng Nghe Mùa Thu', 'Thư giãn với acoustic và cà phê.', '2026-05-10 18:30:00', '2026-05-10 21:00:00', 'Lululola Coffee, Đà Lạt', 100, 150000.00),
+(2, 5, 'EDM Festival: Cháy Cùng Mùa Hè', 'Lễ hội nhạc điện tử bãi biển.', '2025-07-20 16:00:00', '2025-07-20 23:59:00', 'Công viên Biển Đông, Đà Nẵng', 2000, 500000.00), -- Đã hoàn thành
+(3, 3, 'React Native vs Flutter 2026', 'Cuộc chiến framework di động.', '2026-05-20 08:30:00', '2026-05-20 12:00:00', 'Đại học Mở TP.HCM', 300, 0.00), -- Miễn phí
+(3, 3, 'Spring Boot Masterclass', 'Làm chủ Spring Boot từ Zero đến Hero.', '2026-06-05 09:00:00', '2026-06-05 17:00:00', 'Tòa nhà Bitexco, TP.HCM', 50, 1200000.00),
+(3, 2, 'AI & Machine Learning Expo', 'Triển lãm công nghệ AI.', '2026-08-15 08:00:00', '2026-08-16 18:00:00', 'SECC Quận 7, TP.HCM', 1000, 200000.00), -- Chờ duyệt
+(4, 3, 'HCMC Midnight Run 2026', 'Giải chạy đêm khám phá Sài Gòn.', '2026-07-12 00:00:00', '2026-07-12 05:00:00', 'Đường Lê Duẩn, Quận 1', 5000, 650000.00),
+(4, 3, 'Trail Marathon Tà Xùa', 'Chạy bộ địa hình trên những tầng mây.', '2026-09-20 04:00:00', '2026-09-21 12:00:00', 'Tà Xùa, Sơn La', 500, 1500000.00),
+(4, 4, 'Đạp Xe Vì Môi Trường', 'Hủy do thời tiết xấu.', '2026-05-01 06:00:00', '2026-05-01 10:00:00', 'Hồ Bán Nguyệt, TP.HCM', 200, 0.00), -- Bị hủy
+(2, 3, 'Đêm Nhạc Trịnh Công Sơn', 'Tưởng nhớ người nhạc sĩ tài hoa.', '2026-05-25 19:30:00', '2026-05-25 22:00:00', 'Nhà hát Hòa Bình, TP.HCM', 800, 800000.00),
+(3, 3, 'Cyber Security Workshop', 'Bảo mật dữ liệu cá nhân trong kỷ nguyên số.', '2026-06-12 14:00:00', '2026-06-12 17:00:00', 'Khách sạn Rex, TP.HCM', 150, 250000.00),
+(4, 3, 'Giải Cầu Lông Sinh Viên Mở Rộng', 'Tranh tài các trường Đại học khu vực Miền Nam.', '2026-05-28 08:00:00', '2026-05-30 18:00:00', 'Nhà thi đấu Phú Thọ, TP.HCM', 1000, 50000.00),
+(2, 3, 'Triển Lãm Nghệ Thuật Ánh Sáng', 'Khám phá không gian nghệ thuật thị giác.', '2026-07-01 09:00:00', '2026-07-15 21:00:00', 'Bảo tàng Mỹ thuật TP.HCM', 2000, 100000.00),
+(3, 1, 'Hội thảo Lập Trình Blockchain', 'Tương lai của Web3.', '2026-08-01 08:30:00', '2026-08-01 16:30:00', 'Tòa nhà Landmark 81', 200, 500000.00), -- Bản nháp (Draft)
+(2, 3, 'Giao Lưu Fan Meeting G-Dragon', 'Sự kiện fan meeting lớn nhất năm.', '2026-11-20 18:00:00', '2026-11-20 21:30:00', 'Sân vận động Mỹ Đình, Hà Nội', 15000, 2500000.00);
+
+-- Gắn Category cho Event
+INSERT INTO `eventcategory` (`event_id`, `category_id`) VALUES 
+(1, 1), (1, 10), (2, 1), (3, 1), (3, 10), (4, 8), (4, 7), (5, 8), (5, 7),
+(6, 8), (6, 9), (7, 3), (7, 6), (8, 3), (8, 5), (9, 3), (9, 6), (10, 1),
+(11, 8), (12, 3), (13, 4), (13, 10), (14, 8), (15, 1), (15, 10);
+
+-- ------------------------------------------------------
+-- 5. DỮ LIỆU ĐẶT VÉ (BOOKING & PAYMENT)
+-- ------------------------------------------------------
+-- Giao dịch thành công (PAID)
+INSERT INTO `booking` (`id`, `event_id`, `user_id`, `status_id`, `quantity`, `unitPrice`, `totalPrice`) VALUES 
+(1, 1, 6, 2, 2, 350000, 700000),
+(2, 1, 7, 2, 1, 350000, 350000),
+(3, 2, 8, 2, 4, 150000, 600000),
+(4, 5, 12, 2, 1, 1200000, 1200000), -- Hải mua vé Spring Boot
+(5, 7, 12, 2, 2, 650000, 1300000), -- Hải mua vé Marathon
+(6, 4, 10, 2, 1, 0, 0),             -- Vé miễn phí
+(7, 4, 11, 2, 3, 0, 0),
+(8, 10, 15, 2, 2, 800000, 1600000);
+
+INSERT INTO `payment` (`booking_id`, `user_id`, `status_id`, `amount`, `method`, `transaction_id`) VALUES 
+(1, 6, 2, 700000, 'VNPAY', 'VNP123456789'),
+(2, 7, 2, 350000, 'MOMO', 'MOMO987654321'),
+(3, 8, 2, 600000, 'VNPAY', 'VNP111222333'),
+(4, 12, 2, 1200000, 'VNPAY', 'VNP444555666'),
+(5, 12, 2, 1300000, 'MOMO', 'MOMO777888999'),
+(8, 15, 2, 1600000, 'VNPAY', 'VNP000999888');
+
+-- Giao dịch đang chờ thanh toán (PENDING)
+INSERT INTO `booking` (`id`, `event_id`, `user_id`, `status_id`, `quantity`, `unitPrice`, `totalPrice`) VALUES 
+(9, 15, 6, 1, 1, 2500000, 2500000),
+(10, 8, 13, 1, 2, 1500000, 3000000),
+(11, 13, 14, 1, 5, 100000, 500000);
+
+-- Giao dịch bị hủy (CANCELLED)
+INSERT INTO `booking` (`id`, `event_id`, `user_id`, `status_id`, `quantity`, `unitPrice`, `totalPrice`) VALUES 
+(12, 1, 9, 3, 10, 350000, 3500000), -- User spammer bị hủy
+(13, 10, 6, 3, 2, 800000, 1600000);
+
+-- ------------------------------------------------------
+-- 6. CHI TIẾT VÉ (TICKET DETAIL - Sinh ra từ Booking đã PAID)
+-- ------------------------------------------------------
+INSERT INTO `ticketdetail` (`booking_id`, `qrCode`, `status_id`) VALUES 
+-- Booking 1 (2 vé, EV1)
+(1, 'QR_EV1_B1_T1_X8A9B', 1), (1, 'QR_EV1_B1_T2_K9L2M', 2), -- 1 vé chưa quét, 1 vé đã check-in
+-- Booking 2 (1 vé, EV1)
+(2, 'QR_EV1_B2_T1_P3Q4R', 1),
+-- Booking 3 (4 vé, EV2)
+(3, 'QR_EV2_B3_T1_H7J8K', 2), (3, 'QR_EV2_B3_T2_W2E3R', 2), (3, 'QR_EV2_B3_T3_T5Y6U', 2), (3, 'QR_EV2_B3_T4_I8O9P', 1),
+-- Booking 4 (1 vé, EV5 - Hải)
+(4, 'QR_EV5_B4_T1_HAI_MASTERCLASS', 1),
+-- Booking 5 (2 vé, EV7 - Hải)
+(5, 'QR_EV7_B5_T1_HAI_RUN1', 1), (5, 'QR_EV7_B5_T2_HAI_RUN2', 1),
+-- Booking 6 & 7 (Vé miễn phí EV4)
+(6, 'QR_EV4_B6_T1_FREE_1', 1),
+(7, 'QR_EV4_B7_T1_FREE_2', 1), (7, 'QR_EV4_B7_T2_FREE_3', 1), (7, 'QR_EV4_B7_T3_FREE_4', 1),
+-- Booking 8 (2 vé, EV10)
+(8, 'QR_EV10_B8_T1_TRINH1', 1), (8, 'QR_EV10_B8_T2_TRINH2', 1);
