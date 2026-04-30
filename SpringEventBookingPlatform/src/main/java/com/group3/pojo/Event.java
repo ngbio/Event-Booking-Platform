@@ -45,7 +45,10 @@ import java.util.Date;
     @NamedQuery(name = "Event.findByEndTime", query = "SELECT e FROM Event e WHERE e.endTime = :endTime"),
     @NamedQuery(name = "Event.findByLocation", query = "SELECT e FROM Event e WHERE e.location = :location"),
     @NamedQuery(name = "Event.findByTotalTickets", query = "SELECT e FROM Event e WHERE e.totalTickets = :totalTickets"),
-    @NamedQuery(name = "Event.findByPrice", query = "SELECT e FROM Event e WHERE e.price = :price")})
+    @NamedQuery(name = "Event.findByPrice", query = "SELECT e FROM Event e WHERE e.price = :price"),
+    @NamedQuery(name = "Event.findByActive", query = "SELECT e FROM Event e WHERE e.active = :active"),
+    @NamedQuery(name = "Event.findByCreatedAt", query = "SELECT e FROM Event e WHERE e.createdAt = :createdAt"),
+    @NamedQuery(name = "Event.findByUpdatedAt", query = "SELECT e FROM Event e WHERE e.updatedAt = :updatedAt")})
 public class Event implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -91,6 +94,14 @@ public class Event implements Serializable {
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Column(name = "price")
     private BigDecimal price;
+    @Column(name = "active")
+    private Boolean active;
+    @Column(name = "createdAt")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date createdAt;
+    @Column(name = "updatedAt")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date updatedAt;
     @JoinTable(name = "eventcategory", joinColumns = {
         @JoinColumn(name = "event_id", referencedColumnName = "id")}, inverseJoinColumns = {
         @JoinColumn(name = "category_id", referencedColumnName = "id")})
@@ -199,6 +210,30 @@ public class Event implements Serializable {
 
     public void setPrice(BigDecimal price) {
         this.price = price;
+    }
+
+    public Boolean getActive() {
+        return active;
+    }
+
+    public void setActive(Boolean active) {
+        this.active = active;
+    }
+
+    public Date getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public Date getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(Date updatedAt) {
+        this.updatedAt = updatedAt;
     }
 
     public Collection<Category> getCategoryCollection() {

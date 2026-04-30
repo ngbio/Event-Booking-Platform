@@ -37,7 +37,9 @@ import java.util.Date;
     @NamedQuery(name = "Booking.findByQuantity", query = "SELECT b FROM Booking b WHERE b.quantity = :quantity"),
     @NamedQuery(name = "Booking.findByUnitPrice", query = "SELECT b FROM Booking b WHERE b.unitPrice = :unitPrice"),
     @NamedQuery(name = "Booking.findByTotalPrice", query = "SELECT b FROM Booking b WHERE b.totalPrice = :totalPrice"),
-    @NamedQuery(name = "Booking.findByCreatedAt", query = "SELECT b FROM Booking b WHERE b.createdAt = :createdAt")})
+    @NamedQuery(name = "Booking.findByActive", query = "SELECT b FROM Booking b WHERE b.active = :active"),
+    @NamedQuery(name = "Booking.findByCreatedAt", query = "SELECT b FROM Booking b WHERE b.createdAt = :createdAt"),
+    @NamedQuery(name = "Booking.findByUpdatedAt", query = "SELECT b FROM Booking b WHERE b.updatedAt = :updatedAt")})
 public class Booking implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -59,9 +61,14 @@ public class Booking implements Serializable {
     @NotNull
     @Column(name = "totalPrice")
     private BigDecimal totalPrice;
+    @Column(name = "active")
+    private Boolean active;
     @Column(name = "createdAt")
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt;
+    @Column(name = "updatedAt")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date updatedAt;
     @JoinColumn(name = "event_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
     private Event eventId;
@@ -122,12 +129,28 @@ public class Booking implements Serializable {
         this.totalPrice = totalPrice;
     }
 
+    public Boolean getActive() {
+        return active;
+    }
+
+    public void setActive(Boolean active) {
+        this.active = active;
+    }
+
     public Date getCreatedAt() {
         return createdAt;
     }
 
     public void setCreatedAt(Date createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public Date getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(Date updatedAt) {
+        this.updatedAt = updatedAt;
     }
 
     public Event getEventId() {

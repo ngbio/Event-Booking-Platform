@@ -15,9 +15,12 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
 import jakarta.persistence.Table;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  *
@@ -28,7 +31,10 @@ import java.io.Serializable;
 @NamedQueries({
     @NamedQuery(name = "Ticketdetail.findAll", query = "SELECT t FROM Ticketdetail t"),
     @NamedQuery(name = "Ticketdetail.findById", query = "SELECT t FROM Ticketdetail t WHERE t.id = :id"),
-    @NamedQuery(name = "Ticketdetail.findByQrCode", query = "SELECT t FROM Ticketdetail t WHERE t.qrCode = :qrCode")})
+    @NamedQuery(name = "Ticketdetail.findByQrCode", query = "SELECT t FROM Ticketdetail t WHERE t.qrCode = :qrCode"),
+    @NamedQuery(name = "Ticketdetail.findByActive", query = "SELECT t FROM Ticketdetail t WHERE t.active = :active"),
+    @NamedQuery(name = "Ticketdetail.findByCreatedAt", query = "SELECT t FROM Ticketdetail t WHERE t.createdAt = :createdAt"),
+    @NamedQuery(name = "Ticketdetail.findByUpdatedAt", query = "SELECT t FROM Ticketdetail t WHERE t.updatedAt = :updatedAt")})
 public class Ticketdetail implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -42,6 +48,14 @@ public class Ticketdetail implements Serializable {
     @Size(min = 1, max = 255)
     @Column(name = "qrCode")
     private String qrCode;
+    @Column(name = "active")
+    private Boolean active;
+    @Column(name = "createdAt")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date createdAt;
+    @Column(name = "updatedAt")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date updatedAt;
     @JoinColumn(name = "booking_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
     private Booking bookingId;
@@ -75,6 +89,30 @@ public class Ticketdetail implements Serializable {
 
     public void setQrCode(String qrCode) {
         this.qrCode = qrCode;
+    }
+
+    public Boolean getActive() {
+        return active;
+    }
+
+    public void setActive(Boolean active) {
+        this.active = active;
+    }
+
+    public Date getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public Date getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(Date updatedAt) {
+        this.updatedAt = updatedAt;
     }
 
     public Booking getBookingId() {
