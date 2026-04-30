@@ -4,6 +4,7 @@
  */
 package com.group3.pojo;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -14,10 +15,13 @@ import jakarta.persistence.ManyToMany;
 import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
 import jakarta.persistence.Table;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.Date;
 
 /**
  *
@@ -28,7 +32,10 @@ import java.util.Collection;
 @NamedQueries({
     @NamedQuery(name = "Category.findAll", query = "SELECT c FROM Category c"),
     @NamedQuery(name = "Category.findById", query = "SELECT c FROM Category c WHERE c.id = :id"),
-    @NamedQuery(name = "Category.findByName", query = "SELECT c FROM Category c WHERE c.name = :name")})
+    @NamedQuery(name = "Category.findByName", query = "SELECT c FROM Category c WHERE c.name = :name"),
+    @NamedQuery(name = "Category.findByActive", query = "SELECT c FROM Category c WHERE c.active = :active"),
+    @NamedQuery(name = "Category.findByCreatedAt", query = "SELECT c FROM Category c WHERE c.createdAt = :createdAt"),
+    @NamedQuery(name = "Category.findByUpdatedAt", query = "SELECT c FROM Category c WHERE c.updatedAt = :updatedAt")})
 public class Category implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -42,6 +49,15 @@ public class Category implements Serializable {
     @Size(min = 1, max = 100)
     @Column(name = "name")
     private String name;
+    @Column(name = "active")
+    private Boolean active;
+    @Column(name = "createdAt")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date createdAt;
+    @Column(name = "updatedAt")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date updatedAt;
+    @JsonIgnore
     @ManyToMany(mappedBy = "categoryCollection")
     private Collection<Event> eventCollection;
 
@@ -71,6 +87,30 @@ public class Category implements Serializable {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public Boolean getActive() {
+        return active;
+    }
+
+    public void setActive(Boolean active) {
+        this.active = active;
+    }
+
+    public Date getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public Date getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(Date updatedAt) {
+        this.updatedAt = updatedAt;
     }
 
     public Collection<Event> getEventCollection() {
