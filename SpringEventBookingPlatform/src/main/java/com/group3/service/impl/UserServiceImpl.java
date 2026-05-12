@@ -67,7 +67,7 @@ public class UserServiceImpl implements UserService {
             try {
                 Map res = this.cloudinary.uploader().upload(avatar.getBytes(),
                         ObjectUtils.asMap("resource_type", "auto"));
-                u.setAvatarUrl(res.get("secure_url").toString());
+                u.setAvatar(res.get("secure_url").toString());
             } catch (IOException ex) {
                 Logger.getLogger(UserServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
             }
