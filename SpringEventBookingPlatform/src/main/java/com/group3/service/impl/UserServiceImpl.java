@@ -63,15 +63,15 @@ public class UserServiceImpl implements UserService {
         u.setUsername(params.get("username"));
         u.setPassword(passwordEncoder.encode(params.get("password")));
 
-        if (!avatar.isEmpty()) {
-            try {
-                Map res = this.cloudinary.uploader().upload(avatar.getBytes(),
-                        ObjectUtils.asMap("resource_type", "auto"));
-                u.setAvatar(res.get("secure_url").toString());
-            } catch (IOException ex) {
-                Logger.getLogger(UserServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
+//        if (!avatar.isEmpty()) {
+//            try {
+//                Map res = this.cloudinary.uploader().upload(avatar.getBytes(),
+//                        ObjectUtils.asMap("resource_type", "auto"));
+//                u.setAvatarUrl(res.get("secure_url").toString());
+//            } catch (IOException ex) {
+//                Logger.getLogger(UserServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
+//            }
+//        }
 
         return this.userRepo.addUser(u);
     }
