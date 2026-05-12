@@ -1,1 +1,21 @@
-node_modules
+# Java/Maven rác
+target/
+*.class
+*.war
+*.ear
+*.jar
+
+# NetBeans rác
+nbproject/
+nb-configuration.xml
+nbactions.xml
+nb-gradle/
+
+# IDE rác khác
+.idea/
+.vscode/
+*.iml
+
+# Hệ điều hành
+Thumbs.db
+.DS_Store
