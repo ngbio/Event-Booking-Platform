@@ -63,8 +63,8 @@ public class EventServiceImpl implements EventService {
         event.setPrice(new BigDecimal(params.get("price")));
         event.setOrganizerId(organizer);
         event.setActive(true);
-        event.setCreatedAt(new Date());
-        event.setUpdatedAt(new Date());
+        event.setCreatedDate(new Date());
+        event.setUpdatedDate(new Date());
         
         // Upload image
         if (image != null && !image.isEmpty()) {
@@ -117,7 +117,7 @@ public class EventServiceImpl implements EventService {
         event.setLocation(params.get("location"));
         event.setTotalTickets(Integer.parseInt(params.get("totalTickets")));
         event.setPrice(new BigDecimal(params.get("price")));
-        event.setUpdatedAt(new Date());
+        event.setUpdatedDate(new Date());
         
         // Upload image if provided
         if (image != null && !image.isEmpty()) {
