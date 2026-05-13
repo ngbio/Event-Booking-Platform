@@ -24,8 +24,8 @@ public class UserMapper {
         dto.setPhone(user.getPhone());
         dto.setAvatar(user.getAvatar());
         dto.setActive(user.getActive());
-        dto.setCreatedAt(user.getCreatedAt());
-        dto.setUpdatedAt(user.getUpdatedAt());
+        dto.setCreatedAt(user.getCreatedDate());
+        dto.setUpdatedAt(user.getUpdatedDate());
         
         if (user.getRoleId() != null) {
             dto.setRoleId(user.getRoleId().getId());

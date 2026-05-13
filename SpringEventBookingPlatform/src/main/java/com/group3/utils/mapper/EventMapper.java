@@ -29,8 +29,8 @@ public class EventMapper {
         dto.setActive(event.getActive());
         dto.setStartTime(event.getStartTime());
         dto.setEndTime(event.getEndTime());
-        dto.setCreatedAt(event.getCreatedAt());
-        dto.setUpdatedAt(event.getUpdatedAt());
+        dto.setCreatedAt(event.getCreatedDate());
+        dto.setUpdatedAt(event.getUpdatedDate());
         
         if (event.getOrganizerId() != null) {
             dto.setOrganizerId(event.getOrganizerId().getId());

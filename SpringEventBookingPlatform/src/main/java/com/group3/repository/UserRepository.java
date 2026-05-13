@@ -4,13 +4,33 @@
  */
 package com.group3.repository;
 import com.group3.pojo.User;
+import java.util.List;
+import java.util.Map;
 
 /**
  *
  * @author THUAN
  */
 public interface UserRepository {
+    List<User> getUsers(Map<String, String> params);
+
+    Long countUsers(Map<String, String> params);
+
+    User findUserById(int id);
+
+    User findUserByEmail(String email);
+
+    boolean existEmail(String email);
+
+    void addOrUpdateUser(User u);
+
+    void deleteUser(int id);
+
     User getUserByUsername(String username);
+
+    Long count();
+
     User addUser(User u);
+        
     boolean authenticate(String username, String password);
 }
