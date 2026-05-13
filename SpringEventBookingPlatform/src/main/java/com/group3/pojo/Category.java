@@ -4,7 +4,6 @@
  */
 package com.group3.pojo;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -51,13 +50,12 @@ public class Category implements Serializable {
     private String name;
     @Column(name = "active")
     private Boolean active;
-    @Column(name = "createdAt")
+    @Column(name = "created_at")
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt;
-    @Column(name = "updatedAt")
+    @Column(name = "updated_at")
     @Temporal(TemporalType.TIMESTAMP)
     private Date updatedAt;
-    @JsonIgnore
     @ManyToMany(mappedBy = "categoryCollection")
     private Collection<Event> eventCollection;
 

@@ -70,7 +70,7 @@ public class User implements Serializable {
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 100)
-    @Column(name = "fullName")
+    @Column(name = "full_name")
     private String fullName;
     // @Pattern(regexp="^\\(?(\\d{3})\\)?[- ]?(\\d{3})[- ]?(\\d{4})$", message="Invalid phone/fax format, should be as xxx-xxx-xxxx")//if the field contains phone or fax number consider using this annotation to enforce field validation
     @Size(max = 20)
@@ -81,10 +81,10 @@ public class User implements Serializable {
     private String avatar;
     @Column(name = "active")
     private Boolean active;
-    @Column(name = "createdAt")
+    @Column(name = "created_at")
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt;
-    @Column(name = "updatedAt")
+    @Column(name = "updated_at")
     @Temporal(TemporalType.TIMESTAMP)
     private Date updatedAt;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "userId")
@@ -98,7 +98,7 @@ public class User implements Serializable {
     private Role roleId;
     @JoinColumn(name = "status_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
-    private Statususer statusId;
+    private StatusUser statusId;
 
     public User() {
     }
@@ -227,11 +227,11 @@ public class User implements Serializable {
         this.roleId = roleId;
     }
 
-    public Statususer getStatusId() {
+    public StatusUser getStatusId() {
         return statusId;
     }
 
-    public void setStatusId(Statususer statusId) {
+    public void setStatusId(StatusUser statusId) {
         this.statusId = statusId;
     }
 

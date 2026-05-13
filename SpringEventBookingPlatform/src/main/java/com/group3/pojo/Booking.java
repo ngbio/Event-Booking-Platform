@@ -55,18 +55,18 @@ public class Booking implements Serializable {
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Basic(optional = false)
     @NotNull
-    @Column(name = "unitPrice")
+    @Column(name = "unit_price")
     private BigDecimal unitPrice;
     @Basic(optional = false)
     @NotNull
-    @Column(name = "totalPrice")
+    @Column(name = "total_price")
     private BigDecimal totalPrice;
     @Column(name = "active")
     private Boolean active;
-    @Column(name = "createdAt")
+    @Column(name = "created_at")
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt;
-    @Column(name = "updatedAt")
+    @Column(name = "updated_at")
     @Temporal(TemporalType.TIMESTAMP)
     private Date updatedAt;
     @JoinColumn(name = "event_id", referencedColumnName = "id")
@@ -74,14 +74,14 @@ public class Booking implements Serializable {
     private Event eventId;
     @JoinColumn(name = "status_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
-    private Statusbooking statusId;
+    private StatusBooking statusId;
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
     private User userId;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "bookingId")
-    private Collection<Payment> paymentCollection;
+    private Collection<TicketDetail> ticketDetailCollection;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "bookingId")
-    private Collection<Ticketdetail> ticketdetailCollection;
+    private Collection<Payment> paymentCollection;
 
     public Booking() {
     }
@@ -161,11 +161,11 @@ public class Booking implements Serializable {
         this.eventId = eventId;
     }
 
-    public Statusbooking getStatusId() {
+    public StatusBooking getStatusId() {
         return statusId;
     }
 
-    public void setStatusId(Statusbooking statusId) {
+    public void setStatusId(StatusBooking statusId) {
         this.statusId = statusId;
     }
 
@@ -177,20 +177,20 @@ public class Booking implements Serializable {
         this.userId = userId;
     }
 
+    public Collection<TicketDetail> getTicketDetailCollection() {
+        return ticketDetailCollection;
+    }
+
+    public void setTicketDetailCollection(Collection<TicketDetail> ticketDetailCollection) {
+        this.ticketDetailCollection = ticketDetailCollection;
+    }
+
     public Collection<Payment> getPaymentCollection() {
         return paymentCollection;
     }
 
     public void setPaymentCollection(Collection<Payment> paymentCollection) {
         this.paymentCollection = paymentCollection;
-    }
-
-    public Collection<Ticketdetail> getTicketdetailCollection() {
-        return ticketdetailCollection;
-    }
-
-    public void setTicketdetailCollection(Collection<Ticketdetail> ticketdetailCollection) {
-        this.ticketdetailCollection = ticketdetailCollection;
     }
 
     @Override

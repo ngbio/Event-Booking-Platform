@@ -8,8 +8,6 @@ import jakarta.persistence.Basic;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
@@ -25,17 +23,17 @@ import java.util.Collection;
  * @author thanh
  */
 @Entity
-@Table(name = "statususer")
+@Table(name = "status_booking")
 @NamedQueries({
-    @NamedQuery(name = "Statususer.findAll", query = "SELECT s FROM Statususer s"),
-    @NamedQuery(name = "Statususer.findById", query = "SELECT s FROM Statususer s WHERE s.id = :id"),
-    @NamedQuery(name = "Statususer.findByName", query = "SELECT s FROM Statususer s WHERE s.name = :name")})
-public class Statususer implements Serializable {
+    @NamedQuery(name = "StatusBooking.findAll", query = "SELECT s FROM StatusBooking s"),
+    @NamedQuery(name = "StatusBooking.findById", query = "SELECT s FROM StatusBooking s WHERE s.id = :id"),
+    @NamedQuery(name = "StatusBooking.findByName", query = "SELECT s FROM StatusBooking s WHERE s.name = :name")})
+public class StatusBooking implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
+    @NotNull
     @Column(name = "id")
     private Integer id;
     @Basic(optional = false)
@@ -44,16 +42,16 @@ public class Statususer implements Serializable {
     @Column(name = "name")
     private String name;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "statusId")
-    private Collection<User> userCollection;
+    private Collection<Booking> bookingCollection;
 
-    public Statususer() {
+    public StatusBooking() {
     }
 
-    public Statususer(Integer id) {
+    public StatusBooking(Integer id) {
         this.id = id;
     }
 
-    public Statususer(Integer id, String name) {
+    public StatusBooking(Integer id, String name) {
         this.id = id;
         this.name = name;
     }
@@ -74,12 +72,12 @@ public class Statususer implements Serializable {
         this.name = name;
     }
 
-    public Collection<User> getUserCollection() {
-        return userCollection;
+    public Collection<Booking> getBookingCollection() {
+        return bookingCollection;
     }
 
-    public void setUserCollection(Collection<User> userCollection) {
-        this.userCollection = userCollection;
+    public void setBookingCollection(Collection<Booking> bookingCollection) {
+        this.bookingCollection = bookingCollection;
     }
 
     @Override
@@ -92,10 +90,10 @@ public class Statususer implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Statususer)) {
+        if (!(object instanceof StatusBooking)) {
             return false;
         }
-        Statususer other = (Statususer) object;
+        StatusBooking other = (StatusBooking) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
@@ -104,7 +102,7 @@ public class Statususer implements Serializable {
 
     @Override
     public String toString() {
-        return "com.group3.pojo.Statususer[ id=" + id + " ]";
+        return "com.group3.pojo.StatusBooking[ id=" + id + " ]";
     }
     
 }

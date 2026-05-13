@@ -67,19 +67,19 @@ public class Event implements Serializable {
     @Column(name = "description")
     private String description;
     @Size(max = 255)
-    @Column(name = "imageUrl")
+    @Column(name = "image_url")
     private String imageUrl;
     @Size(max = 255)
-    @Column(name = "videoUrl")
+    @Column(name = "video_url")
     private String videoUrl;
     @Basic(optional = false)
     @NotNull
-    @Column(name = "startTime")
+    @Column(name = "start_time")
     @Temporal(TemporalType.TIMESTAMP)
     private Date startTime;
     @Basic(optional = false)
     @NotNull
-    @Column(name = "endTime")
+    @Column(name = "end_time")
     @Temporal(TemporalType.TIMESTAMP)
     private Date endTime;
     @Basic(optional = false)
@@ -89,20 +89,20 @@ public class Event implements Serializable {
     private String location;
     @Basic(optional = false)
     @NotNull
-    @Column(name = "totalTickets")
+    @Column(name = "total_tickets")
     private int totalTickets;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Column(name = "price")
     private BigDecimal price;
     @Column(name = "active")
     private Boolean active;
-    @Column(name = "createdAt")
+    @Column(name = "created_at")
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt;
-    @Column(name = "updatedAt")
+    @Column(name = "updated_at")
     @Temporal(TemporalType.TIMESTAMP)
     private Date updatedAt;
-    @JoinTable(name = "eventcategory", joinColumns = {
+    @JoinTable(name = "event_category", joinColumns = {
         @JoinColumn(name = "event_id", referencedColumnName = "id")}, inverseJoinColumns = {
         @JoinColumn(name = "category_id", referencedColumnName = "id")})
     @ManyToMany
@@ -111,7 +111,7 @@ public class Event implements Serializable {
     private Collection<Booking> bookingCollection;
     @JoinColumn(name = "status_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
-    private Statusevent statusId;
+    private StatusEvent statusId;
     @JoinColumn(name = "organizer_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
     private User organizerId;
@@ -252,11 +252,11 @@ public class Event implements Serializable {
         this.bookingCollection = bookingCollection;
     }
 
-    public Statusevent getStatusId() {
+    public StatusEvent getStatusId() {
         return statusId;
     }
 
-    public void setStatusId(Statusevent statusId) {
+    public void setStatusId(StatusEvent statusId) {
         this.statusId = statusId;
     }
 

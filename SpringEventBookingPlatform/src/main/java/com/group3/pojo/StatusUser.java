@@ -8,8 +8,6 @@ import jakarta.persistence.Basic;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
@@ -25,17 +23,17 @@ import java.util.Collection;
  * @author thanh
  */
 @Entity
-@Table(name = "statusevent")
+@Table(name = "status_user")
 @NamedQueries({
-    @NamedQuery(name = "Statusevent.findAll", query = "SELECT s FROM Statusevent s"),
-    @NamedQuery(name = "Statusevent.findById", query = "SELECT s FROM Statusevent s WHERE s.id = :id"),
-    @NamedQuery(name = "Statusevent.findByName", query = "SELECT s FROM Statusevent s WHERE s.name = :name")})
-public class Statusevent implements Serializable {
+    @NamedQuery(name = "StatusUser.findAll", query = "SELECT s FROM StatusUser s"),
+    @NamedQuery(name = "StatusUser.findById", query = "SELECT s FROM StatusUser s WHERE s.id = :id"),
+    @NamedQuery(name = "StatusUser.findByName", query = "SELECT s FROM StatusUser s WHERE s.name = :name")})
+public class StatusUser implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
+    @NotNull
     @Column(name = "id")
     private Integer id;
     @Basic(optional = false)
@@ -44,16 +42,16 @@ public class Statusevent implements Serializable {
     @Column(name = "name")
     private String name;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "statusId")
-    private Collection<Event> eventCollection;
+    private Collection<User> userCollection;
 
-    public Statusevent() {
+    public StatusUser() {
     }
 
-    public Statusevent(Integer id) {
+    public StatusUser(Integer id) {
         this.id = id;
     }
 
-    public Statusevent(Integer id, String name) {
+    public StatusUser(Integer id, String name) {
         this.id = id;
         this.name = name;
     }
@@ -74,12 +72,12 @@ public class Statusevent implements Serializable {
         this.name = name;
     }
 
-    public Collection<Event> getEventCollection() {
-        return eventCollection;
+    public Collection<User> getUserCollection() {
+        return userCollection;
     }
 
-    public void setEventCollection(Collection<Event> eventCollection) {
-        this.eventCollection = eventCollection;
+    public void setUserCollection(Collection<User> userCollection) {
+        this.userCollection = userCollection;
     }
 
     @Override
@@ -92,10 +90,10 @@ public class Statusevent implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Statusevent)) {
+        if (!(object instanceof StatusUser)) {
             return false;
         }
-        Statusevent other = (Statusevent) object;
+        StatusUser other = (StatusUser) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
@@ -104,7 +102,7 @@ public class Statusevent implements Serializable {
 
     @Override
     public String toString() {
-        return "com.group3.pojo.Statusevent[ id=" + id + " ]";
+        return "com.group3.pojo.StatusUser[ id=" + id + " ]";
     }
     
 }

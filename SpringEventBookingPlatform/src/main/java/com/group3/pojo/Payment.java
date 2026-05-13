@@ -61,10 +61,10 @@ public class Payment implements Serializable {
     private String transactionId;
     @Column(name = "active")
     private Boolean active;
-    @Column(name = "createdAt")
+    @Column(name = "created_at")
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt;
-    @Column(name = "updatedAt")
+    @Column(name = "updated_at")
     @Temporal(TemporalType.TIMESTAMP)
     private Date updatedAt;
     @JoinColumn(name = "booking_id", referencedColumnName = "id")
@@ -72,7 +72,7 @@ public class Payment implements Serializable {
     private Booking bookingId;
     @JoinColumn(name = "status_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
-    private Statuspay statusId;
+    private StatusPay statusId;
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
     private User userId;
@@ -154,11 +154,11 @@ public class Payment implements Serializable {
         this.bookingId = bookingId;
     }
 
-    public Statuspay getStatusId() {
+    public StatusPay getStatusId() {
         return statusId;
     }
 
-    public void setStatusId(Statuspay statusId) {
+    public void setStatusId(StatusPay statusId) {
         this.statusId = statusId;
     }
 
