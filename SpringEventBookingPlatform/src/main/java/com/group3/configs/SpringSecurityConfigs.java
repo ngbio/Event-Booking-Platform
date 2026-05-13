@@ -31,9 +31,9 @@ import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 @EnableTransactionManagement
 @ComponentScan(
         basePackages = {
-            "com.dht.controllers",
-            "com.dht.repository",
-            "com.dht.service"
+            "com.group3.controllers",
+            "com.group3.repository",
+            "com.group3.service"
         }
 )
 public class SpringSecurityConfigs {
@@ -50,20 +50,20 @@ public class SpringSecurityConfigs {
         return new HandlerMappingIntrospector();
     }
 
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.csrf(c -> c.disable()).authorizeHttpRequests((requests) -> requests
-                .requestMatchers("/", "/admin").hasRole("ADMIN")
-                .requestMatchers("/api/**").permitAll()
-                .anyRequest().authenticated()
-        ).formLogin(form -> form.loginPage("/admin/login") // Đường dẫn tới trang đăng nhập
-                .loginProcessingUrl("/login") // Đường dẫn xử lý POST
-                .defaultSuccessUrl("/", true) // Chuyển hướng khi thành công
-                .failureUrl("/admin/login?error=true") // Chuyển hướng khi thất bại
-                .permitAll()
-        ).logout((logout) -> logout.logoutSuccessUrl("/admin/login").permitAll());
-        return http.build();
-    }
+//    @Bean
+//    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+//        http.csrf(c -> c.disable()).authorizeHttpRequests((requests) -> requests
+//                .requestMatchers("/", "/admin").hasRole("ADMIN")
+//                .requestMatchers("/api/**").permitAll()
+//                .anyRequest().authenticated()
+//        ).formLogin(form -> form.loginPage("/admin/login") // Đường dẫn tới trang đăng nhập
+//                .loginProcessingUrl("/login") // Đường dẫn xử lý POST
+//                .defaultSuccessUrl("/", true) // Chuyển hướng khi thành công
+//                .failureUrl("/admin/login?error=true") // Chuyển hướng khi thất bại
+//                .permitAll()
+//        ).logout((logout) -> logout.logoutSuccessUrl("/admin/login").permitAll());
+//        return http.build();
+//    }
 
     @Bean
     public Cloudinary cloudinary() {
