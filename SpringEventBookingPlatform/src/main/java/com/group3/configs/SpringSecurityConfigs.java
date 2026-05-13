@@ -31,9 +31,9 @@ import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 @EnableTransactionManagement
 @ComponentScan(
         basePackages = {
-            "com.dht.controllers",
-            "com.dht.repository",
-            "com.dht.service"
+            "com.group3.controllers",
+            "com.group3.repository",
+            "com.group3.service"
         }
 )
 public class SpringSecurityConfigs {
@@ -69,9 +69,9 @@ public class SpringSecurityConfigs {
     public Cloudinary cloudinary() {
         Cloudinary cloudinary
                 = new Cloudinary(ObjectUtils.asMap(
-                        "cloud_name", "dxxwcby8l",
-                        "api_key", "792844686918347",
-                        "api_secret", "T8ys_Z9zaKSqmKWa4K1RY6DXUJg",
+                        "cloud_name", "ducouuixg",
+                        "api_key", "222724154773865",
+                        "api_secret", "im6x_Bg68qbbPgx9RYalYAm5iwY",
                         "secure", true));
         return cloudinary;
     }
