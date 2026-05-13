@@ -20,8 +20,8 @@ public class CategoryMapper {
             category.getId(),
             category.getName(),
             category.getActive(),
-            category.getCreatedAt(),
-            category.getUpdatedAt()
+            category.getCreatedDate(),
+            category.getUpdatedDate()
         );
     }
 

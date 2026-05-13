@@ -4,19 +4,18 @@
  */
 package com.group3.service.impl;
 
-import com.cloudinary.Cloudinary;
-import com.cloudinary.utils.ObjectUtils;
-import com.group3.pojo.Role;
 import com.group3.pojo.User;
-import com.group3.repository.RoleRepository;
+import com.group3.pojo.Role;
 import com.group3.repository.UserRepository;
+import com.group3.repository.RoleRepository;
+
 import com.group3.service.UserService;
+
 import java.io.IOException;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -30,27 +29,65 @@ import org.springframework.web.multipart.MultipartFile;
  *
  * @author THUAN
  */
-@Service("userDetailsService")
+@Service
 public class UserServiceImpl implements UserService {
-    
+
     @Autowired
     private UserRepository userRepo;
-    
+
     @Autowired
     private RoleRepository roleRepo;
 
     @Autowired
-    private Cloudinary cloudinary;
-
-    @Autowired
     private BCryptPasswordEncoder passwordEncoder;
+
+
+    @Override
+    public List<User> getUsers(Map<String, String> params) {
+        return this.userRepo.getUsers(params);
+    }
+
+    @Override
+    public Long countUsers(Map<String, String> params) {
+        return this.userRepo.countUsers(params);
+    }
+
+    @Override
+    public void addOrUpdateUser(User u) {
+        this.userRepo.addOrUpdateUser(u);
+    }
+
+    @Override
+    public void deleteUser(int id) {
+        this.userRepo.deleteUser(id);
+    }
+
+    @Override
+    public User getUserById(int id) {
+        return this.userRepo.findUserById(id);
+    }
+
+    @Override
+    public User getUserByEmail(String email) {
+        return this.userRepo.findUserByEmail(email);
+    }
+
+    @Override
+    public boolean checkExistEmail(String email) {
+        return this.userRepo.existEmail(email);
+    }
+
+    @Override
+    public Long countUsers() {
+        return this.userRepo.count();
+    }
 
     @Override
     public User getUserByUsername(String username) {
         return this.userRepo.getUserByUsername(username);
     }
 
-    @Override
+   @Override
     public User addUser(Map<String, String> params, MultipartFile avatar) {
         User u = new User();
         u.setFullName(params.get("fullName"));
@@ -77,6 +114,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public boolean authenticate(String username, String password) {
+        return this.userRepo.authenticate(username, password);
+    }
+
+    @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = this.userRepo.getUserByUsername(username);
         if (user == null) {
@@ -90,8 +132,4 @@ public class UserServiceImpl implements UserService {
                 user.getPassword(), authorities);
     }
 
-    @Override
-    public boolean authenticate(String username, String password) {
-        return this.userRepo.authenticate(username, password);
-    }
 }

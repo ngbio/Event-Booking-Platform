@@ -22,8 +22,8 @@ public class PaymentMapper {
         dto.setMethod(payment.getMethod());
         dto.setTransactionId(payment.getTransactionId());
         dto.setActive(payment.getActive());
-        dto.setCreatedAt(payment.getCreatedAt());
-        dto.setUpdatedAt(payment.getUpdatedAt());
+        dto.setCreatedAt(payment.getCreatedDate());
+        dto.setUpdatedAt(payment.getUpdatedDate());
         
         if (payment.getBookingId() != null) {
             dto.setBookingId(payment.getBookingId().getId());

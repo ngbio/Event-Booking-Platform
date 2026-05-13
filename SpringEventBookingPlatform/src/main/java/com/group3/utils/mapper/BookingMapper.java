@@ -22,8 +22,8 @@ public class BookingMapper {
         dto.setUnitPrice(booking.getUnitPrice());
         dto.setTotalPrice(booking.getTotalPrice());
         dto.setActive(booking.getActive());
-        dto.setCreatedAt(booking.getCreatedAt());
-        dto.setUpdatedAt(booking.getUpdatedAt());
+        dto.setCreatedAt(booking.getCreatedDate());
+        dto.setUpdatedAt(booking.getUpdatedDate());
         
         if (booking.getEventId() != null) {
             dto.setEventId(booking.getEventId().getId());
