@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class CategoryRepositoryImpl implements CategoryRepository{
     @Autowired
     private LocalSessionFactoryBean fatory;
+    
     @Override
     public List<Category> getCates() {
         Session session = fatory.getObject().getCurrentSession();
@@ -22,4 +23,11 @@ public class CategoryRepositoryImpl implements CategoryRepository{
         return query.getResultList();
     }
     
+    @Override
+    public Category getCateById(Integer id) {
+        Session session = fatory.getObject().getCurrentSession();
+        Query<Category> q = session.createNamedQuery("Category.findById", Category.class);
+        q.setParameter("id", id);
+        return q.uniqueResult();
+    }
 }
