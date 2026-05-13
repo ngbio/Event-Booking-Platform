@@ -27,15 +27,15 @@ import java.util.Date;
  * @author thanh
  */
 @Entity
-@Table(name = "ticketdetail")
+@Table(name = "ticket_detail")
 @NamedQueries({
-    @NamedQuery(name = "Ticketdetail.findAll", query = "SELECT t FROM Ticketdetail t"),
-    @NamedQuery(name = "Ticketdetail.findById", query = "SELECT t FROM Ticketdetail t WHERE t.id = :id"),
-    @NamedQuery(name = "Ticketdetail.findByQrCode", query = "SELECT t FROM Ticketdetail t WHERE t.qrCode = :qrCode"),
-    @NamedQuery(name = "Ticketdetail.findByActive", query = "SELECT t FROM Ticketdetail t WHERE t.active = :active"),
-    @NamedQuery(name = "Ticketdetail.findByCreatedAt", query = "SELECT t FROM Ticketdetail t WHERE t.createdAt = :createdAt"),
-    @NamedQuery(name = "Ticketdetail.findByUpdatedAt", query = "SELECT t FROM Ticketdetail t WHERE t.updatedAt = :updatedAt")})
-public class Ticketdetail implements Serializable {
+    @NamedQuery(name = "TicketDetail.findAll", query = "SELECT t FROM TicketDetail t"),
+    @NamedQuery(name = "TicketDetail.findById", query = "SELECT t FROM TicketDetail t WHERE t.id = :id"),
+    @NamedQuery(name = "TicketDetail.findByQrCode", query = "SELECT t FROM TicketDetail t WHERE t.qrCode = :qrCode"),
+    @NamedQuery(name = "TicketDetail.findByActive", query = "SELECT t FROM TicketDetail t WHERE t.active = :active"),
+    @NamedQuery(name = "TicketDetail.findByCreatedDate", query = "SELECT t FROM TicketDetail t WHERE t.createdDate = :createdDate"),
+    @NamedQuery(name = "TicketDetail.findByUpdatedDate", query = "SELECT t FROM TicketDetail t WHERE t.updatedDate = :updatedDate")})
+public class TicketDetail implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -46,31 +46,31 @@ public class Ticketdetail implements Serializable {
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 255)
-    @Column(name = "qrCode")
+    @Column(name = "qr_code")
     private String qrCode;
     @Column(name = "active")
     private Boolean active;
-    @Column(name = "createdAt")
+    @Column(name = "created_date")
     @Temporal(TemporalType.TIMESTAMP)
-    private Date createdAt;
-    @Column(name = "updatedAt")
+    private Date createdDate;
+    @Column(name = "updated_date")
     @Temporal(TemporalType.TIMESTAMP)
-    private Date updatedAt;
+    private Date updatedDate;
     @JoinColumn(name = "booking_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
     private Booking bookingId;
     @JoinColumn(name = "status_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
-    private Statusticket statusId;
+    private StatusTicket statusId;
 
-    public Ticketdetail() {
+    public TicketDetail() {
     }
 
-    public Ticketdetail(Integer id) {
+    public TicketDetail(Integer id) {
         this.id = id;
     }
 
-    public Ticketdetail(Integer id, String qrCode) {
+    public TicketDetail(Integer id, String qrCode) {
         this.id = id;
         this.qrCode = qrCode;
     }
@@ -99,20 +99,20 @@ public class Ticketdetail implements Serializable {
         this.active = active;
     }
 
-    public Date getCreatedAt() {
-        return createdAt;
+    public Date getCreatedDate() {
+        return createdDate;
     }
 
-    public void setCreatedAt(Date createdAt) {
-        this.createdAt = createdAt;
+    public void setCreatedDate(Date createdDate) {
+        this.createdDate = createdDate;
     }
 
-    public Date getUpdatedAt() {
-        return updatedAt;
+    public Date getUpdatedDate() {
+        return updatedDate;
     }
 
-    public void setUpdatedAt(Date updatedAt) {
-        this.updatedAt = updatedAt;
+    public void setUpdatedDate(Date updatedDate) {
+        this.updatedDate = updatedDate;
     }
 
     public Booking getBookingId() {
@@ -123,11 +123,11 @@ public class Ticketdetail implements Serializable {
         this.bookingId = bookingId;
     }
 
-    public Statusticket getStatusId() {
+    public StatusTicket getStatusId() {
         return statusId;
     }
 
-    public void setStatusId(Statusticket statusId) {
+    public void setStatusId(StatusTicket statusId) {
         this.statusId = statusId;
     }
 
@@ -141,10 +141,10 @@ public class Ticketdetail implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Ticketdetail)) {
+        if (!(object instanceof TicketDetail)) {
             return false;
         }
-        Ticketdetail other = (Ticketdetail) object;
+        TicketDetail other = (TicketDetail) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
@@ -153,7 +153,7 @@ public class Ticketdetail implements Serializable {
 
     @Override
     public String toString() {
-        return "com.group3.pojo.Ticketdetail[ id=" + id + " ]";
+        return "com.group3.pojo.TicketDetail[ id=" + id + " ]";
     }
     
 }

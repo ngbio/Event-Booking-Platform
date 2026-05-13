@@ -8,8 +8,6 @@ import jakarta.persistence.Basic;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
@@ -25,17 +23,17 @@ import java.util.Collection;
  * @author thanh
  */
 @Entity
-@Table(name = "statusticket")
+@Table(name = "status_pay")
 @NamedQueries({
-    @NamedQuery(name = "Statusticket.findAll", query = "SELECT s FROM Statusticket s"),
-    @NamedQuery(name = "Statusticket.findById", query = "SELECT s FROM Statusticket s WHERE s.id = :id"),
-    @NamedQuery(name = "Statusticket.findByName", query = "SELECT s FROM Statusticket s WHERE s.name = :name")})
-public class Statusticket implements Serializable {
+    @NamedQuery(name = "StatusPay.findAll", query = "SELECT s FROM StatusPay s"),
+    @NamedQuery(name = "StatusPay.findById", query = "SELECT s FROM StatusPay s WHERE s.id = :id"),
+    @NamedQuery(name = "StatusPay.findByName", query = "SELECT s FROM StatusPay s WHERE s.name = :name")})
+public class StatusPay implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
+    @NotNull
     @Column(name = "id")
     private Integer id;
     @Basic(optional = false)
@@ -44,16 +42,16 @@ public class Statusticket implements Serializable {
     @Column(name = "name")
     private String name;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "statusId")
-    private Collection<Ticketdetail> ticketdetailCollection;
+    private Collection<Payment> paymentCollection;
 
-    public Statusticket() {
+    public StatusPay() {
     }
 
-    public Statusticket(Integer id) {
+    public StatusPay(Integer id) {
         this.id = id;
     }
 
-    public Statusticket(Integer id, String name) {
+    public StatusPay(Integer id, String name) {
         this.id = id;
         this.name = name;
     }
@@ -74,12 +72,12 @@ public class Statusticket implements Serializable {
         this.name = name;
     }
 
-    public Collection<Ticketdetail> getTicketdetailCollection() {
-        return ticketdetailCollection;
+    public Collection<Payment> getPaymentCollection() {
+        return paymentCollection;
     }
 
-    public void setTicketdetailCollection(Collection<Ticketdetail> ticketdetailCollection) {
-        this.ticketdetailCollection = ticketdetailCollection;
+    public void setPaymentCollection(Collection<Payment> paymentCollection) {
+        this.paymentCollection = paymentCollection;
     }
 
     @Override
@@ -92,10 +90,10 @@ public class Statusticket implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Statusticket)) {
+        if (!(object instanceof StatusPay)) {
             return false;
         }
-        Statusticket other = (Statusticket) object;
+        StatusPay other = (StatusPay) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
@@ -104,7 +102,7 @@ public class Statusticket implements Serializable {
 
     @Override
     public String toString() {
-        return "com.group3.pojo.Statusticket[ id=" + id + " ]";
+        return "com.group3.pojo.StatusPay[ id=" + id + " ]";
     }
     
 }

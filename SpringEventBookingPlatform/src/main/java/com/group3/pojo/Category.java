@@ -4,7 +4,6 @@
  */
 package com.group3.pojo;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -34,8 +33,8 @@ import java.util.Date;
     @NamedQuery(name = "Category.findById", query = "SELECT c FROM Category c WHERE c.id = :id"),
     @NamedQuery(name = "Category.findByName", query = "SELECT c FROM Category c WHERE c.name = :name"),
     @NamedQuery(name = "Category.findByActive", query = "SELECT c FROM Category c WHERE c.active = :active"),
-    @NamedQuery(name = "Category.findByCreatedAt", query = "SELECT c FROM Category c WHERE c.createdAt = :createdAt"),
-    @NamedQuery(name = "Category.findByUpdatedAt", query = "SELECT c FROM Category c WHERE c.updatedAt = :updatedAt")})
+    @NamedQuery(name = "Category.findByCreatedDate", query = "SELECT c FROM Category c WHERE c.createdDate = :createdDate"),
+    @NamedQuery(name = "Category.findByUpdatedDate", query = "SELECT c FROM Category c WHERE c.updatedDate = :updatedDate")})
 public class Category implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -51,13 +50,12 @@ public class Category implements Serializable {
     private String name;
     @Column(name = "active")
     private Boolean active;
-    @Column(name = "createdAt")
+    @Column(name = "created_date")
     @Temporal(TemporalType.TIMESTAMP)
-    private Date createdAt;
-    @Column(name = "updatedAt")
+    private Date createdDate;
+    @Column(name = "updated_date")
     @Temporal(TemporalType.TIMESTAMP)
-    private Date updatedAt;
-    @JsonIgnore
+    private Date updatedDate;
     @ManyToMany(mappedBy = "categoryCollection")
     private Collection<Event> eventCollection;
 
@@ -97,20 +95,20 @@ public class Category implements Serializable {
         this.active = active;
     }
 
-    public Date getCreatedAt() {
-        return createdAt;
+    public Date getCreatedDate() {
+        return createdDate;
     }
 
-    public void setCreatedAt(Date createdAt) {
-        this.createdAt = createdAt;
+    public void setCreatedDate(Date createdDate) {
+        this.createdDate = createdDate;
     }
 
-    public Date getUpdatedAt() {
-        return updatedAt;
+    public Date getUpdatedDate() {
+        return updatedDate;
     }
 
-    public void setUpdatedAt(Date updatedAt) {
-        this.updatedAt = updatedAt;
+    public void setUpdatedDate(Date updatedDate) {
+        this.updatedDate = updatedDate;
     }
 
     public Collection<Event> getEventCollection() {

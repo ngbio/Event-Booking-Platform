@@ -8,8 +8,6 @@ import jakarta.persistence.Basic;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
@@ -25,17 +23,17 @@ import java.util.Collection;
  * @author thanh
  */
 @Entity
-@Table(name = "statusbooking")
+@Table(name = "status_ticket")
 @NamedQueries({
-    @NamedQuery(name = "Statusbooking.findAll", query = "SELECT s FROM Statusbooking s"),
-    @NamedQuery(name = "Statusbooking.findById", query = "SELECT s FROM Statusbooking s WHERE s.id = :id"),
-    @NamedQuery(name = "Statusbooking.findByName", query = "SELECT s FROM Statusbooking s WHERE s.name = :name")})
-public class Statusbooking implements Serializable {
+    @NamedQuery(name = "StatusTicket.findAll", query = "SELECT s FROM StatusTicket s"),
+    @NamedQuery(name = "StatusTicket.findById", query = "SELECT s FROM StatusTicket s WHERE s.id = :id"),
+    @NamedQuery(name = "StatusTicket.findByName", query = "SELECT s FROM StatusTicket s WHERE s.name = :name")})
+public class StatusTicket implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
+    @NotNull
     @Column(name = "id")
     private Integer id;
     @Basic(optional = false)
@@ -44,16 +42,16 @@ public class Statusbooking implements Serializable {
     @Column(name = "name")
     private String name;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "statusId")
-    private Collection<Booking> bookingCollection;
+    private Collection<TicketDetail> ticketDetailCollection;
 
-    public Statusbooking() {
+    public StatusTicket() {
     }
 
-    public Statusbooking(Integer id) {
+    public StatusTicket(Integer id) {
         this.id = id;
     }
 
-    public Statusbooking(Integer id, String name) {
+    public StatusTicket(Integer id, String name) {
         this.id = id;
         this.name = name;
     }
@@ -74,12 +72,12 @@ public class Statusbooking implements Serializable {
         this.name = name;
     }
 
-    public Collection<Booking> getBookingCollection() {
-        return bookingCollection;
+    public Collection<TicketDetail> getTicketDetailCollection() {
+        return ticketDetailCollection;
     }
 
-    public void setBookingCollection(Collection<Booking> bookingCollection) {
-        this.bookingCollection = bookingCollection;
+    public void setTicketDetailCollection(Collection<TicketDetail> ticketDetailCollection) {
+        this.ticketDetailCollection = ticketDetailCollection;
     }
 
     @Override
@@ -92,10 +90,10 @@ public class Statusbooking implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Statusbooking)) {
+        if (!(object instanceof StatusTicket)) {
             return false;
         }
-        Statusbooking other = (Statusbooking) object;
+        StatusTicket other = (StatusTicket) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
@@ -104,7 +102,7 @@ public class Statusbooking implements Serializable {
 
     @Override
     public String toString() {
-        return "com.group3.pojo.Statusbooking[ id=" + id + " ]";
+        return "com.group3.pojo.StatusTicket[ id=" + id + " ]";
     }
     
 }

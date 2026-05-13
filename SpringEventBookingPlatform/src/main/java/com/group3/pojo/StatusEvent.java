@@ -8,8 +8,6 @@ import jakarta.persistence.Basic;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
@@ -25,17 +23,17 @@ import java.util.Collection;
  * @author thanh
  */
 @Entity
-@Table(name = "statuspay")
+@Table(name = "status_event")
 @NamedQueries({
-    @NamedQuery(name = "Statuspay.findAll", query = "SELECT s FROM Statuspay s"),
-    @NamedQuery(name = "Statuspay.findById", query = "SELECT s FROM Statuspay s WHERE s.id = :id"),
-    @NamedQuery(name = "Statuspay.findByName", query = "SELECT s FROM Statuspay s WHERE s.name = :name")})
-public class Statuspay implements Serializable {
+    @NamedQuery(name = "StatusEvent.findAll", query = "SELECT s FROM StatusEvent s"),
+    @NamedQuery(name = "StatusEvent.findById", query = "SELECT s FROM StatusEvent s WHERE s.id = :id"),
+    @NamedQuery(name = "StatusEvent.findByName", query = "SELECT s FROM StatusEvent s WHERE s.name = :name")})
+public class StatusEvent implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
+    @NotNull
     @Column(name = "id")
     private Integer id;
     @Basic(optional = false)
@@ -44,16 +42,16 @@ public class Statuspay implements Serializable {
     @Column(name = "name")
     private String name;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "statusId")
-    private Collection<Payment> paymentCollection;
+    private Collection<Event> eventCollection;
 
-    public Statuspay() {
+    public StatusEvent() {
     }
 
-    public Statuspay(Integer id) {
+    public StatusEvent(Integer id) {
         this.id = id;
     }
 
-    public Statuspay(Integer id, String name) {
+    public StatusEvent(Integer id, String name) {
         this.id = id;
         this.name = name;
     }
@@ -74,12 +72,12 @@ public class Statuspay implements Serializable {
         this.name = name;
     }
 
-    public Collection<Payment> getPaymentCollection() {
-        return paymentCollection;
+    public Collection<Event> getEventCollection() {
+        return eventCollection;
     }
 
-    public void setPaymentCollection(Collection<Payment> paymentCollection) {
-        this.paymentCollection = paymentCollection;
+    public void setEventCollection(Collection<Event> eventCollection) {
+        this.eventCollection = eventCollection;
     }
 
     @Override
@@ -92,10 +90,10 @@ public class Statuspay implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Statuspay)) {
+        if (!(object instanceof StatusEvent)) {
             return false;
         }
-        Statuspay other = (Statuspay) object;
+        StatusEvent other = (StatusEvent) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
@@ -104,7 +102,7 @@ public class Statuspay implements Serializable {
 
     @Override
     public String toString() {
-        return "com.group3.pojo.Statuspay[ id=" + id + " ]";
+        return "com.group3.pojo.StatusEvent[ id=" + id + " ]";
     }
     
 }

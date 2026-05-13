@@ -38,8 +38,8 @@ import java.util.Date;
     @NamedQuery(name = "Booking.findByUnitPrice", query = "SELECT b FROM Booking b WHERE b.unitPrice = :unitPrice"),
     @NamedQuery(name = "Booking.findByTotalPrice", query = "SELECT b FROM Booking b WHERE b.totalPrice = :totalPrice"),
     @NamedQuery(name = "Booking.findByActive", query = "SELECT b FROM Booking b WHERE b.active = :active"),
-    @NamedQuery(name = "Booking.findByCreatedAt", query = "SELECT b FROM Booking b WHERE b.createdAt = :createdAt"),
-    @NamedQuery(name = "Booking.findByUpdatedAt", query = "SELECT b FROM Booking b WHERE b.updatedAt = :updatedAt")})
+    @NamedQuery(name = "Booking.findByCreatedDate", query = "SELECT b FROM Booking b WHERE b.createdDate = :createdDate"),
+    @NamedQuery(name = "Booking.findByUpdatedDate", query = "SELECT b FROM Booking b WHERE b.updatedDate = :updatedDate")})
 public class Booking implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -55,33 +55,33 @@ public class Booking implements Serializable {
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Basic(optional = false)
     @NotNull
-    @Column(name = "unitPrice")
+    @Column(name = "unit_price")
     private BigDecimal unitPrice;
     @Basic(optional = false)
     @NotNull
-    @Column(name = "totalPrice")
+    @Column(name = "total_price")
     private BigDecimal totalPrice;
     @Column(name = "active")
     private Boolean active;
-    @Column(name = "createdAt")
+    @Column(name = "created_date")
     @Temporal(TemporalType.TIMESTAMP)
-    private Date createdAt;
-    @Column(name = "updatedAt")
+    private Date createdDate;
+    @Column(name = "updated_date")
     @Temporal(TemporalType.TIMESTAMP)
-    private Date updatedAt;
+    private Date updatedDate;
     @JoinColumn(name = "event_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
     private Event eventId;
     @JoinColumn(name = "status_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
-    private Statusbooking statusId;
+    private StatusBooking statusId;
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
     private User userId;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "bookingId")
-    private Collection<Payment> paymentCollection;
+    private Collection<TicketDetail> ticketDetailCollection;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "bookingId")
-    private Collection<Ticketdetail> ticketdetailCollection;
+    private Collection<Payment> paymentCollection;
 
     public Booking() {
     }
@@ -137,20 +137,20 @@ public class Booking implements Serializable {
         this.active = active;
     }
 
-    public Date getCreatedAt() {
-        return createdAt;
+    public Date getCreatedDate() {
+        return createdDate;
     }
 
-    public void setCreatedAt(Date createdAt) {
-        this.createdAt = createdAt;
+    public void setCreatedDate(Date createdDate) {
+        this.createdDate = createdDate;
     }
 
-    public Date getUpdatedAt() {
-        return updatedAt;
+    public Date getUpdatedDate() {
+        return updatedDate;
     }
 
-    public void setUpdatedAt(Date updatedAt) {
-        this.updatedAt = updatedAt;
+    public void setUpdatedDate(Date updatedDate) {
+        this.updatedDate = updatedDate;
     }
 
     public Event getEventId() {
@@ -161,11 +161,11 @@ public class Booking implements Serializable {
         this.eventId = eventId;
     }
 
-    public Statusbooking getStatusId() {
+    public StatusBooking getStatusId() {
         return statusId;
     }
 
-    public void setStatusId(Statusbooking statusId) {
+    public void setStatusId(StatusBooking statusId) {
         this.statusId = statusId;
     }
 
@@ -177,20 +177,20 @@ public class Booking implements Serializable {
         this.userId = userId;
     }
 
+    public Collection<TicketDetail> getTicketDetailCollection() {
+        return ticketDetailCollection;
+    }
+
+    public void setTicketDetailCollection(Collection<TicketDetail> ticketDetailCollection) {
+        this.ticketDetailCollection = ticketDetailCollection;
+    }
+
     public Collection<Payment> getPaymentCollection() {
         return paymentCollection;
     }
 
     public void setPaymentCollection(Collection<Payment> paymentCollection) {
         this.paymentCollection = paymentCollection;
-    }
-
-    public Collection<Ticketdetail> getTicketdetailCollection() {
-        return ticketdetailCollection;
-    }
-
-    public void setTicketdetailCollection(Collection<Ticketdetail> ticketdetailCollection) {
-        this.ticketdetailCollection = ticketdetailCollection;
     }
 
     @Override
