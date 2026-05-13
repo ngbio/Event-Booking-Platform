@@ -33,8 +33,8 @@ import java.util.Date;
     @NamedQuery(name = "TicketDetail.findById", query = "SELECT t FROM TicketDetail t WHERE t.id = :id"),
     @NamedQuery(name = "TicketDetail.findByQrCode", query = "SELECT t FROM TicketDetail t WHERE t.qrCode = :qrCode"),
     @NamedQuery(name = "TicketDetail.findByActive", query = "SELECT t FROM TicketDetail t WHERE t.active = :active"),
-    @NamedQuery(name = "TicketDetail.findByCreatedAt", query = "SELECT t FROM TicketDetail t WHERE t.createdAt = :createdAt"),
-    @NamedQuery(name = "TicketDetail.findByUpdatedAt", query = "SELECT t FROM TicketDetail t WHERE t.updatedAt = :updatedAt")})
+    @NamedQuery(name = "TicketDetail.findByCreatedDate", query = "SELECT t FROM TicketDetail t WHERE t.createdDate = :createdDate"),
+    @NamedQuery(name = "TicketDetail.findByUpdatedDate", query = "SELECT t FROM TicketDetail t WHERE t.updatedDate = :updatedDate")})
 public class TicketDetail implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -50,12 +50,12 @@ public class TicketDetail implements Serializable {
     private String qrCode;
     @Column(name = "active")
     private Boolean active;
-    @Column(name = "created_at")
+    @Column(name = "created_date")
     @Temporal(TemporalType.TIMESTAMP)
-    private Date createdAt;
-    @Column(name = "updated_at")
+    private Date createdDate;
+    @Column(name = "updated_date")
     @Temporal(TemporalType.TIMESTAMP)
-    private Date updatedAt;
+    private Date updatedDate;
     @JoinColumn(name = "booking_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
     private Booking bookingId;
@@ -99,20 +99,20 @@ public class TicketDetail implements Serializable {
         this.active = active;
     }
 
-    public Date getCreatedAt() {
-        return createdAt;
+    public Date getCreatedDate() {
+        return createdDate;
     }
 
-    public void setCreatedAt(Date createdAt) {
-        this.createdAt = createdAt;
+    public void setCreatedDate(Date createdDate) {
+        this.createdDate = createdDate;
     }
 
-    public Date getUpdatedAt() {
-        return updatedAt;
+    public Date getUpdatedDate() {
+        return updatedDate;
     }
 
-    public void setUpdatedAt(Date updatedAt) {
-        this.updatedAt = updatedAt;
+    public void setUpdatedDate(Date updatedDate) {
+        this.updatedDate = updatedDate;
     }
 
     public Booking getBookingId() {

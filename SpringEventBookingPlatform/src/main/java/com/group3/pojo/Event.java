@@ -47,8 +47,8 @@ import java.util.Date;
     @NamedQuery(name = "Event.findByTotalTickets", query = "SELECT e FROM Event e WHERE e.totalTickets = :totalTickets"),
     @NamedQuery(name = "Event.findByPrice", query = "SELECT e FROM Event e WHERE e.price = :price"),
     @NamedQuery(name = "Event.findByActive", query = "SELECT e FROM Event e WHERE e.active = :active"),
-    @NamedQuery(name = "Event.findByCreatedAt", query = "SELECT e FROM Event e WHERE e.createdAt = :createdAt"),
-    @NamedQuery(name = "Event.findByUpdatedAt", query = "SELECT e FROM Event e WHERE e.updatedAt = :updatedAt")})
+    @NamedQuery(name = "Event.findByCreatedDate", query = "SELECT e FROM Event e WHERE e.createdDate = :createdDate"),
+    @NamedQuery(name = "Event.findByUpdatedDate", query = "SELECT e FROM Event e WHERE e.updatedDate = :updatedDate")})
 public class Event implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -96,12 +96,12 @@ public class Event implements Serializable {
     private BigDecimal price;
     @Column(name = "active")
     private Boolean active;
-    @Column(name = "created_at")
+    @Column(name = "created_date")
     @Temporal(TemporalType.TIMESTAMP)
-    private Date createdAt;
-    @Column(name = "updated_at")
+    private Date createdDate;
+    @Column(name = "updated_date")
     @Temporal(TemporalType.TIMESTAMP)
-    private Date updatedAt;
+    private Date updatedDate;
     @JoinTable(name = "event_category", joinColumns = {
         @JoinColumn(name = "event_id", referencedColumnName = "id")}, inverseJoinColumns = {
         @JoinColumn(name = "category_id", referencedColumnName = "id")})
@@ -220,20 +220,20 @@ public class Event implements Serializable {
         this.active = active;
     }
 
-    public Date getCreatedAt() {
-        return createdAt;
+    public Date getCreatedDate() {
+        return createdDate;
     }
 
-    public void setCreatedAt(Date createdAt) {
-        this.createdAt = createdAt;
+    public void setCreatedDate(Date createdDate) {
+        this.createdDate = createdDate;
     }
 
-    public Date getUpdatedAt() {
-        return updatedAt;
+    public Date getUpdatedDate() {
+        return updatedDate;
     }
 
-    public void setUpdatedAt(Date updatedAt) {
-        this.updatedAt = updatedAt;
+    public void setUpdatedDate(Date updatedDate) {
+        this.updatedDate = updatedDate;
     }
 
     public Collection<Category> getCategoryCollection() {
