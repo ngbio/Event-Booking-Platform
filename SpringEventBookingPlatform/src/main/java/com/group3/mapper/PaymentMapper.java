@@ -1,7 +1,7 @@
-package com.group3.utils.mapper;
+package com.group3.mapper;
 
 import com.group3.pojo.Payment;
-import com.group3.pojo.response.ResPaymentDTO;
+import com.group3.dto.response.PaymentResponse;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -11,19 +11,19 @@ public class PaymentMapper {
     /**
      * Convert Payment entity to ResPaymentDTO
      */
-    public static ResPaymentDTO toDTO(Payment payment) {
+    public static PaymentResponse toResponse(Payment payment) {
         if (payment == null) {
             return null;
         }
         
-        ResPaymentDTO dto = new ResPaymentDTO();
+        PaymentResponse dto = new PaymentResponse();
         dto.setId(payment.getId());
         dto.setAmount(payment.getAmount());
         dto.setMethod(payment.getMethod());
         dto.setTransactionId(payment.getTransactionId());
         dto.setActive(payment.getActive());
-        dto.setCreatedAt(payment.getCreatedDate());
-        dto.setUpdatedAt(payment.getUpdatedDate());
+        dto.setCreatedDate(payment.getCreatedDate());
+        dto.setUpdatedDate(payment.getUpdatedDate());
         
         if (payment.getBookingId() != null) {
             dto.setBookingId(payment.getBookingId().getId());
@@ -45,12 +45,12 @@ public class PaymentMapper {
     /**
      * Convert List of Payments to List of ResPaymentDTOs
      */
-    public static List<ResPaymentDTO> toDTOList(List<Payment> payments) {
+    public static List<PaymentResponse> toResponseList(List<Payment> payments) {
         if (payments == null) {
             return new ArrayList<>();
         }
         return payments.stream()
-                .map(PaymentMapper::toDTO)
+                .map(PaymentMapper::toResponse)
                 .collect(Collectors.toList());
     }
 }

@@ -1,7 +1,7 @@
-package com.group3.utils.mapper;
+package com.group3.mapper;
 
 import com.group3.pojo.Role;
-import com.group3.pojo.response.ResRoleDTO;
+import com.group3.dto.response.RoleResponse;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -11,23 +11,23 @@ public class RoleMapper {
     /**
      * Convert Role entity to ResRoleDTO
      */
-    public static ResRoleDTO toDTO(Role role) {
+    public static RoleResponse toResponse(Role role) {
         if (role == null) {
             return null;
         }
         
-        return new ResRoleDTO(role.getId(), role.getName());
+        return new RoleResponse(role.getId(), role.getName());
     }
 
     /**
      * Convert List of Roles to List of ResRoleDTOs
      */
-    public static List<ResRoleDTO> toDTOList(List<Role> roles) {
+    public static List<RoleResponse> toResponseList(List<Role> roles) {
         if (roles == null) {
             return new ArrayList<>();
         }
         return roles.stream()
-                .map(RoleMapper::toDTO)
+                .map(RoleMapper::toResponse)
                 .collect(Collectors.toList());
     }
 }

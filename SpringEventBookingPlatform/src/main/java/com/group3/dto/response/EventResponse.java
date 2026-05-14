@@ -1,10 +1,10 @@
-package com.group3.pojo.response;
+package com.group3.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import java.math.BigDecimal;
 import java.util.Date;
 
-public class ResEventDTO {
+public class EventResponse {
     private Integer id;
     private String title;
     private String description;
@@ -26,18 +26,18 @@ public class ResEventDTO {
     private Date endTime;
     
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Ho_Chi_Minh")
-    private Date createdAt;
+    private Date createdDate;
     
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Ho_Chi_Minh")
-    private Date updatedAt;
+    private Date updatedDate;
 
-    public ResEventDTO() {
+    public EventResponse() {
     }
 
-    public ResEventDTO(Integer id, String title, String description, String imageUrl, String videoUrl, 
+    public EventResponse(Integer id, String title, String description, String imageUrl, String videoUrl, 
                        Integer organizerId, String organizerName, String location, int totalTickets, 
                        BigDecimal price, Boolean active, Integer categoryId, String categoryName, 
-                       Date startTime, Date endTime, Date createdAt, Date updatedAt) {
+                       Date startTime, Date endTime, Date createdDate, Date updatedDate) {
         this.id = id;
         this.title = title;
         this.description = description;
@@ -53,8 +53,8 @@ public class ResEventDTO {
         this.categoryName = categoryName;
         this.startTime = startTime;
         this.endTime = endTime;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
+        this.createdDate = createdDate;
+        this.updatedDate = updatedDate;
     }
 
     public Integer getId() {
@@ -177,19 +177,19 @@ public class ResEventDTO {
         this.endTime = endTime;
     }
 
-    public Date getCreatedAt() {
-        return createdAt;
+    public Date getCreatedDate() {
+        return createdDate;
     }
 
-    public void setCreatedAt(Date createdAt) {
-        this.createdAt = createdAt;
+    public void setCreatedDate(Date createdDate) {
+        this.createdDate = createdDate;
     }
 
-    public Date getUpdatedAt() {
-        return updatedAt;
+    public Date getUpdatedDate() {
+        return updatedDate;
     }
 
-    public void setUpdatedAt(Date updatedAt) {
-        this.updatedAt = updatedAt;
+    public void setUpdatedDate(Date updatedDate) {
+        this.updatedDate = updatedDate;
     }
 }

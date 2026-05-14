@@ -26,6 +26,8 @@ public interface UserService extends UserDetailsService {
     User getUserByEmail(String email);
 
     boolean checkExistEmail(String email);
+    
+    boolean checkExistUsername(String username);
 
     void deleteUser(int id);
 

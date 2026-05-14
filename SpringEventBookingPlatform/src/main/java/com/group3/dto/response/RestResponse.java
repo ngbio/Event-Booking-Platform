@@ -1,4 +1,4 @@
-package com.group3.pojo.response;
+package com.group3.dto.response;
 
 public class RestResponse<T> {
     private int statusCode;

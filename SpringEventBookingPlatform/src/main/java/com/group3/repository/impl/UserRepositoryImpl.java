@@ -40,7 +40,7 @@ public class UserRepositoryImpl implements UserRepository{
     private Session currentSession() {
         return Objects.requireNonNull(this.factory.getObject(), "SessionFactory is null").getCurrentSession();
     }
-
+    
     @Override
     public User findUserById(int id) {
         Session s = currentSession();
@@ -170,6 +170,14 @@ public class UserRepositoryImpl implements UserRepository{
         q.setParameter("email", email);
         return q.uniqueResult() != null;
     }
+    
+    @Override
+    public boolean existUsername(String username){
+        Session s = currentSession();
+        Query<User> q = s.createNamedQuery("User.findByUsername",User.class);
+        q.setParameter("username", username);
+        return q.uniqueResult() != null;
+    }
 
     @Override
     public Long count() {
@@ -180,8 +188,8 @@ public class UserRepositoryImpl implements UserRepository{
 
     @Override
     public User addUser(User u) {
-        Session session = this.factory.getObject().getCurrentSession();
-        session.persist(u);
+        Session s = currentSession();
+        s.persist(u);
         
         return u;
     }

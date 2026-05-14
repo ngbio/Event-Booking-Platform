@@ -2,21 +2,21 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package com.group3.pojo.response;
+package com.group3.dto.response;
 
 /**
  *
  * @author THUAN
  */
-public class ResRegisterDTO {
+public class RegisterResponse {
     private Integer userId;
     private String username;
     private String role;
 
-    public ResRegisterDTO() {
+    public RegisterResponse() {
     }
 
-    public ResRegisterDTO(Integer userId, String username, String role) {
+    public RegisterResponse(Integer userId, String username, String role) {
         this.userId = userId;
         this.username = username;
         this.role = role;
