@@ -7,6 +7,7 @@ package com.group3.service.impl;
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
 import com.group3.pojo.User;
+import com.group3.dto.request.RegisterRequest;
 import com.group3.pojo.Role;
 import com.group3.repository.UserRepository;
 import com.group3.repository.RoleRepository;
@@ -60,11 +61,6 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void addOrUpdateUser(User u) {
-        this.userRepo.addOrUpdateUser(u);
-    }
-
-    @Override
     public void deleteUser(int id) {
         this.userRepo.deleteUser(id);
     }
@@ -99,20 +95,15 @@ public class UserServiceImpl implements UserService {
         return this.userRepo.getUserByUsername(username);
     }
 
-   @Override
-    public User addUser(Map<String, String> params, MultipartFile avatar) {
-        User u = new User();
-        u.setFullName(params.get("fullName"));
-        u.setPhone(params.get("phone"));
-        
+    @Override
+    public User addUser(User u, MultipartFile avatar) {
+        u.setPassword(passwordEncoder.encode(u.getPassword()));
+
         // Set default role (USER - id = 2)
         Role userRole = roleRepo.findById(2);
         u.setRoleId(userRole);
-        u.setEmail(params.get("email"));
-        u.setUsername(params.get("username"));
-        u.setPassword(passwordEncoder.encode(params.get("password")));
 
-        if (!avatar.isEmpty()) {
+        if (avatar != null && !avatar.isEmpty()) {
             try {
                 Map res = this.cloudinary.uploader().upload(avatar.getBytes(),
                         ObjectUtils.asMap("resource_type", "auto"));
