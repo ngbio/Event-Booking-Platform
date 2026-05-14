@@ -25,7 +25,7 @@ import java.util.List;
  * This class delegates to individual mapper classes
  * Each entity has its own mapper for better organization and maintainability
  */
-public class DTOMapper {
+public class DtoMapper {
 
     /**
      * Convert User entity to ResUserDTO

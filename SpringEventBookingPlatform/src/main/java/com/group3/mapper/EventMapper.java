@@ -12,7 +12,7 @@ public class EventMapper {
     /**
      * Convert Event entity to ResEventDTO
      */
-    public static EventResponse toDTO(Event event) {
+    public static EventResponse toResponse(Event event) {
         if (event == null) {
             return null;
         }
@@ -29,8 +29,8 @@ public class EventMapper {
         dto.setActive(event.getActive());
         dto.setStartTime(event.getStartTime());
         dto.setEndTime(event.getEndTime());
-        dto.setCreatedAt(event.getCreatedDate());
-        dto.setUpdatedAt(event.getUpdatedDate());
+        dto.setCreatedDate(event.getCreatedDate());
+        dto.setUpdatedDate(event.getUpdatedDate());
         
         if (event.getOrganizerId() != null) {
             dto.setOrganizerId(event.getOrganizerId().getId());
@@ -51,12 +51,12 @@ public class EventMapper {
     /**
      * Convert List of Events to List of ResEventDTOs
      */
-    public static List<EventResponse> toDTOList(List<Event> events) {
+    public static List<EventResponse> toResponseList(List<Event> events) {
         if (events == null) {
             return new ArrayList<>();
         }
         return events.stream()
-                .map(EventMapper::toDTO)
+                .map(EventMapper::toResponse)
                 .collect(Collectors.toList());
     }
 }

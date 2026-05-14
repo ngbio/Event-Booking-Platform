@@ -4,6 +4,8 @@
  */
 package com.group3.service.impl;
 
+import com.cloudinary.Cloudinary;
+import com.cloudinary.utils.ObjectUtils;
 import com.group3.pojo.User;
 import com.group3.pojo.Role;
 import com.group3.repository.UserRepository;
@@ -16,6 +18,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -40,6 +44,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
+    
+    @Autowired
+    private Cloudinary cloudinary;
 
 
     @Override
@@ -76,6 +83,11 @@ public class UserServiceImpl implements UserService {
     public boolean checkExistEmail(String email) {
         return this.userRepo.existEmail(email);
     }
+    
+    @Override
+    public boolean checkExistUsername(String username){
+        return this.userRepo.existUsername(username);
+    }
 
     @Override
     public Long countUsers() {
@@ -100,15 +112,15 @@ public class UserServiceImpl implements UserService {
         u.setUsername(params.get("username"));
         u.setPassword(passwordEncoder.encode(params.get("password")));
 
-//        if (!avatar.isEmpty()) {
-//            try {
-//                Map res = this.cloudinary.uploader().upload(avatar.getBytes(),
-//                        ObjectUtils.asMap("resource_type", "auto"));
-//                u.setAvatarUrl(res.get("secure_url").toString());
-//            } catch (IOException ex) {
-//                Logger.getLogger(UserServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
-//            }
-//        }
+        if (!avatar.isEmpty()) {
+            try {
+                Map res = this.cloudinary.uploader().upload(avatar.getBytes(),
+                        ObjectUtils.asMap("resource_type", "auto"));
+                u.setAvatar(res.get("secure_url").toString());
+            } catch (IOException ex) {
+                Logger.getLogger(UserServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
 
         return this.userRepo.addUser(u);
     }

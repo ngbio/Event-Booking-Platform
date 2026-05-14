@@ -11,7 +11,7 @@ public class RoleMapper {
     /**
      * Convert Role entity to ResRoleDTO
      */
-    public static RoleResponse toDTO(Role role) {
+    public static RoleResponse toResponse(Role role) {
         if (role == null) {
             return null;
         }
@@ -22,12 +22,12 @@ public class RoleMapper {
     /**
      * Convert List of Roles to List of ResRoleDTOs
      */
-    public static List<RoleResponse> toDTOList(List<Role> roles) {
+    public static List<RoleResponse> toResponseList(List<Role> roles) {
         if (roles == null) {
             return new ArrayList<>();
         }
         return roles.stream()
-                .map(RoleMapper::toDTO)
+                .map(RoleMapper::toResponse)
                 .collect(Collectors.toList());
     }
 }

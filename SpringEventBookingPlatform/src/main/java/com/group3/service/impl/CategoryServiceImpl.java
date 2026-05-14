@@ -15,5 +15,4 @@ public class CategoryServiceImpl implements CategoryService{
     public List<Category> getCates() {
         return this.cateRepo.getCates();
     }
-    
 }

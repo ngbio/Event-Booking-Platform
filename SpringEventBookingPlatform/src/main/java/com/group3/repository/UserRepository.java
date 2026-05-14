@@ -21,6 +21,8 @@ public interface UserRepository {
     User findUserByEmail(String email);
 
     boolean existEmail(String email);
+    
+    boolean existUsername(String username);
 
     void addOrUpdateUser(User u);
 
