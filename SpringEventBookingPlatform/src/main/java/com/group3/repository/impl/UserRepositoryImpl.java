@@ -36,6 +36,9 @@ public class UserRepositoryImpl implements UserRepository{
 
     @Autowired
     private LocalSessionFactoryBean factory;
+    
+    @Autowired
+    private BCryptPasswordEncoder bCryptPasswordEncoder;
 
     private Session currentSession() {
         return Objects.requireNonNull(this.factory.getObject(), "SessionFactory is null").getCurrentSession();
@@ -200,7 +203,6 @@ public class UserRepositoryImpl implements UserRepository{
         if (user == null) {
             return false;
         }
-        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-        return encoder.matches(password, user.getPassword());
+        return bCryptPasswordEncoder.matches(password, user.getPassword());
     }
 }

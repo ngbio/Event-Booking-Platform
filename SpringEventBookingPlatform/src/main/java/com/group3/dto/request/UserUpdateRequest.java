@@ -11,12 +11,9 @@ import jakarta.validation.constraints.Size;
 
 /**
  *
- * @author THUAN
+ * @author thanh
  */
-public class RegisterRequest {
-
-    @NotBlank(message = "Tên đăng nhập không được để trống")
-    private String username;
+public class UserUpdateRequest {
 
     @NotBlank(message = "Mật khẩu không được để trống")
     @Size(min = 6, message = "Mật khẩu phải từ 6 ký tự trở lên")
@@ -25,24 +22,13 @@ public class RegisterRequest {
     
     @NotBlank(message = "Họ và tên không được để trống")
     private String fullName;
-
+    
     @NotBlank(message = "Email không được để trống")
     @Email(message = "Email không hợp lệ")
     private String email;
 
     @NotBlank(message = "Số điện thoại không được để trống")
     private String phone;
-
-    @NotBlank(message = "Vai trò của user không được trống")
-    private String Role;
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
 
     public String getPassword() {
         return password;
@@ -74,14 +60,6 @@ public class RegisterRequest {
 
     public void setPhone(String phone) {
         this.phone = phone;
-    }
-
-    public String getRole() {
-        return Role;
-    }
-
-    public void setRole(String Role) {
-        this.Role = Role;
     }
 
     

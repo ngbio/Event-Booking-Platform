@@ -117,7 +117,7 @@ CREATE TABLE `ticket_detail` (
 -- ------------------------------------------------------
 -- 2. DỮ LIỆU TỪ ĐIỂN & NGƯỜI DÙNG (BĂM MK: 123456)
 -- ------------------------------------------------------
-INSERT INTO `role` VALUES (1, 'ADMIN'), (2, 'ORGANIZER'), (3, 'ATTENDEE');
+INSERT INTO `role` VALUES (1, 'ROLE_ADMIN'), (2, 'ROLE_ORGANIZER'), (3, 'ROLE_ATTENDEE');
 INSERT INTO `status_user` VALUES (1, 'PENDING'), (2, 'ACTIVE'), (3, 'BANNED');
 INSERT INTO `status_event` VALUES (1, 'DRAFT'), (2, 'PENDING_REVIEW'), (3, 'PUBLISHED'), (4, 'CANCELLED'), (5, 'COMPLETED');
 INSERT INTO `status_booking` VALUES (1, 'PENDING_PAYMENT'), (2, 'PAID'), (3, 'CANCELLED');

@@ -1,5 +1,7 @@
 package com.group3.mapper;
 
+import com.group3.dto.request.RegisterRequest;
+import com.group3.dto.request.UserUpdateRequest;
 import com.group3.pojo.User;
 import com.group3.dto.response.UserResponse;
 import java.util.ArrayList;
@@ -16,23 +18,23 @@ public class UserMapper {
             return null;
         }
         
-        UserResponse dto = new UserResponse();
-        dto.setId(user.getId());
-        dto.setUsername(user.getUsername());
-        dto.setEmail(user.getEmail());
-        dto.setFullName(user.getFullName());
-        dto.setPhone(user.getPhone());
-        dto.setAvatar(user.getAvatar());
-        dto.setActive(user.getActive());
-        dto.setCreatedDate(user.getCreatedDate());
-        dto.setUpdatedDate(user.getUpdatedDate());
+        UserResponse response = new UserResponse();
+        response.setId(user.getId());
+        response.setUsername(user.getUsername());
+        response.setEmail(user.getEmail());
+        response.setFullName(user.getFullName());
+        response.setPhone(user.getPhone());
+        response.setAvatar(user.getAvatar());
+        response.setActive(user.getActive());
+        response.setCreatedDate(user.getCreatedDate());
+        response.setUpdatedDate(user.getUpdatedDate());
         
         if (user.getRoleId() != null) {
-            dto.setRoleId(user.getRoleId().getId());
-            dto.setRoleName(user.getRoleId().getName());
+            response.setRoleId(user.getRoleId().getId());
+            response.setRoleName(user.getRoleId().getName());
         }
         
-        return dto;
+        return response;
     }
 
     /**
@@ -45,5 +47,26 @@ public class UserMapper {
         return users.stream()
                 .map(UserMapper::toResponse)
                 .collect(Collectors.toList());
+    }
+    //Register
+    public static User toEntity(RegisterRequest request){ 
+        if (request==null) return null;
+        User user = new User();
+        user.setUsername(request.getUsername());
+        user.setFullName(request.getFullName());
+        user.setPassword(request.getPassword());
+        user.setEmail(request.getEmail());
+        user.setPhone(request.getPhone());
+        
+        return user;
+    }
+    //Update
+    public static User toEntity(UserUpdateRequest request,User user){
+        if (request == null || user == null) return null;
+        user.setFullName(request.getFullName());
+        user.setEmail(request.getEmail());
+        user.setPhone(request.getPhone());
+        user.setPassword(request.getPassword());
+        return user;
     }
 }

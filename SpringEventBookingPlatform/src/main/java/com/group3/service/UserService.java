@@ -4,8 +4,9 @@
  */
 package com.group3.service;
 
+import com.group3.dto.request.LoginRequest;
 import com.group3.dto.request.RegisterRequest;
-import com.group3.pojo.User;
+import com.group3.dto.response.UserResponse;
 import java.util.List;
 import java.util.Map;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -16,13 +17,13 @@ import org.springframework.web.multipart.MultipartFile;
  * @author THUAN
  */
 public interface UserService extends UserDetailsService {
-    List<User> getUsers(Map<String, String> params);
+    List<UserResponse> getUsers(Map<String, String> params);
 
     Long countUsers(Map<String, String> params);
 
-    User getUserById(int id);
+    UserResponse getUserById(int id);
 
-    User getUserByEmail(String email);
+    UserResponse getUserByEmail(String email);
 
     boolean checkExistEmail(String email);
     
@@ -32,10 +33,10 @@ public interface UserService extends UserDetailsService {
 
     Long countUsers();
 
-    User getUserByUsername(String username);
+    UserResponse getUserByUsername(String username);
 
-    User addUser(User u, MultipartFile avatar);
+    UserResponse addUser(RegisterRequest request, MultipartFile avatar);
 
-    User authenticate(String username, String password);
+    UserResponse authenticate(LoginRequest request);
 
 }

@@ -16,31 +16,31 @@ public class BookingMapper {
             return null;
         }
         
-        BookingResponse dto = new BookingResponse();
-        dto.setId(booking.getId());
-        dto.setQuantity(booking.getQuantity());
-        dto.setUnitPrice(booking.getUnitPrice());
-        dto.setTotalPrice(booking.getTotalPrice());
-        dto.setActive(booking.getActive());
-        dto.setCreatedDate(booking.getCreatedDate());
-        dto.setUpdatedDate(booking.getUpdatedDate());
+        BookingResponse response = new BookingResponse();
+        response.setId(booking.getId());
+        response.setQuantity(booking.getQuantity());
+        response.setUnitPrice(booking.getUnitPrice());
+        response.setTotalPrice(booking.getTotalPrice());
+        response.setActive(booking.getActive());
+        response.setCreatedDate(booking.getCreatedDate());
+        response.setUpdatedDate(booking.getUpdatedDate());
         
         if (booking.getEventId() != null) {
-            dto.setEventId(booking.getEventId().getId());
-            dto.setEventTitle(booking.getEventId().getTitle());
+            response.setEventId(booking.getEventId().getId());
+            response.setEventTitle(booking.getEventId().getTitle());
         }
         
         if (booking.getUserId() != null) {
-            dto.setUserId(booking.getUserId().getId());
-            dto.setUsername(booking.getUserId().getUsername());
+            response.setUserId(booking.getUserId().getId());
+            response.setUsername(booking.getUserId().getUsername());
         }
         
         if (booking.getStatusId() != null) {
-            dto.setStatusId(booking.getStatusId().getId());
+            response.setStatusId(booking.getStatusId().getId());
             // Note: Statusbooking entity should have getName() method
         }
         
-        return dto;
+        return response;
     }
 
     /**

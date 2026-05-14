@@ -17,7 +17,7 @@ public class CategoryRepositoryImpl implements CategoryRepository{
     private LocalSessionFactoryBean fatory;
     
     @Override
-    public List<Category> getCates() {
+    public List<Category> getCategories() {
         Session session = fatory.getObject().getCurrentSession();
         Query query = session.createQuery("FROM Category",Category.class);
         return query.getResultList();

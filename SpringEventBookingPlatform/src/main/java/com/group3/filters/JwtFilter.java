@@ -52,6 +52,7 @@ public class JwtFilter implements Filter {
 
             ((HttpServletResponse) response).sendError(HttpServletResponse.SC_UNAUTHORIZED, 
                     "Token không hợp lệ hoặc hết hạn");
+            return;
         }
         
         chain.doFilter(request, response);

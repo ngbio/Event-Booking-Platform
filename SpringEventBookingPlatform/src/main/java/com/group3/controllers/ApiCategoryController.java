@@ -1,6 +1,6 @@
 package com.group3.controllers;
 
-import com.group3.pojo.Category;
+import com.group3.dto.response.CategoryResponse;
 import com.group3.service.CategoryService;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +19,7 @@ public class ApiCategoryController {
     private CategoryService cateService;
     
     @GetMapping("/categories")
-    public ResponseEntity<List<Category>> list(){
-        return new ResponseEntity<>(this.cateService.getCates(),HttpStatus.OK);
+    public ResponseEntity<List<CategoryResponse>> list(){
+        return new ResponseEntity<>(this.cateService.getCategories(),HttpStatus.OK);
     } 
 }
