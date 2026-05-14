@@ -1,13 +1,13 @@
-package com.group3.pojo.response;
+package com.group3.dto.response;
 
-public class ResRoleDTO {
+public class RoleResponse {
     private Integer id;
     private String name;
 
-    public ResRoleDTO() {
+    public RoleResponse() {
     }
 
-    public ResRoleDTO(Integer id, String name) {
+    public RoleResponse(Integer id, String name) {
         this.id = id;
         this.name = name;
     }

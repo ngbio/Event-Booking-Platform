@@ -7,11 +7,11 @@ package com.group3.controllers;
 import com.group3.pojo.User;
 import com.group3.pojo.Role;
 import com.group3.pojo.StatusUser;
-import com.group3.pojo.request.ReqLoginDTO;
-import com.group3.pojo.request.ReqRegisterDTO;
-import com.group3.pojo.response.ResLoginDTO;
-import com.group3.pojo.response.ResRegisterDTO;
-import com.group3.pojo.response.RestResponse;
+import com.group3.dto.request.LoginRequest;
+import com.group3.dto.request.RegisterRequest;
+import com.group3.dto.response.LoginResponse;
+import com.group3.dto.response.RegisterResponse;
+import com.group3.dto.response.RestResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -52,7 +52,7 @@ public class ApiAuthController {
     private RoleRepository roleRepository;
 
     @PostMapping("/login")
-    public ResponseEntity<RestResponse<ResLoginDTO>> login(@Valid @RequestBody ReqLoginDTO request) throws Exception {
+    public ResponseEntity<RestResponse<LoginResponse>> login(@Valid @RequestBody LoginRequest request) throws Exception {
         User user = userService.getUserByUsername(request.getUsername());
 
         if (user == null) {
@@ -66,9 +66,9 @@ public class ApiAuthController {
         String accessToken = jwtUtil.generateToken(user.getUsername());
 
         String roleName = user.getRoleId() != null ? user.getRoleId().getName() : "USER";
-        ResLoginDTO resLogin = new ResLoginDTO(accessToken, user.getId(), user.getUsername(), roleName);
+        LoginResponse resLogin = new LoginResponse(accessToken, user.getId(), user.getUsername(), roleName);
 
-        RestResponse<ResLoginDTO> res = new RestResponse<>();
+        RestResponse<LoginResponse> res = new RestResponse<>();
         res.setStatusCode(HttpStatus.OK.value());
         res.setMessage("Login thành công");
         res.setData(resLogin);
@@ -77,7 +77,7 @@ public class ApiAuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<RestResponse<ResRegisterDTO>> register(@Valid @RequestBody ReqRegisterDTO request)
+    public ResponseEntity<RestResponse<RegisterResponse>> register(@Valid @RequestBody RegisterRequest request)
             throws IdInvalidException {
 
         if (userService.checkExistEmail(request.getEmail())) {
@@ -101,9 +101,9 @@ public class ApiAuthController {
         User saved = userService.getUserByUsername(request.getUsername());
         
         String roleName = saved.getRoleId() != null ? saved.getRoleId().getName() : "USER";
-        ResRegisterDTO resRegister = new ResRegisterDTO(saved.getId(), saved.getUsername(), roleName);
+        RegisterResponse resRegister = new RegisterResponse(saved.getId(), saved.getUsername(), roleName);
 
-        RestResponse<ResRegisterDTO> res = new RestResponse<>();
+        RestResponse<RegisterResponse> res = new RestResponse<>();
         res.setStatusCode(HttpStatus.CREATED.value());
         res.setMessage("Register thành công");
         res.setData(resRegister);

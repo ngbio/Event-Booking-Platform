@@ -1,28 +1,28 @@
-package com.group3.pojo.response;
+package com.group3.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import java.util.Date;
 
-public class ResCategoryDTO {
+public class CategoryResponse {
     private Integer id;
     private String name;
     private Boolean active;
     
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Ho_Chi_Minh")
-    private Date createdAt;
+    private Date createdDate;
     
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Ho_Chi_Minh")
-    private Date updatedAt;
+    private Date updatedDate;
 
-    public ResCategoryDTO() {
+    public CategoryResponse() {
     }
 
-    public ResCategoryDTO(Integer id, String name, Boolean active, Date createdAt, Date updatedAt) {
+    public CategoryResponse(Integer id, String name, Boolean active, Date createdDate, Date updatedDate) {
         this.id = id;
         this.name = name;
         this.active = active;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
+        this.createdDate = createdDate;
+        this.updatedDate= updatedDate;
     }
 
     public Integer getId() {
@@ -49,19 +49,19 @@ public class ResCategoryDTO {
         this.active = active;
     }
 
-    public Date getCreatedAt() {
-        return createdAt;
+    public Date getCreatedDate() {
+        return createdDate;
     }
 
-    public void setCreatedAt(Date createdAt) {
-        this.createdAt = createdAt;
+    public void setCreatedDate(Date createdDate) {
+        this.createdDate = createdDate;
     }
 
-    public Date getUpdatedAt() {
-        return updatedAt;
+    public Date getUpdatedDate() {
+        return updatedDate;
     }
 
-    public void setUpdatedAt(Date updatedAt) {
-        this.updatedAt = updatedAt;
+    public void setUpdatedDate(Date updatedDate) {
+        this.updatedDate = updatedDate;
     }
 }

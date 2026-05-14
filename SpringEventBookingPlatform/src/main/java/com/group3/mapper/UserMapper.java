@@ -1,7 +1,7 @@
-package com.group3.utils.mapper;
+package com.group3.mapper;
 
 import com.group3.pojo.User;
-import com.group3.pojo.response.ResUserDTO;
+import com.group3.dto.response.UserResponse;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -11,12 +11,12 @@ public class UserMapper {
     /**
      * Convert User entity to ResUserDTO
      */
-    public static ResUserDTO toDTO(User user) {
+    public static UserResponse toResponse(User user) {
         if (user == null) {
             return null;
         }
         
-        ResUserDTO dto = new ResUserDTO();
+        UserResponse dto = new UserResponse();
         dto.setId(user.getId());
         dto.setUsername(user.getUsername());
         dto.setEmail(user.getEmail());
@@ -24,8 +24,8 @@ public class UserMapper {
         dto.setPhone(user.getPhone());
         dto.setAvatar(user.getAvatar());
         dto.setActive(user.getActive());
-        dto.setCreatedAt(user.getCreatedDate());
-        dto.setUpdatedAt(user.getUpdatedDate());
+        dto.setCreatedDate(user.getCreatedDate());
+        dto.setUpdatedDate(user.getUpdatedDate());
         
         if (user.getRoleId() != null) {
             dto.setRoleId(user.getRoleId().getId());
@@ -38,12 +38,12 @@ public class UserMapper {
     /**
      * Convert List of Users to List of ResUserDTOs
      */
-    public static List<ResUserDTO> toDTOList(List<User> users) {
+    public static List<UserResponse> toResponseList(List<User> users) {
         if (users == null) {
             return new ArrayList<>();
         }
         return users.stream()
-                .map(UserMapper::toDTO)
+                .map(UserMapper::toResponse)
                 .collect(Collectors.toList());
     }
 }

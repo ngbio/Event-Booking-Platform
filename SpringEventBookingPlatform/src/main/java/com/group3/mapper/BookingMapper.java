@@ -1,7 +1,7 @@
-package com.group3.utils.mapper;
+package com.group3.mapper;
 
 import com.group3.pojo.Booking;
-import com.group3.pojo.response.ResBookingDTO;
+import com.group3.dto.response.BookingResponse;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -11,19 +11,19 @@ public class BookingMapper {
     /**
      * Convert Booking entity to ResBookingDTO
      */
-    public static ResBookingDTO toDTO(Booking booking) {
+    public static BookingResponse toResponse(Booking booking) {
         if (booking == null) {
             return null;
         }
         
-        ResBookingDTO dto = new ResBookingDTO();
+        BookingResponse dto = new BookingResponse();
         dto.setId(booking.getId());
         dto.setQuantity(booking.getQuantity());
         dto.setUnitPrice(booking.getUnitPrice());
         dto.setTotalPrice(booking.getTotalPrice());
         dto.setActive(booking.getActive());
-        dto.setCreatedAt(booking.getCreatedDate());
-        dto.setUpdatedAt(booking.getUpdatedDate());
+        dto.setCreatedDate(booking.getCreatedDate());
+        dto.setUpdatedDate(booking.getUpdatedDate());
         
         if (booking.getEventId() != null) {
             dto.setEventId(booking.getEventId().getId());
@@ -46,12 +46,12 @@ public class BookingMapper {
     /**
      * Convert List of Bookings to List of ResBookingDTOs
      */
-    public static List<ResBookingDTO> toDTOList(List<Booking> bookings) {
+    public static List<BookingResponse> toResponseList(List<Booking> bookings) {
         if (bookings == null) {
             return new ArrayList<>();
         }
         return bookings.stream()
-                .map(BookingMapper::toDTO)
+                .map(BookingMapper::toResponse)
                 .collect(Collectors.toList());
     }
 }
