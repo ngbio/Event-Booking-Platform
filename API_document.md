@@ -43,4 +43,4 @@
 | `/admin/` | **GET** | Admin | Giao diện Dashboard (Tổng doanh thu sàn, user mới) | `` |
 | `/admin/users` | **GET/POST**| Admin | Giao diện quản lý & Khóa/Mở tài khoản người dùng | `` |
 | `/admin/events` | **GET/POST**| Admin | Giao diện xét duyệt sự kiện (Publish hoặc Reject) | `` |
-| `/admin/categories` | **GET/POST**| Admin | Giao diện quản lý danh mục (Thêm/Sửa/Xóa) | `` |
+| `/admin/categories` | **GET/POST**| Admin | Giao diện quản lý danh mục (Thêm/Sửa/Xóa) | `` | 

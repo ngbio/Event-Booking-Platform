@@ -60,7 +60,6 @@ public class SpringSecurityConfigs {
                 .loginProcessingUrl("/login") // Đường dẫn xử lý POST
                 .defaultSuccessUrl("/", true) // Chuyển hướng khi thành công
                 .failureUrl("/admin/login?error=true") // Chuyển hướng khi thất bại
-                .permitAll()
         ).logout((logout) -> logout.logoutSuccessUrl("/admin/login").permitAll());
         return http.build();
     }

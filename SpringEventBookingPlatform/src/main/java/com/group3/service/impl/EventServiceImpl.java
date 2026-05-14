@@ -6,14 +6,16 @@ package com.group3.service.impl;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
+import com.group3.dto.request.EventRequest;
+import com.group3.dto.response.EventResponse;
 import com.group3.pojo.Category;
 import com.group3.pojo.Event;
 import com.group3.pojo.User;
 import com.group3.repository.CategoryRepository;
 import com.group3.repository.EventRepository;
 import com.group3.service.EventService;
+import com.group3.utils.DtoMapper;
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -31,41 +33,38 @@ import org.springframework.web.multipart.MultipartFile;
  */
 @Service
 public class EventServiceImpl implements EventService {
-    
+
     @Autowired
     private EventRepository eventRepo;
-    
+
     @Autowired
     private CategoryRepository cateRepo;
-    
+
     @Autowired
     private Cloudinary cloudinary;
 
     @Override
-    public List<Event> getEvents(Map<String, String> params) {
-        return this.eventRepo.findByParams(params);
+    public List<EventResponse> getEvents(Map<String, String> params) {
+        List<Event> events = this.eventRepo.findByParams(params);
+        return DtoMapper.toEventResponseList(events);
     }
 
     @Override
-    public Event getEventById(Integer id) {
-        return this.eventRepo.getEventById(id);
+    public EventResponse getEventById(Integer id) {
+        return DtoMapper.toEventResponse(this.eventRepo.getEventById(id));
     }
 
     @Override
-    public Event createEvent(Map<String, String> params, MultipartFile image, MultipartFile video, User organizer) {
-        Event event = new Event();
-        
-        // Set basic info
-        event.setTitle(params.get("title"));
-        event.setDescription(params.get("description"));
-        event.setLocation(params.get("location"));
-        event.setTotalTickets(Integer.parseInt(params.get("totalTickets")));
-        event.setPrice(new BigDecimal(params.get("price")));
+    public EventResponse createEvent(EventRequest request, MultipartFile image, MultipartFile video, User organizer) {
+        Event event = DtoMapper.toEventEntity(request);
+        //add Organizer
         event.setOrganizerId(organizer);
-        event.setActive(true);
-        event.setCreatedDate(new Date());
-        event.setUpdatedDate(new Date());
-        
+
+        //add date
+        Date now = new Date();
+        event.setCreatedDate(now);
+        event.setUpdatedDate(now);
+
         // Upload image
         if (image != null && !image.isEmpty()) {
             try {
@@ -76,7 +75,7 @@ public class EventServiceImpl implements EventService {
                 Logger.getLogger(EventServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-        
+
         // Upload video
         if (video != null && !video.isEmpty()) {
             try {
@@ -87,38 +86,40 @@ public class EventServiceImpl implements EventService {
                 Logger.getLogger(EventServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-        
+
         // Set categories
-        if (params.containsKey("categoryIds")) {
-            String[] categoryIds = params.get("categoryIds").split(",");
+        if (request.getCategoryIds() != null) {
+            String[] categoryIds = request.getCategoryIds().split(",");
             Collection<Category> categories = new ArrayList<>();
             for (String catId : categoryIds) {
-                Category cat = this.cateRepo.getCateById(Integer.parseInt(catId.trim()));
-                if (cat != null) {
-                    categories.add(cat);
+                Category cate = this.cateRepo.getCateById(Integer.parseInt(catId.trim()));
+                if (cate != null) {
+                    categories.add(cate);
                 }
             }
             event.setCategoryCollection(categories);
         }
-        
-        return this.eventRepo.addEvent(event);
+        return DtoMapper.toEventResponse(this.eventRepo.addEvent(event));
     }
 
     @Override
-    public Event updateEvent(Integer id, Map<String, String> params, MultipartFile image, MultipartFile video) {
+    public EventResponse updateEvent(Integer id, EventRequest request, MultipartFile image, MultipartFile video) {
         Event event = this.eventRepo.getEventById(id);
         if (event == null) {
             return null;
         }
+
+        event.setTitle(request.getTitle());
+        event.setDescription(request.getDescription());
+        event.setLocation(request.getLocation());
+        event.setStartTime(request.getStartTime());
+        event.setEndTime(request.getEndTime());
+        event.setPrice(request.getPrice());
+        event.setTotalTickets(request.getTotalTickets());
         
-        // Update basic info
-        event.setTitle(params.get("title"));
-        event.setDescription(params.get("description"));
-        event.setLocation(params.get("location"));
-        event.setTotalTickets(Integer.parseInt(params.get("totalTickets")));
-        event.setPrice(new BigDecimal(params.get("price")));
+        //update date
         event.setUpdatedDate(new Date());
-        
+
         // Upload image if provided
         if (image != null && !image.isEmpty()) {
             try {
@@ -129,7 +130,7 @@ public class EventServiceImpl implements EventService {
                 Logger.getLogger(EventServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-        
+
         // Upload video if provided
         if (video != null && !video.isEmpty()) {
             try {
@@ -140,21 +141,21 @@ public class EventServiceImpl implements EventService {
                 Logger.getLogger(EventServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-        
+
         // Update categories if provided
-        if (params.containsKey("categoryIds")) {
-            String[] categoryIds = params.get("categoryIds").split(",");
+        if (request.getCategoryIds() != null) {
+            String[] categoryIds = request.getCategoryIds().split(",");
             Collection<Category> categories = new ArrayList<>();
             for (String catId : categoryIds) {
-                Category cat = this.cateRepo.getCateById(Integer.parseInt(catId.trim()));
-                if (cat != null) {
-                    categories.add(cat);
+                Category cate = this.cateRepo.getCateById(Integer.parseInt(catId.trim()));
+                if (cate != null) {
+                    categories.add(cate);
                 }
             }
             event.setCategoryCollection(categories);
         }
-        
-        return this.eventRepo.updateEvent(event);
+
+        return DtoMapper.toEventResponse(this.eventRepo.updateEvent(event));
     }
 
     @Override
@@ -168,11 +169,11 @@ public class EventServiceImpl implements EventService {
         if (event == null) {
             return 0;
         }
-        
+
         // totalTickets - booked tickets
         int totalTickets = event.getTotalTickets();
         int bookedTickets = 0;
-        
+
         if (event.getBookingCollection() != null) {
             for (Object booking : event.getBookingCollection()) {
                 // Giả sử Booking có method getQuantity()
@@ -180,7 +181,7 @@ public class EventServiceImpl implements EventService {
                 bookedTickets += 1; // Placeholder - cần adjust theo Booking POJO
             }
         }
-        
+
         return totalTickets - bookedTickets;
     }
 
@@ -190,14 +191,14 @@ public class EventServiceImpl implements EventService {
         if (event == null) {
             return false;
         }
-        
+
         int availableTickets = getAvailableTickets(eventId);
         if (availableTickets >= quantityBooked) {
             // Note: totalTickets không giảm, chỉ được query qua booking
             // Hoặc có thể thêm column "soldTickets" nếu cần
             return true;
         }
-        
+
         return false;
     }
 }

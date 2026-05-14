@@ -1,5 +1,6 @@
 package com.group3.mapper;
 
+import com.group3.dto.request.EventRequest;
 import com.group3.pojo.Category;
 import com.group3.pojo.Event;
 import com.group3.dto.response.EventResponse;
@@ -17,35 +18,35 @@ public class EventMapper {
             return null;
         }
         
-        EventResponse dto = new EventResponse();
-        dto.setId(event.getId());
-        dto.setTitle(event.getTitle());
-        dto.setDescription(event.getDescription());
-        dto.setImageUrl(event.getImageUrl());
-        dto.setVideoUrl(event.getVideoUrl());
-        dto.setLocation(event.getLocation());
-        dto.setTotalTickets(event.getTotalTickets());
-        dto.setPrice(event.getPrice());
-        dto.setActive(event.getActive());
-        dto.setStartTime(event.getStartTime());
-        dto.setEndTime(event.getEndTime());
-        dto.setCreatedDate(event.getCreatedDate());
-        dto.setUpdatedDate(event.getUpdatedDate());
+        EventResponse response = new EventResponse();
+        response.setId(event.getId());
+        response.setTitle(event.getTitle());
+        response.setDescription(event.getDescription());
+        response.setImageUrl(event.getImageUrl());
+        response.setVideoUrl(event.getVideoUrl());
+        response.setLocation(event.getLocation());
+        response.setTotalTickets(event.getTotalTickets());
+        response.setPrice(event.getPrice());
+        response.setActive(event.getActive());
+        response.setStartTime(event.getStartTime());
+        response.setEndTime(event.getEndTime());
+        response.setCreatedDate(event.getCreatedDate());
+        response.setUpdatedDate(event.getUpdatedDate());
         
         if (event.getOrganizerId() != null) {
-            dto.setOrganizerId(event.getOrganizerId().getId());
-            dto.setOrganizerName(event.getOrganizerId().getFullName());
+            response.setOrganizerId(event.getOrganizerId().getId());
+            response.setOrganizerName(event.getOrganizerId().getFullName());
         }
         
         if (event.getCategoryCollection() != null && !event.getCategoryCollection().isEmpty()) {
             Category firstCat = event.getCategoryCollection().iterator().next();
             if (firstCat != null) {
-                dto.setCategoryId(firstCat.getId());
-                dto.setCategoryName(firstCat.getName());
+                response.setCategoryId(firstCat.getId());
+                response.setCategoryName(firstCat.getName());
             }
         }
         
-        return dto;
+        return response;
     }
 
     /**
@@ -58,5 +59,17 @@ public class EventMapper {
         return events.stream()
                 .map(EventMapper::toResponse)
                 .collect(Collectors.toList());
+    }
+    public static Event toEntity(EventRequest request){
+        if (request==null) return null;
+        Event event = new Event();
+        event.setTitle(request.getTitle());
+        event.setDescription(request.getDescription());
+        event.setStartTime(request.getStartTime());
+        event.setEndTime(request.getEndTime());
+        event.setLocation(request.getLocation());
+        event.setTotalTickets(request.getTotalTickets());
+        event.setPrice(request.getPrice());
+        return event;
     }
 }

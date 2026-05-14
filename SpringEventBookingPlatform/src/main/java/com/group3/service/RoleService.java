@@ -4,6 +4,7 @@
  */
 package com.group3.service;
 
+import com.group3.dto.response.RoleResponse;
 import com.group3.pojo.Role;
 import java.util.List;
 import java.util.Map;
@@ -13,6 +14,6 @@ import java.util.Map;
  * @author THUAN
  */
 public interface RoleService {
-	List<Role> findAll();
+	List<RoleResponse> findAll();
 	Map<String,String> getRoles();
 }

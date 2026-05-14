@@ -4,9 +4,11 @@
  */
 package com.group3.service.impl;
 
+import com.group3.dto.response.RoleResponse;
 import com.group3.pojo.Role;
 import com.group3.repository.RoleRepository;
 import com.group3.service.RoleService;
+import com.group3.utils.DtoMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,8 +27,9 @@ public class RoleServiceImpl implements RoleService {
 	private RoleRepository roleRepository;
 
 	@Override
-	public List<Role> findAll() {
-		return roleRepository.findAll();
+	public List<RoleResponse> findAll() {
+            List<Role> roles = this.roleRepository.findAll();
+		return DtoMapper.toRoleResponseList(roles);
 	}
 
 	@Override

@@ -4,6 +4,6 @@ import com.group3.pojo.Category;
 import java.util.List;
 
 public interface CategoryRepository {
-     List<Category> getCates();
+     List<Category> getCategories();
      Category getCateById(Integer id);
 }

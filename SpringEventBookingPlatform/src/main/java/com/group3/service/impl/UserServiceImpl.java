@@ -6,13 +6,16 @@ package com.group3.service.impl;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
-import com.group3.pojo.User;
+import com.group3.dto.request.LoginRequest;
 import com.group3.dto.request.RegisterRequest;
+import com.group3.pojo.User;
+import com.group3.dto.response.UserResponse;
 import com.group3.pojo.Role;
 import com.group3.repository.UserRepository;
 import com.group3.repository.RoleRepository;
 
 import com.group3.service.UserService;
+import com.group3.utils.DtoMapper;
 
 import java.io.IOException;
 import java.util.HashSet;
@@ -51,8 +54,9 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public List<User> getUsers(Map<String, String> params) {
-        return this.userRepo.getUsers(params);
+    public List<UserResponse> getUsers(Map<String, String> params) {
+        List<User> users = this.userRepo.getUsers(params);
+        return DtoMapper.toUserResponseList(users);
     }
 
     @Override
@@ -66,13 +70,15 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User getUserById(int id) {
-        return this.userRepo.findUserById(id);
+    public UserResponse getUserById(int id) {
+        User user = this.userRepo.findUserById(id);
+        return DtoMapper.toUserResponse(user);
     }
 
     @Override
-    public User getUserByEmail(String email) {
-        return this.userRepo.findUserByEmail(email);
+    public UserResponse getUserByEmail(String email) {
+        User user = this.userRepo.findUserByEmail(email);
+        return DtoMapper.toUserResponse(user);
     }
 
     @Override
@@ -91,34 +97,42 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User getUserByUsername(String username) {
-        return this.userRepo.getUserByUsername(username);
+    public UserResponse getUserByUsername(String username) {
+        User user = this.userRepo.getUserByUsername(username);
+        return DtoMapper.toUserResponse(user);
     }
 
     @Override
-    public User addUser(User u, MultipartFile avatar) {
-        u.setPassword(passwordEncoder.encode(u.getPassword()));
+    public UserResponse addUser(RegisterRequest request, MultipartFile avatar) {
+        User user = DtoMapper.toUserEntity(request);
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
 
         // Set default role (USER - id = 2)
         Role userRole = roleRepo.findById(2);
-        u.setRoleId(userRole);
+        user.setRoleId(userRole);
 
         if (avatar != null && !avatar.isEmpty()) {
             try {
                 Map res = this.cloudinary.uploader().upload(avatar.getBytes(),
                         ObjectUtils.asMap("resource_type", "auto"));
-                u.setAvatar(res.get("secure_url").toString());
+                user.setAvatar(res.get("secure_url").toString());
             } catch (IOException ex) {
                 Logger.getLogger(UserServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
 
-        return this.userRepo.addUser(u);
+        return DtoMapper.toUserResponse(this.userRepo.addUser(user));
     }
 
     @Override
-    public boolean authenticate(String username, String password) {
-        return this.userRepo.authenticate(username, password);
+    public UserResponse authenticate(LoginRequest request) {
+        boolean isAuthenticated = this.userRepo.authenticate(request.getUsername(),request.getPassword());
+        
+        if (isAuthenticated){
+            User user = this.userRepo.getUserByUsername(request.getUsername());
+            return DtoMapper.toUserResponse(user);
+        }
+        return null;
     }
 
     @Override
