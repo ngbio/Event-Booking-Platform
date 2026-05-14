@@ -24,6 +24,9 @@ public class RegisterRequest {
     @Email(message = "Email không hợp lệ")
     private String email;
 
+    @NotBlank(message = "Số điện thoại không được để trống")
+    private String phone;
+
     public RegisterRequest() {}
 
     public String getUsername() { return username; }
@@ -31,6 +34,9 @@ public class RegisterRequest {
 
     public String getPassword() { return password; }
     public void setPassword(String password) { this.password = password; }
+
+    public String getPhone() { return phone; }
+    public void setPhone(String phone) { this.phone = phone; }
 
     public String getEmail() { return email; }
     public void setEmail(String email) { this.email = email; }

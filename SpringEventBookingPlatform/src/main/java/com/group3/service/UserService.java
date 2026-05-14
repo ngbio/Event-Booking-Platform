@@ -4,6 +4,7 @@
  */
 package com.group3.service;
 
+import com.group3.dto.request.RegisterRequest;
 import com.group3.pojo.User;
 import java.util.List;
 import java.util.Map;
@@ -19,8 +20,6 @@ public interface UserService extends UserDetailsService {
 
     Long countUsers(Map<String, String> params);
 
-    void addOrUpdateUser(User u);
-
     User getUserById(int id);
 
     User getUserByEmail(String email);
@@ -35,8 +34,8 @@ public interface UserService extends UserDetailsService {
 
     User getUserByUsername(String username);
 
-    User addUser(Map<String, String> params, MultipartFile avatar);
+    User addUser(User u, MultipartFile avatar);
 
-    boolean authenticate(String username, String password);
+    User authenticate(String username, String password);
 
 }

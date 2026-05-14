@@ -14,14 +14,15 @@ import com.group3.dto.response.RegisterResponse;
 import com.group3.dto.response.UserResponse;
 import com.group3.mapper.UserMapper;
 import java.security.Principal;
-import java.util.Collections;
 import java.util.Map;
 import java.util.HashMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -41,11 +42,14 @@ import jakarta.validation.Valid;
 public class ApiUserController {
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private BCryptPasswordEncoder passwordEncoder;
     
     @PostMapping(path = "/users", 
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE, 
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> register(@Valid @RequestBody RegisterRequest request,
+    public ResponseEntity<?> register(@ModelAttribute RegisterRequest request,
                                        @RequestParam(value = "avatar", required = false) MultipartFile avatar) {
         try {
             // Check if username or email already exists
@@ -58,19 +62,20 @@ public class ApiUserController {
             }
             
             // Create user through service
-            Map<String, String> params = new HashMap<>();
-            params.put("username", request.getUsername());
-            params.put("password", request.getPassword());
-            params.put("email", request.getEmail());
-            
-            User newUser = userService.addUser(params, avatar);
+            User newUser = new User();
+            newUser.setUsername(request.getUsername());
+            newUser.setPhone(request.getPhone());
+            newUser.setEmail(request.getEmail());
+            newUser.setPassword(request.getPassword());
+
+            User savedUser = userService.addUser(newUser, avatar);
             
             // Create and return RegisterResponse
             RegisterResponse response = new RegisterResponse();
-            response.setUserId(newUser.getId());
-            response.setUsername(newUser.getUsername());
-            if (newUser.getRoleId() != null) {
-                response.setRole(newUser.getRoleId().getName());
+            response.setUserId(savedUser.getId());
+            response.setUsername(savedUser.getUsername());
+            if (savedUser.getRoleId() != null) {
+                response.setRole(savedUser.getRoleId().getName());
             }
             
             return new ResponseEntity<>(response, HttpStatus.CREATED);
@@ -81,9 +86,12 @@ public class ApiUserController {
     
     @PostMapping("/login")
     public ResponseEntity<?> login(@Valid @RequestBody LoginRequest loginRequest) {
-            if (userService.authenticate(loginRequest.getUsername(), loginRequest.getPassword())) {
                 try {
-                    User user = userService.getUserByUsername(loginRequest.getUsername());
+                    User user = userService.authenticate(loginRequest.getUsername(), loginRequest.getPassword());
+                    if (user == null) {
+                        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Sai thông tin đăng nhập");
+                    }
+
                     String token = JwtUtils.generateToken(loginRequest.getUsername());
                     
                     
@@ -99,19 +107,26 @@ public class ApiUserController {
                 } catch (Exception e) {
                     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Lỗi khi tạo JWT: " + e.getMessage());
                 }
-            }
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Sai thông tin đăng nhập");
     }
 
     @RequestMapping("/secure/profile")
     @ResponseBody
     public ResponseEntity<?> getProfile(Principal principal) {
         try {
+
+            if (principal == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                        .body("Chưa đăng nhập");
+            }
+
             User user = userService.getUserByUsername(principal.getName());
+
             if (user == null) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Người dùng không tìm thấy");
             }
+
             UserResponse response = UserMapper.toResponse(user);
+            
             return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Lỗi lấy thông tin profile: " + e.getMessage());
