@@ -6,4 +6,6 @@ import java.util.List;
 public interface CategoryRepository {
      List<Category> getCategories();
      Category getCateById(Integer id);
+     boolean deleteCategory(Integer id);
+     void addOrUpdateCategory(Category cate);
 }

@@ -10,7 +10,7 @@
     <section class="container mt-4">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h2>Danh mục sự kiện</h2>
-            <button class="btn btn-primary">+ Thêm danh mục mới</button>
+            <a th:href="@{/admin/categories/add}" class="btn btn-primary">+ Thêm danh mục mới</a>
         </div>
 
         <table class="table table-striped table-bordered">
@@ -33,7 +33,7 @@
                         <span th:unless="${c.active}" class="text-danger fw-bold">Ẩn</span>
                     </td>
                     <td class="text-center">
-                        <a th:href="@{/admin/categories/edit/} + ${c.id}" class="btn btn-sm btn-info text-white">Sửa</a>
+                        <a th:href="@{/admin/categories/update/} + ${c.id}" class="btn btn-sm btn-info text-white">Cập nhật</a>
                         <form method="post" th:action="@{/admin/categories/delete}" class="d-inline">
                             <input type="hidden" name="categoryId" th:value="${c.id}" />
                             <button class="btn btn-sm btn-danger" onclick="return confirm('Bạn có chắc muốn xóa?')">Xóa</button>

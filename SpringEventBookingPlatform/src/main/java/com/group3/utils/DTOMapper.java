@@ -1,5 +1,6 @@
 package com.group3.utils;
 
+import com.group3.dto.request.CategoryRequest;
 import com.group3.dto.request.EventRequest;
 import com.group3.dto.request.RegisterRequest;
 import com.group3.dto.request.UserUpdateRequest;
@@ -126,5 +127,8 @@ public class DTOMapper {
     
     public static User toUserEntity(UserUpdateRequest request, User user){
         return UserMapper.toEntity(request, user);
+    }
+    public static Category toCategoryEntity(CategoryRequest request){
+        return CategoryMapper.toEntity(request);
     }
 }
