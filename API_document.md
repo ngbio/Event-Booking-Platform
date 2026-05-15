@@ -11,8 +11,8 @@
 ## 2. DỮ LIỆU CÔNG KHAI (API PUBLIC EVENTS & CATEGORIES)
 | API Endpoint | Method | Role | Mô tả nghiệp vụ | Trạng thái |
 | :--- | :--- | :--- | :--- | :--- |
-| `/api/categories` | **GET** | Public | Lấy danh sách danh mục sự kiện | `` |
-| `/api/events` | **GET** | Public | Danh sách sự kiện (Dùng `@RequestParam Map params` để search/lọc) | `` |
+| `/api/categories` | **GET** | Public | Lấy danh sách danh mục sự kiện | `Done` |
+| `/api/events` | **GET** | Public | Danh sách sự kiện (Dùng `@RequestParam Map params` để search/lọc) | `DOne` |
 | `/api/events/{eventId}` | **GET** | Public | Xem chi tiết 1 sự kiện và các loại vé | `` |
 
 ## 3. LUỒNG ĐẶT VÉ & THANH TOÁN (API BOOKING & PAYMENT)

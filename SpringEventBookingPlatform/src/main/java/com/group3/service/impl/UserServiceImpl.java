@@ -15,7 +15,7 @@ import com.group3.repository.UserRepository;
 import com.group3.repository.RoleRepository;
 
 import com.group3.service.UserService;
-import com.group3.utils.DtoMapper;
+import com.group3.utils.DTOMapper;
 
 import java.io.IOException;
 import java.util.HashSet;
@@ -56,7 +56,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<UserResponse> getUsers(Map<String, String> params) {
         List<User> users = this.userRepo.getUsers(params);
-        return DtoMapper.toUserResponseList(users);
+        return DTOMapper.toUserResponseList(users);
     }
 
     @Override
@@ -72,13 +72,13 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserResponse getUserById(int id) {
         User user = this.userRepo.findUserById(id);
-        return DtoMapper.toUserResponse(user);
+        return DTOMapper.toUserResponse(user);
     }
 
     @Override
     public UserResponse getUserByEmail(String email) {
         User user = this.userRepo.findUserByEmail(email);
-        return DtoMapper.toUserResponse(user);
+        return DTOMapper.toUserResponse(user);
     }
 
     @Override
@@ -99,12 +99,12 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserResponse getUserByUsername(String username) {
         User user = this.userRepo.getUserByUsername(username);
-        return DtoMapper.toUserResponse(user);
+        return DTOMapper.toUserResponse(user);
     }
 
     @Override
     public UserResponse addUser(RegisterRequest request, MultipartFile avatar) {
-        User user = DtoMapper.toUserEntity(request);
+        User user = DTOMapper.toUserEntity(request);
         user.setPassword(passwordEncoder.encode(request.getPassword()));
 
         // Set default role (USER - id = 2)
@@ -121,7 +121,7 @@ public class UserServiceImpl implements UserService {
             }
         }
 
-        return DtoMapper.toUserResponse(this.userRepo.addUser(user));
+        return DTOMapper.toUserResponse(this.userRepo.addUser(user));
     }
 
     @Override
@@ -130,7 +130,7 @@ public class UserServiceImpl implements UserService {
         
         if (isAuthenticated){
             User user = this.userRepo.getUserByUsername(request.getUsername());
-            return DtoMapper.toUserResponse(user);
+            return DTOMapper.toUserResponse(user);
         }
         return null;
     }
@@ -143,7 +143,7 @@ public class UserServiceImpl implements UserService {
         }
         
         Set<GrantedAuthority> authorities = new HashSet<>();
-        authorities.add(new SimpleGrantedAuthority("ROLE_" + user.getRoleId().getName()));
+        authorities.add(new SimpleGrantedAuthority(user.getRoleId().getName()));
         
         return new org.springframework.security.core.userdetails.User(user.getUsername(),
                 user.getPassword(), authorities);

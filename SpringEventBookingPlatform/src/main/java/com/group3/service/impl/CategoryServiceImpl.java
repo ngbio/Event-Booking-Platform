@@ -4,7 +4,7 @@ import com.group3.dto.response.CategoryResponse;
 import com.group3.pojo.Category;
 import com.group3.repository.CategoryRepository;
 import com.group3.service.CategoryService;
-import com.group3.utils.DtoMapper;
+import com.group3.utils.DTOMapper;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,6 +15,6 @@ public class CategoryServiceImpl implements CategoryService{
     private CategoryRepository categoryRepository;
     public List<CategoryResponse> getCategories() {
         List<Category> categories =  categoryRepository.getCategories();
-        return DtoMapper.toCategoryResponseList(categories);
+        return DTOMapper.toCategoryResponseList(categories);
     }
 }
