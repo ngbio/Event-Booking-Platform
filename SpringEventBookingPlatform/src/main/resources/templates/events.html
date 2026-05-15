@@ -1,0 +1,47 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <title>Dashboard - Tổng quan</title>
+    <th:block th:replace="base :: css"></th:block>
+</head>
+<body>
+    <div th:replace="base :: header"></div>
+
+    <section class="container mt-4">
+        <table class="table table-hover">
+            <thead class="table-dark">
+                <tr>
+                    <th>Tên sự kiện</th>
+                    <th>Giá vé</th>
+                    <th>Vé đã bán</th>
+                    <th>Trạng thái</th>
+                    <th>Hành động</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="e : ${events}">
+                    <td th:text="${e.title}"></td>
+                    <td th:text="${e.price}"></td>
+                    <td th:text="${e.soldQuantity}">0</td> <td>
+                        <span th:if="${e.active}" class="badge bg-success">Đang hiện</span>
+                        <span th:unless="${e.active}" class="badge bg-secondary">Đã ẩn</span>
+                    </td>
+                    <td>
+                        <form th:action="@{/admin/events/toggle}" method="post" class="d-inline">
+                            <input type="hidden" name="id" th:value="${e.id}"/>
+                            <button class="btn btn-sm btn-warning" th:text="${e.active ? 'Ẩn tin' : 'Hiện tin'}"></button>
+                        </form>
+
+                        <form th:if="${e.soldQuantity == 0}" th:action="@{/admin/events/delete}" method="post" class="d-inline">
+                            <input type="hidden" name="id" th:value="${e.id}"/>
+                            <button class="btn btn-sm btn-danger" onclick="return confirm('Xóa vĩnh viễn sự kiện này?')">Xóa</button>
+                        </form>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+
+    <div th:replace="base :: footer"></div>
+</body>
+</html>

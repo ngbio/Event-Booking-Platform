@@ -59,19 +59,18 @@ public class SpringSecurityConfigs {
         .authorizeHttpRequests((requests) -> requests
             .requestMatchers("/admin/login", "/api/login", "/api/users").permitAll()
             .requestMatchers("/admin/**").hasRole("ADMIN")
-            // Khu vực này sẽ do JwtFilter của Hải bảo vệ
+            // Khu vực này sẽ do JwtFilter bảo vệ
             .requestMatchers("/api/secure/**").authenticated() 
             .anyRequest().authenticated()
         )
         
-        // --- THÊM ĐÚNG 1 DÒNG NÀY VÀO ĐÂY ---
-        // Khởi tạo JwtFilter của Hải và đặt nó gác ở cửa kiểm tra API
+        // Khởi tạo JwtFilter và đặt nó gác ở cửa kiểm tra API
         .addFilterBefore(new com.group3.filters.JwtFilter(), UsernamePasswordAuthenticationFilter.class)
         
         .formLogin(form -> form
             .loginPage("/admin/login")
             .loginProcessingUrl("/admin/login")
-            .defaultSuccessUrl("/", true)
+            .defaultSuccessUrl("/admin", true)
             .failureUrl("/admin/login?error=true")
             .permitAll()
         )
