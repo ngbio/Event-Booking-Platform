@@ -17,7 +17,7 @@ public class EventMapper {
         if (event == null) {
             return null;
         }
-        
+
         EventResponse response = new EventResponse();
         response.setId(event.getId());
         response.setTitle(event.getTitle());
@@ -35,14 +35,16 @@ public class EventMapper {
         response.setIsPaidFee(event.getIsPaidFee());
         response.setListingFee(event.getListingFee());
         response.setSettlementCode(event.getSettlementCode());
-        response.setStatusId(event.getStatusId().getId());
-        response.setStatusName(event.getStatusId().getName());
         
+        if (event.getStatusId() != null) {
+            response.setStatusId(event.getStatusId().getId());
+            response.setStatusName(event.getStatusId().getName());
+        }
         if (event.getOrganizerId() != null) {
             response.setOrganizerId(event.getOrganizerId().getId());
             response.setOrganizerName(event.getOrganizerId().getFullName());
         }
-        
+
         if (event.getCategoryCollection() != null && !event.getCategoryCollection().isEmpty()) {
             Category firstCat = event.getCategoryCollection().iterator().next();
             if (firstCat != null) {
@@ -50,7 +52,7 @@ public class EventMapper {
                 response.setCategoryName(firstCat.getName());
             }
         }
-        
+
         return response;
     }
 
@@ -65,8 +67,11 @@ public class EventMapper {
                 .map(EventMapper::toResponse)
                 .collect(Collectors.toList());
     }
-    public static Event toEntity(EventRequest request){
-        if (request==null) return null;
+
+    public static Event toEntity(EventRequest request) {
+        if (request == null) {
+            return null;
+        }
         Event event = new Event();
         event.setTitle(request.getTitle());
         event.setDescription(request.getDescription());

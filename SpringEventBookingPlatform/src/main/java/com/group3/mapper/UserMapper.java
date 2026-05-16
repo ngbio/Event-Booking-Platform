@@ -26,6 +26,10 @@ public class UserMapper {
         response.setAvatar(user.getAvatar());
         response.setCreatedDate(user.getCreatedDate());
         response.setUpdatedDate(user.getUpdatedDate());
+        response.setIdentityCard(user.getIdentityCard());
+        response.setBusinessLicense(user.getBusinessLicense());
+        response.setOrganizationName(user.getOrganizationName());
+        response.setTaxCode(user.getTaxCode());
         
         if (user.getRoleId() != null) {
             response.setRoleId(user.getRoleId().getId());
@@ -61,6 +65,11 @@ public class UserMapper {
         user.setEmail(request.getEmail());
         user.setPhone(request.getPhone());
         
+        user.setIdentityCard(request.getIdentityCard());
+        user.setBusinessLicense(request.getBusinessLicense());
+        user.setOrganizationName(request.getOrganizationName());
+        user.setTaxCode(request.getTaxCode());
+        
         return user;
     }
     //Update
@@ -70,6 +79,11 @@ public class UserMapper {
         user.setEmail(request.getEmail());
         user.setPhone(request.getPhone());
         user.setPassword(request.getPassword());
+        
+        user.setIdentityCard(request.getIdentityCard());
+        user.setBusinessLicense(request.getBusinessLicense());
+        user.setOrganizationName(request.getOrganizationName());
+        user.setTaxCode(request.getTaxCode());
         return user;
     }
 }

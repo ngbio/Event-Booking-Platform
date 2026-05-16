@@ -35,6 +35,12 @@ public class RegisterRequest {
 
     @NotBlank(message = "Vai trò của user không được trống")
     private String Role;
+    
+    //Cho nha to chuc
+    private String identityCard;
+    private String businessLicense;
+    private String organizationName;
+    private String taxCode;
 
     public String getUsername() {
         return username;
@@ -84,5 +90,38 @@ public class RegisterRequest {
         this.Role = Role;
     }
 
+    public String getIdentityCard() {
+        return identityCard;
+    }
+
+    public void setIdentityCard(String identityCard) {
+        this.identityCard = identityCard;
+    }
+
+    public String getBusinessLicense() {
+        return businessLicense;
+    }
+
+    public void setBusinessLicense(String businessLicense) {
+        this.businessLicense = businessLicense;
+    }
+
+    public String getOrganizationName() {
+        return organizationName;
+    }
+
+    public void setOrganizationName(String organizationName) {
+        this.organizationName = organizationName;
+    }
+
+    public String getTaxCode() {
+        return taxCode;
+    }
+
+    public void setTaxCode(String taxCode) {
+        this.taxCode = taxCode;
+    }
+    
+    
     
 }

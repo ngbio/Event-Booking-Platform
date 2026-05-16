@@ -37,6 +37,8 @@ public class CategoryRepositoryImpl implements CategoryRepository{
             Session session = this.factory.getObject().getCurrentSession();
             Category category = getCateById(id);
             if (category!=null){
+                if (category.getEventCollection()!=null&&!category.getEventCollection().isEmpty())
+                    throw new IllegalStateException("Có sự kiện trong danh mục, vui lòng sử dụng nút ẩn danh mục");
                 session.remove(category);
                 return true;
             }

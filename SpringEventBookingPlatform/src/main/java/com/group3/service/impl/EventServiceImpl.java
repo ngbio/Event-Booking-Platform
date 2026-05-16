@@ -49,7 +49,7 @@ public class EventServiceImpl implements EventService {
 
     @Autowired
     private Cloudinary cloudinary;
-    
+
     @Autowired
     private StatusEventRepository statusEventRepo;
     @Value("${event.feePerTicket}")
@@ -130,7 +130,7 @@ public class EventServiceImpl implements EventService {
             StatusEvent statusPending = this.statusEventRepo.getStatusEventById(2);
             event.setStatusId(statusPending);
         }
-        event.setSoldTickets(0); 
+        event.setSoldTickets(0);
         event.setSettlementCode(null);
         return DTOMapper.toEventResponse(this.eventRepo.addEvent(event));
     }
@@ -141,53 +141,72 @@ public class EventServiceImpl implements EventService {
         if (event == null) {
             return null;
         }
-
-        event.setTitle(request.getTitle());
-        event.setDescription(request.getDescription());
-        event.setLocation(request.getLocation());
-        event.setStartTime(request.getStartTime());
-        event.setEndTime(request.getEndTime());
-        event.setPrice(request.getPrice());
-        event.setTotalTickets(request.getTotalTickets());
-
-        //update date
-        event.setUpdatedDate(new Date());
-
-        // Upload image if provided
-        if (image != null && !image.isEmpty()) {
-            try {
-                Map res = this.cloudinary.uploader().upload(image.getBytes(),
-                        ObjectUtils.asMap("resource_type", "auto"));
-                event.setImageUrl(res.get("secure_url").toString());
-            } catch (IOException ex) {
-                Logger.getLogger(EventServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
+        if (event.getStatusId() != null) {
+            if (event.getStatusId().getId() == 3) {
+                throw new IllegalStateException("Sự kiện đang mở bán không được chỉnh sửa.");
             }
-        }
+            event.setTitle(request.getTitle());
+            event.setDescription(request.getDescription());
+            event.setLocation(request.getLocation());
+            event.setStartTime(request.getStartTime());
+            event.setEndTime(request.getEndTime());
+            event.setPrice(request.getPrice());
+            event.setTotalTickets(request.getTotalTickets());
 
-        // Upload video if provided
-        if (video != null && !video.isEmpty()) {
-            try {
-                Map res = this.cloudinary.uploader().upload(video.getBytes(),
-                        ObjectUtils.asMap("resource_type", "auto"));
-                event.setVideoUrl(res.get("secure_url").toString());
-            } catch (IOException ex) {
-                Logger.getLogger(EventServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
+            //update date
+            event.setUpdatedDate(new Date());
 
-        // Update categories if provided
-        if (request.getCategoryIds() != null) {
-            String[] categoryIds = request.getCategoryIds().split(",");
-            Collection<Category> categories = new ArrayList<>();
-            for (String catId : categoryIds) {
-                Category cate = this.cateRepo.getCateById(Integer.parseInt(catId.trim()));
-                if (cate != null) {
-                    categories.add(cate);
+            // Upload image if provided
+            if (image != null && !image.isEmpty()) {
+                try {
+                    Map res = this.cloudinary.uploader().upload(image.getBytes(),
+                            ObjectUtils.asMap("resource_type", "auto"));
+                    event.setImageUrl(res.get("secure_url").toString());
+                } catch (IOException ex) {
+                    Logger.getLogger(EventServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
-            event.setCategoryCollection(categories);
-        }
 
+            // Upload video if provided
+            if (video != null && !video.isEmpty()) {
+                try {
+                    Map res = this.cloudinary.uploader().upload(video.getBytes(),
+                            ObjectUtils.asMap("resource_type", "auto"));
+                    event.setVideoUrl(res.get("secure_url").toString());
+                } catch (IOException ex) {
+                    Logger.getLogger(EventServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+
+            // Update categories if provided
+            if (request.getCategoryIds() != null) {
+                String[] categoryIds = request.getCategoryIds().split(",");
+                Collection<Category> categories = new ArrayList<>();
+                for (String catId : categoryIds) {
+                    Category cate = this.cateRepo.getCateById(Integer.parseInt(catId.trim()));
+                    if (cate != null) {
+                        categories.add(cate);
+                    }
+                }
+                event.setCategoryCollection(categories);
+            }
+            if (event.getPrice().compareTo(BigDecimal.ZERO) > 0) {
+                //Su kien co ban ve => Tinh lai phi & chuyen ve DRAFT
+                double calculatedFee = event.getTotalTickets() * feePerTicket;
+                event.setListingFee(BigDecimal.valueOf(calculatedFee));
+                event.setIsPaidFee(false); // Bắt phải thanh toán lại phí chênh lệch
+
+                StatusEvent statusDraft = this.statusEventRepo.getStatusEventById(1);
+                event.setStatusId(statusDraft);
+            } else {
+                // Su kien mien thi => Khong tinh phi va day ve PENDING_REVIEW
+                event.setListingFee(BigDecimal.ZERO);
+                event.setIsPaidFee(true);
+
+                StatusEvent statusPending = this.statusEventRepo.getStatusEventById(2);
+                event.setStatusId(statusPending);
+            }
+        }
         return DTOMapper.toEventResponse(this.eventRepo.updateEvent(event));
     }
 
@@ -213,18 +232,18 @@ public class EventServiceImpl implements EventService {
         }
 
         int availableTickets = event.getTotalTickets() - event.getSoldTickets();
-        
+
         // Kiem tra co du ve de ban khong
         if (availableTickets >= quantityBooked) {
             //Cap nhat lai so ve da ban
             int newSoldAmount = event.getSoldTickets() + quantityBooked;
             event.setSoldTickets(newSoldAmount);
-            
+
             // Luu su kien de cap nhat kho ve
             this.eventRepo.updateEvent(event);
             return true;
         }
 
-        return false; 
+        return false;
     }
 }

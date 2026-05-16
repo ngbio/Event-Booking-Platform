@@ -6,7 +6,9 @@ package com.group3.service;
 
 import com.group3.dto.request.LoginRequest;
 import com.group3.dto.request.RegisterRequest;
+import com.group3.dto.request.UserUpdateRequest;
 import com.group3.dto.response.UserResponse;
+import com.group3.pojo.User;
 import java.util.List;
 import java.util.Map;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -39,5 +41,5 @@ public interface UserService extends UserDetailsService {
 
     UserResponse authenticate(LoginRequest request);
     
-
+    UserResponse updateUser(Integer id, UserUpdateRequest request,MultipartFile avatar);
 }

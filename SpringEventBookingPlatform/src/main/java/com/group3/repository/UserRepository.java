@@ -23,7 +23,7 @@ public interface UserRepository {
 
     boolean existEmail(String email);
 
-    void addOrUpdateUser(User u);
+    User updateUser(User user);
 
     void deleteUser(Integer id);
 

@@ -60,13 +60,9 @@ public class UserRepositoryImpl implements UserRepository{
 //    }
 
     @Override
-    public void addOrUpdateUser(User u) {
+    public User updateUser(User user) {
         Session s = currentSession();
-        if (u.getId() != null) {
-            s.merge(u);
-        } else {
-            s.persist(u);
-        }
+        return (User)s.merge(user);
     }
 
     @Override
@@ -154,7 +150,7 @@ public class UserRepositoryImpl implements UserRepository{
             String kw = params.get("kw");
             if (kw != null && !kw.isBlank()) {
                 String t = kw.trim();
-                Predicate byFullname = b.like(root.get("username"), "%" + t + "%");
+                Predicate byFullname = b.like(root.get("fullname"), "%" + t + "%");
                 Predicate byEmail = b.like(root.get("email"), "%" + t + "%");
                 predicates.add(b.or(byFullname, byEmail));
             }
