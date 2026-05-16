@@ -37,7 +37,6 @@ import java.util.Date;
     @NamedQuery(name = "Booking.findByQuantity", query = "SELECT b FROM Booking b WHERE b.quantity = :quantity"),
     @NamedQuery(name = "Booking.findByUnitPrice", query = "SELECT b FROM Booking b WHERE b.unitPrice = :unitPrice"),
     @NamedQuery(name = "Booking.findByTotalPrice", query = "SELECT b FROM Booking b WHERE b.totalPrice = :totalPrice"),
-    @NamedQuery(name = "Booking.findByActive", query = "SELECT b FROM Booking b WHERE b.active = :active"),
     @NamedQuery(name = "Booking.findByCreatedDate", query = "SELECT b FROM Booking b WHERE b.createdDate = :createdDate"),
     @NamedQuery(name = "Booking.findByUpdatedDate", query = "SELECT b FROM Booking b WHERE b.updatedDate = :updatedDate")})
 public class Booking implements Serializable {
@@ -61,8 +60,6 @@ public class Booking implements Serializable {
     @NotNull
     @Column(name = "total_price")
     private BigDecimal totalPrice;
-    @Column(name = "active")
-    private Boolean active;
     @Column(name = "created_date")
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdDate;
@@ -127,14 +124,6 @@ public class Booking implements Serializable {
 
     public void setTotalPrice(BigDecimal totalPrice) {
         this.totalPrice = totalPrice;
-    }
-
-    public Boolean getActive() {
-        return active;
-    }
-
-    public void setActive(Boolean active) {
-        this.active = active;
     }
 
     public Date getCreatedDate() {

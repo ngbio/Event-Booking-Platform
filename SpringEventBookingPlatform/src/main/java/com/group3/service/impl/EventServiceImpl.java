@@ -10,12 +10,15 @@ import com.group3.dto.request.EventRequest;
 import com.group3.dto.response.EventResponse;
 import com.group3.pojo.Category;
 import com.group3.pojo.Event;
+import com.group3.pojo.StatusEvent;
 import com.group3.pojo.User;
 import com.group3.repository.CategoryRepository;
 import com.group3.repository.EventRepository;
+import com.group3.repository.StatusEventRepository;
 import com.group3.service.EventService;
 import com.group3.utils.DTOMapper;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -24,6 +27,8 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -33,6 +38,7 @@ import org.springframework.web.multipart.MultipartFile;
  * @author THUAN
  */
 @Service
+@PropertySource("classpath:configs.properties")
 public class EventServiceImpl implements EventService {
 
     @Autowired
@@ -43,6 +49,11 @@ public class EventServiceImpl implements EventService {
 
     @Autowired
     private Cloudinary cloudinary;
+    
+    @Autowired
+    private StatusEventRepository statusEventRepo;
+    @Value("${event.feePerTicket}")
+    private double feePerTicket;
 
     @Override
     @Transactional
@@ -101,6 +112,26 @@ public class EventServiceImpl implements EventService {
             }
             event.setCategoryCollection(categories);
         }
+        if (event.getPrice().compareTo(BigDecimal.ZERO) > 0) {
+            // Sự kiện CÓ BÁN VÉ -> Thu phí 2,000 VND / vé (Hải có thể thay đổi số này)
+            double calculatedFee = event.getTotalTickets() * feePerTicket;
+            event.setListingFee(BigDecimal.valueOf(calculatedFee));
+            event.setIsPaidFee(false); // Chưa đóng tiền
+
+            // Gán trạng thái 1: DRAFT (Lưu nháp chờ thanh toán phí)
+            StatusEvent statusDraft = this.statusEventRepo.getStatusEventById(1);
+            event.setStatusId(statusDraft);
+        } else {
+            // Sự kiện MIỄN PHÍ -> Không thu phí sàn
+            event.setListingFee(BigDecimal.ZERO);
+            event.setIsPaidFee(true); // Coi như đã hoàn tất nghĩa vụ phí
+
+            // Gán trạng thái 2: PENDING_REVIEW (Đẩy thẳng cho Admin chờ duyệt nội dung)
+            StatusEvent statusPending = this.statusEventRepo.getStatusEventById(2);
+            event.setStatusId(statusPending);
+        }
+        event.setSoldTickets(0); 
+        event.setSettlementCode(null);
         return DTOMapper.toEventResponse(this.eventRepo.addEvent(event));
     }
 
@@ -118,7 +149,7 @@ public class EventServiceImpl implements EventService {
         event.setEndTime(request.getEndTime());
         event.setPrice(request.getPrice());
         event.setTotalTickets(request.getTotalTickets());
-        
+
         //update date
         event.setUpdatedDate(new Date());
 
@@ -171,20 +202,7 @@ public class EventServiceImpl implements EventService {
         if (event == null) {
             return 0;
         }
-
-        // totalTickets - booked tickets
-        int totalTickets = event.getTotalTickets();
-        int bookedTickets = 0;
-
-        if (event.getBookingCollection() != null) {
-            for (Object booking : event.getBookingCollection()) {
-                // Giả sử Booking có method getQuantity()
-                // bookedTickets += ((Booking) booking).getQuantity();
-                bookedTickets += 1; // Placeholder - cần adjust theo Booking POJO
-            }
-        }
-
-        return totalTickets - bookedTickets;
+        return event.getTotalTickets() - event.getSoldTickets();
     }
 
     @Override
@@ -194,13 +212,19 @@ public class EventServiceImpl implements EventService {
             return false;
         }
 
-        int availableTickets = getAvailableTickets(eventId);
+        int availableTickets = event.getTotalTickets() - event.getSoldTickets();
+        
+        // Kiem tra co du ve de ban khong
         if (availableTickets >= quantityBooked) {
-            // Note: totalTickets không giảm, chỉ được query qua booking
-            // Hoặc có thể thêm column "soldTickets" nếu cần
+            //Cap nhat lai so ve da ban
+            int newSoldAmount = event.getSoldTickets() + quantityBooked;
+            event.setSoldTickets(newSoldAmount);
+            
+            // Luu su kien de cap nhat kho ve
+            this.eventRepo.updateEvent(event);
             return true;
         }
 
-        return false;
+        return false; 
     }
 }

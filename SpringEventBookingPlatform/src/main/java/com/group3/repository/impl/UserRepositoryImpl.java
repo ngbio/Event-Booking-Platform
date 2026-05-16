@@ -45,18 +45,19 @@ public class UserRepositoryImpl implements UserRepository{
     }
     
     @Override
-    public User findUserById(int id) {
+    public User findUserById(Integer id) {
+        if (id == null) return null;
         Session s = currentSession();
         return s.get(User.class, id);
     }
-
-    @Override
-    public User getUserByUsername(String username) {
-        Session s = currentSession();
-        Query<User> q = s.createNamedQuery("User.findByUsername", User.class);
-        q.setParameter("username", username);
-        return q.uniqueResult();
-    }
+//
+//    @Override
+//    public User getUserByUsername(String username) {
+//        Session s = currentSession();
+//        Query<User> q = s.createNamedQuery("User.findByUsername", User.class);
+//        q.setParameter("username", username);
+//        return q.uniqueResult();
+//    }
 
     @Override
     public void addOrUpdateUser(User u) {
@@ -69,7 +70,7 @@ public class UserRepositoryImpl implements UserRepository{
     }
 
     @Override
-    public void deleteUser(int id) {
+    public void deleteUser(Integer id) {
         Session s = currentSession();
         User u = s.get(User.class, id);
         if (u != null) {
@@ -98,9 +99,9 @@ public class UserRepositoryImpl implements UserRepository{
             String kw = params.get("kw");
             if (kw != null && !kw.isBlank()) {
                 String t = kw.trim();
-                Predicate byUsername = b.like(root.get("username"), "%" + t + "%");
+                Predicate byFullname = b.like(root.get("fullName"), "%" + t + "%");
                 Predicate byEmail = b.like(root.get("email"), "%" + t + "%");
-                predicates.add(b.or(byUsername, byEmail));
+                predicates.add(b.or(byFullname, byEmail));
             }
         }
 
@@ -153,9 +154,9 @@ public class UserRepositoryImpl implements UserRepository{
             String kw = params.get("kw");
             if (kw != null && !kw.isBlank()) {
                 String t = kw.trim();
-                Predicate byUsername = b.like(root.get("username"), "%" + t + "%");
+                Predicate byFullname = b.like(root.get("username"), "%" + t + "%");
                 Predicate byEmail = b.like(root.get("email"), "%" + t + "%");
-                predicates.add(b.or(byUsername, byEmail));
+                predicates.add(b.or(byFullname, byEmail));
             }
         }
 
@@ -171,14 +172,6 @@ public class UserRepositoryImpl implements UserRepository{
         Session s = currentSession();
         Query<User> q = s.createNamedQuery("User.findByEmail", User.class);
         q.setParameter("email", email);
-        return q.uniqueResult() != null;
-    }
-    
-    @Override
-    public boolean existUsername(String username){
-        Session s = currentSession();
-        Query<User> q = s.createNamedQuery("User.findByUsername",User.class);
-        q.setParameter("username", username);
         return q.uniqueResult() != null;
     }
 
@@ -198,11 +191,11 @@ public class UserRepositoryImpl implements UserRepository{
     }
 
     @Override
-    public boolean authenticate(String username, String password) {
-        User user = getUserByUsername(username);
+    public boolean authenticate(String email, String password) {
+        User user = findUserByEmail(email);
         if (user == null) {
             return false;
         }
-        return bCryptPasswordEncoder.matches(password, user.getPassword());
+        return this.bCryptPasswordEncoder.matches(password, user.getPassword());
     }
 }

@@ -32,7 +32,6 @@ import java.util.Date;
     @NamedQuery(name = "TicketDetail.findAll", query = "SELECT t FROM TicketDetail t"),
     @NamedQuery(name = "TicketDetail.findById", query = "SELECT t FROM TicketDetail t WHERE t.id = :id"),
     @NamedQuery(name = "TicketDetail.findByQrCode", query = "SELECT t FROM TicketDetail t WHERE t.qrCode = :qrCode"),
-    @NamedQuery(name = "TicketDetail.findByActive", query = "SELECT t FROM TicketDetail t WHERE t.active = :active"),
     @NamedQuery(name = "TicketDetail.findByCreatedDate", query = "SELECT t FROM TicketDetail t WHERE t.createdDate = :createdDate"),
     @NamedQuery(name = "TicketDetail.findByUpdatedDate", query = "SELECT t FROM TicketDetail t WHERE t.updatedDate = :updatedDate")})
 public class TicketDetail implements Serializable {
@@ -48,8 +47,6 @@ public class TicketDetail implements Serializable {
     @Size(min = 1, max = 255)
     @Column(name = "qr_code")
     private String qrCode;
-    @Column(name = "active")
-    private Boolean active;
     @Column(name = "created_date")
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdDate;
@@ -89,14 +86,6 @@ public class TicketDetail implements Serializable {
 
     public void setQrCode(String qrCode) {
         this.qrCode = qrCode;
-    }
-
-    public Boolean getActive() {
-        return active;
-    }
-
-    public void setActive(Boolean active) {
-        this.active = active;
     }
 
     public Date getCreatedDate() {

@@ -16,30 +16,29 @@ public class PaymentMapper {
             return null;
         }
         
-        PaymentResponse dto = new PaymentResponse();
-        dto.setId(payment.getId());
-        dto.setAmount(payment.getAmount());
-        dto.setMethod(payment.getMethod());
-        dto.setTransactionId(payment.getTransactionId());
-        dto.setActive(payment.getActive());
-        dto.setCreatedDate(payment.getCreatedDate());
-        dto.setUpdatedDate(payment.getUpdatedDate());
+        PaymentResponse response = new PaymentResponse();
+        response.setId(payment.getId());
+        response.setAmount(payment.getAmount());
+        response.setMethod(payment.getMethod());
+        response.setTransactionId(payment.getTransactionId());
+        response.setCreatedDate(payment.getCreatedDate());
+        response.setUpdatedDate(payment.getUpdatedDate());
         
         if (payment.getBookingId() != null) {
-            dto.setBookingId(payment.getBookingId().getId());
+            response.setBookingId(payment.getBookingId().getId());
         }
         
         if (payment.getUserId() != null) {
-            dto.setUserId(payment.getUserId().getId());
-            dto.setUsername(payment.getUserId().getUsername());
+            response.setUserId(payment.getUserId().getId());
+            response.setUsername(payment.getUserId().getEmail());
         }
         
         if (payment.getStatusId() != null) {
-            dto.setStatusId(payment.getStatusId().getId());
+            response.setStatusId(payment.getStatusId().getId());
             // Note: Statuspay entity should have getName() method
         }
         
-        return dto;
+        return response;
     }
 
     /**

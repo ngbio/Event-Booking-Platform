@@ -48,8 +48,10 @@ public class Category implements Serializable {
     @Size(min = 1, max = 100)
     @Column(name = "name")
     private String name;
+    @Basic(optional = false)
+    @NotNull
     @Column(name = "active")
-    private Boolean active;
+    private boolean active;
     @Column(name = "created_date")
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdDate;
@@ -66,9 +68,10 @@ public class Category implements Serializable {
         this.id = id;
     }
 
-    public Category(Integer id, String name) {
+    public Category(Integer id, String name, boolean active) {
         this.id = id;
         this.name = name;
+        this.active = active;
     }
 
     public Integer getId() {
@@ -87,11 +90,11 @@ public class Category implements Serializable {
         this.name = name;
     }
 
-    public Boolean getActive() {
+    public boolean getActive() {
         return active;
     }
 
-    public void setActive(Boolean active) {
+    public void setActive(boolean active) {
         this.active = active;
     }
 

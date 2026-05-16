@@ -9,11 +9,10 @@ public class BookingResponse {
     private Integer eventId;
     private String eventTitle;
     private Integer userId;
-    private String username;
-    private int quantity;
+    private String email;
+    private Integer quantity;
     private BigDecimal unitPrice;
     private BigDecimal totalPrice;
-    private Boolean active;
     private Integer statusId;
     private String statusName;
     
@@ -26,18 +25,17 @@ public class BookingResponse {
     public BookingResponse() {
     }
 
-    public BookingResponse(Integer id, Integer eventId, String eventTitle, Integer userId, String username, 
-                        int quantity, BigDecimal unitPrice, BigDecimal totalPrice, Boolean active, 
+    public BookingResponse(Integer id, Integer eventId, String eventTitle, Integer userId, String email, 
+                        Integer quantity, BigDecimal unitPrice, BigDecimal totalPrice, 
                         Integer statusId, String statusName, Date createdDate, Date updatedDate) {
         this.id = id;
         this.eventId = eventId;
         this.eventTitle = eventTitle;
         this.userId = userId;
-        this.username = username;
+        this.email = email;
         this.quantity = quantity;
         this.unitPrice = unitPrice;
         this.totalPrice = totalPrice;
-        this.active = active;
         this.statusId = statusId;
         this.statusName = statusName;
         this.createdDate = createdDate;
@@ -76,19 +74,19 @@ public class BookingResponse {
         this.userId = userId;
     }
 
-    public String getUsername() {
-        return username;
+    public String getEmail() {
+        return email;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
-    public int getQuantity() {
+    public Integer getQuantity() {
         return quantity;
     }
 
-    public void setQuantity(int quantity) {
+    public void setQuantity(Integer quantity) {
         this.quantity = quantity;
     }
 
@@ -106,14 +104,6 @@ public class BookingResponse {
 
     public void setTotalPrice(BigDecimal totalPrice) {
         this.totalPrice = totalPrice;
-    }
-
-    public Boolean getActive() {
-        return active;
-    }
-
-    public void setActive(Boolean active) {
-        this.active = active;
     }
 
     public Integer getStatusId() {

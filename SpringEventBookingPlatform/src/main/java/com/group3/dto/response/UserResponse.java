@@ -4,39 +4,53 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import java.util.Date;
 
 public class UserResponse {
+
     private Integer id;
-    private String username;
     private String email;
     private String fullName;
     private String phone;
     private String avatar;
     private Boolean active;
+    private String identityCard;
+    private String businessLicense;
+    private String organizationName;
+    private String taxCode;
+
     private Integer roleId;
     private String roleName;
-    
+
+    private Integer statusId;
+    private String statusName;
+
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Ho_Chi_Minh")
     private Date createdDate;
-    
+
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Ho_Chi_Minh")
     private Date updatedDate;
 
     public UserResponse() {
     }
 
-    public UserResponse(Integer id, String username, String email, String fullName, String phone, 
-                      String avatar, Boolean active, Integer roleId, String roleName, Date createdDate, Date updatedDate) {
+    public UserResponse(Integer id, String email, String fullName, String phone, String avatar, Boolean active, String identityCard, String businessLicense, String organizationName, String taxCode, Integer roleId, String roleName, Integer statusId, String statusName, Date createdDate, Date updatedDate) {
         this.id = id;
-        this.username = username;
         this.email = email;
         this.fullName = fullName;
         this.phone = phone;
         this.avatar = avatar;
         this.active = active;
+        this.identityCard = identityCard;
+        this.businessLicense = businessLicense;
+        this.organizationName = organizationName;
+        this.taxCode = taxCode;
         this.roleId = roleId;
         this.roleName = roleName;
+        this.statusId = statusId;
+        this.statusName = statusName;
         this.createdDate = createdDate;
         this.updatedDate = updatedDate;
     }
+
+    
 
     public Integer getId() {
         return id;
@@ -44,14 +58,6 @@ public class UserResponse {
 
     public void setId(Integer id) {
         this.id = id;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
     }
 
     public String getEmail() {
@@ -125,4 +131,55 @@ public class UserResponse {
     public void setUpdatedDate(Date updatedDate) {
         this.updatedDate = updatedDate;
     }
+
+    public String getIdentityCard() {
+        return identityCard;
+    }
+
+    public void setIdentityCard(String identityCard) {
+        this.identityCard = identityCard;
+    }
+
+    public String getBusinessLicense() {
+        return businessLicense;
+    }
+
+    public void setBusinessLicense(String businessLicense) {
+        this.businessLicense = businessLicense;
+    }
+
+    public String getOrganizationName() {
+        return organizationName;
+    }
+
+    public void setOrganizationName(String organizationName) {
+        this.organizationName = organizationName;
+    }
+
+    public String getTaxCode() {
+        return taxCode;
+    }
+
+    public void setTaxCode(String taxCode) {
+        this.taxCode = taxCode;
+    }
+
+    public Integer getStatusId() {
+        return statusId;
+    }
+
+    public void setStatusId(Integer statusId) {
+        this.statusId = statusId;
+    }
+
+    public String getStatusName() {
+        return statusName;
+    }
+
+    public void setStatusName(String statusName) {
+        this.statusName = statusName;
+    }
+    
+    
+
 }

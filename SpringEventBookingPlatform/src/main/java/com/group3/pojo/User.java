@@ -34,13 +34,15 @@ import java.util.Date;
 @NamedQueries({
     @NamedQuery(name = "User.findAll", query = "SELECT u FROM User u"),
     @NamedQuery(name = "User.findById", query = "SELECT u FROM User u WHERE u.id = :id"),
-    @NamedQuery(name = "User.findByUsername", query = "SELECT u FROM User u WHERE u.username = :username"),
-    @NamedQuery(name = "User.findByPassword", query = "SELECT u FROM User u WHERE u.password = :password"),
     @NamedQuery(name = "User.findByEmail", query = "SELECT u FROM User u WHERE u.email = :email"),
+    @NamedQuery(name = "User.findByPassword", query = "SELECT u FROM User u WHERE u.password = :password"),
     @NamedQuery(name = "User.findByFullName", query = "SELECT u FROM User u WHERE u.fullName = :fullName"),
     @NamedQuery(name = "User.findByPhone", query = "SELECT u FROM User u WHERE u.phone = :phone"),
     @NamedQuery(name = "User.findByAvatar", query = "SELECT u FROM User u WHERE u.avatar = :avatar"),
-    @NamedQuery(name = "User.findByActive", query = "SELECT u FROM User u WHERE u.active = :active"),
+    @NamedQuery(name = "User.findByIdentityCard", query = "SELECT u FROM User u WHERE u.identityCard = :identityCard"),
+    @NamedQuery(name = "User.findByBusinessLicense", query = "SELECT u FROM User u WHERE u.businessLicense = :businessLicense"),
+    @NamedQuery(name = "User.findByOrganizationName", query = "SELECT u FROM User u WHERE u.organizationName = :organizationName"),
+    @NamedQuery(name = "User.findByTaxCode", query = "SELECT u FROM User u WHERE u.taxCode = :taxCode"),
     @NamedQuery(name = "User.findByCreatedDate", query = "SELECT u FROM User u WHERE u.createdDate = :createdDate"),
     @NamedQuery(name = "User.findByUpdatedDate", query = "SELECT u FROM User u WHERE u.updatedDate = :updatedDate")})
 public class User implements Serializable {
@@ -51,22 +53,17 @@ public class User implements Serializable {
     @Basic(optional = false)
     @Column(name = "id")
     private Integer id;
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 50)
-    @Column(name = "username")
-    private String username;
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 255)
-    @Column(name = "password")
-    private String password;
     // @Pattern(regexp="[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?", message="Invalid email")//if the field contains email address consider using this annotation to enforce field validation
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 100)
     @Column(name = "email")
     private String email;
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 255)
+    @Column(name = "password")
+    private String password;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 100)
@@ -79,8 +76,18 @@ public class User implements Serializable {
     @Size(max = 255)
     @Column(name = "avatar")
     private String avatar;
-    @Column(name = "active")
-    private Boolean active;
+    @Size(max = 255)
+    @Column(name = "identity_card")
+    private String identityCard;
+    @Size(max = 255)
+    @Column(name = "business_license")
+    private String businessLicense;
+    @Size(max = 255)
+    @Column(name = "organization_name")
+    private String organizationName;
+    @Size(max = 20)
+    @Column(name = "tax_code")
+    private String taxCode;
     @Column(name = "created_date")
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdDate;
@@ -107,11 +114,10 @@ public class User implements Serializable {
         this.id = id;
     }
 
-    public User(Integer id, String username, String password, String email, String fullName) {
+    public User(Integer id, String email, String password, String fullName) {
         this.id = id;
-        this.username = username;
-        this.password = password;
         this.email = email;
+        this.password = password;
         this.fullName = fullName;
     }
 
@@ -123,12 +129,12 @@ public class User implements Serializable {
         this.id = id;
     }
 
-    public String getUsername() {
-        return username;
+    public String getEmail() {
+        return email;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public String getPassword() {
@@ -137,14 +143,6 @@ public class User implements Serializable {
 
     public void setPassword(String password) {
         this.password = password;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
     }
 
     public String getFullName() {
@@ -171,12 +169,36 @@ public class User implements Serializable {
         this.avatar = avatar;
     }
 
-    public Boolean getActive() {
-        return active;
+    public String getIdentityCard() {
+        return identityCard;
     }
 
-    public void setActive(Boolean active) {
-        this.active = active;
+    public void setIdentityCard(String identityCard) {
+        this.identityCard = identityCard;
+    }
+
+    public String getBusinessLicense() {
+        return businessLicense;
+    }
+
+    public void setBusinessLicense(String businessLicense) {
+        this.businessLicense = businessLicense;
+    }
+
+    public String getOrganizationName() {
+        return organizationName;
+    }
+
+    public void setOrganizationName(String organizationName) {
+        this.organizationName = organizationName;
+    }
+
+    public String getTaxCode() {
+        return taxCode;
+    }
+
+    public void setTaxCode(String taxCode) {
+        this.taxCode = taxCode;
     }
 
     public Date getCreatedDate() {

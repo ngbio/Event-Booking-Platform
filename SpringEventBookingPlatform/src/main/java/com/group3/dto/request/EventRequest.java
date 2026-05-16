@@ -12,10 +12,11 @@ import jakarta.validation.constraints.Size;
 import java.math.BigDecimal;
 import java.util.Date;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  *
- * @author thanhs
+ * @author thanh
  */
 public class EventRequest {
     @NotBlank(message = "Tiêu đề sự kiện không được để trống")
@@ -23,7 +24,11 @@ public class EventRequest {
     private String title;
 
     private String description;
+    
+    private MultipartFile imageFile;
 
+    private MultipartFile videoFile;
+    
     @NotNull(message = "Thời gian bắt đầu là bắt buộc")
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm") // Khớp với input type="datetime-local" của HTML5
     private Date startTime;
@@ -107,6 +112,22 @@ public class EventRequest {
 
     public void setCategoryIds(String categoryIds) {
         this.categoryIds = categoryIds;
+    }
+
+    public MultipartFile getImageFile() {
+        return imageFile;
+    }
+
+    public void setImageFile(MultipartFile imageFile) {
+        this.imageFile = imageFile;
+    }
+
+    public MultipartFile getVideoFile() {
+        return videoFile;
+    }
+
+    public void setVideoFile(MultipartFile videoFile) {
+        this.videoFile = videoFile;
     }
     
     
