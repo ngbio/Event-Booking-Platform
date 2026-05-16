@@ -13,30 +13,36 @@
             <a th:href="@{/admin/categories/add}" class="btn btn-primary">+ Thêm danh mục mới</a>
         </div>
 
-        <table class="table table-striped table-bordered">
-            <thead class="table-dark">
+        <table class="table table-hover table-bordered align-middle shadow-sm bg-white">
+            <thead class="table-dark text-center">
                 <tr>
                     <th>ID</th>
                     <th>Tên danh mục</th>
                     <th>Ngày tạo</th>
                     <th>Trạng thái</th>
-                    <th class="text-center">Hành động</th>
+                    <th>Hành động</th>
                 </tr>
             </thead>
             <tbody>
                 <tr th:each="c: ${categories}">
-                    <td th:text="${c.id}">1</td>
+                    <td class="text-center fw-bold" th:text="${c.id}">1</td>
                     <td th:text="${c.name}">Âm nhạc</td>
-                    <td th:text="${#dates.format(c.createdDate, 'dd/MM/yyyy')}">15/07/2026</td>
-                    <td>
-                        <span th:if="${c.active}" class="text-success fw-bold">Hiện</span>
-                        <span th:unless="${c.active}" class="text-danger fw-bold">Ẩn</span>
-                    </td>
+                    <td class="text-center" th:text="${#dates.format(c.createdDate, 'dd/MM/yyyy')}">15/07/2026</td>
+                    
                     <td class="text-center">
-                        <a th:href="@{/admin/categories/update/} + ${c.id}" class="btn btn-sm btn-info text-white">Cập nhật</a>
+                        <span th:if="${c.active}" class="badge bg-success">Đang hiện</span>
+                        <span th:unless="${c.active}" class="badge bg-secondary">Đã ẩn</span>
+                    </td>
+                    
+                    <td class="text-center">
+                        <a th:href="@{/admin/categories/update/} + ${c.id}" class="btn btn-sm btn-info text-white me-1">Cập nhật</a>
+                        
                         <form method="post" th:action="@{/admin/categories/delete}" class="d-inline">
                             <input type="hidden" name="categoryId" th:value="${c.id}" />
-                            <button class="btn btn-sm btn-danger" onclick="return confirm('Bạn có chắc muốn xóa?')">Xóa</button>
+                            <button class="btn btn-sm btn-danger" 
+                                    onclick="return confirm('Bạn có chắc muốn xóa vĩnh viễn danh mục này?')">
+                                Xóa
+                            </button>
                         </form>
                     </td>
                 </tr>
@@ -45,5 +51,20 @@
     </section>
 
     <div th:replace="base :: footer"></div>
+
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        var error = /*[[${error}]]*/ null;
+        var success = /*[[${success}]]*/ null;
+
+        if (error !== null) {
+            alert(error);
+        }
+        
+        if (success !== null) {
+            alert(success);
+        }
+        /*]]>*/
+    </script>
 </body>
 </html>
