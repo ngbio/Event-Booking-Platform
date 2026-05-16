@@ -14,7 +14,7 @@ import com.group3.pojo.User;
 import com.group3.repository.CategoryRepository;
 import com.group3.repository.EventRepository;
 import com.group3.service.EventService;
-import com.group3.utils.DtoMapper;
+import com.group3.utils.DTOMapper;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -25,6 +25,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
@@ -44,19 +45,20 @@ public class EventServiceImpl implements EventService {
     private Cloudinary cloudinary;
 
     @Override
+    @Transactional
     public List<EventResponse> getEvents(Map<String, String> params) {
         List<Event> events = this.eventRepo.findByParams(params);
-        return DtoMapper.toEventResponseList(events);
+        return DTOMapper.toEventResponseList(events);
     }
 
     @Override
     public EventResponse getEventById(Integer id) {
-        return DtoMapper.toEventResponse(this.eventRepo.getEventById(id));
+        return DTOMapper.toEventResponse(this.eventRepo.getEventById(id));
     }
 
     @Override
     public EventResponse createEvent(EventRequest request, MultipartFile image, MultipartFile video, User organizer) {
-        Event event = DtoMapper.toEventEntity(request);
+        Event event = DTOMapper.toEventEntity(request);
         //add Organizer
         event.setOrganizerId(organizer);
 
@@ -99,7 +101,7 @@ public class EventServiceImpl implements EventService {
             }
             event.setCategoryCollection(categories);
         }
-        return DtoMapper.toEventResponse(this.eventRepo.addEvent(event));
+        return DTOMapper.toEventResponse(this.eventRepo.addEvent(event));
     }
 
     @Override
@@ -155,7 +157,7 @@ public class EventServiceImpl implements EventService {
             event.setCategoryCollection(categories);
         }
 
-        return DtoMapper.toEventResponse(this.eventRepo.updateEvent(event));
+        return DTOMapper.toEventResponse(this.eventRepo.updateEvent(event));
     }
 
     @Override

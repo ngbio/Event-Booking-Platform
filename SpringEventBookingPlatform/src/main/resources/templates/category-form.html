@@ -1,0 +1,64 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title th:text="${category.id != null ? 'Chỉnh sửa danh mục' : 'Thêm danh mục mới'}"></title>
+    <th:block th:replace="base :: css"></th:block>
+</head>
+<body class="bg-light">
+    <div th:replace="base :: header"></div>
+
+    <section class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <nav aria-label="breadcrumb" class="mb-3">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a th:href="@{/admin/categories}">Danh mục</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Cập nhật</li>
+                    </ol>
+                </nav>
+
+                <div class="card shadow-sm border-0">
+                    <div class="card-header text-white px-4 py-3" style="background-color: #2c3e50;">
+                        <h5 class="mb-0 fw-bold">
+                            <i class="bi bi-pencil-square me-2"></i>
+                            <span th:text="${category.id != null ? 'CẬP NHẬT DANH MỤC' : 'THÊM DANH MỤC MỚI'}"></span>
+                        </h5>
+                    </div>
+                    
+                    <div class="card-body p-4">
+                        <form th:action="@{/admin/categories/save}" th:object="${category}" method="post">
+                            <input type="hidden" th:field="*{id}" />
+
+                            <div class="mb-4">
+                                <label class="form-label fw-bold">Tên danh mục</label>
+                                <input type="text" th:field="*{name}" class="form-control form-control-lg" 
+                                       placeholder="Ví dụ: Âm nhạc, Hội thảo..." required />
+                                <div class="form-text">Tên danh mục nên ngắn gọn và súc tích.</div>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label class="form-label fw-bold">Trạng thái hiển thị</label>
+                                <select th:field="*{active}" class="form-select form-select-lg">
+                                    <option th:value="true">Hiện (Công khai trên sàn)</option>
+                                    <option th:value="false">Ẩn (Tạm thời đóng)</option>
+                                </select>
+                            </div>
+
+                            <hr class="my-4">
+
+                            <div class="d-flex justify-content-end gap-2">
+                                <a th:href="@{/admin/categories}" class="btn btn-secondary px-4">Hủy bỏ</a>
+                                <button type="submit" class="btn btn-success px-5 fw-bold">
+                                    <i class="bi bi-save me-2"></i>Lưu dữ liệu
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div th:replace="base :: footer"></div>
+</body>
+</html>

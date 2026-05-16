@@ -16,6 +16,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -52,16 +53,30 @@ public class SpringSecurityConfigs {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.csrf(c -> c.disable()).authorizeHttpRequests((requests) -> requests
-                .requestMatchers("/", "/admin").permitAll()
-                .requestMatchers("/api/**").permitAll()
-                .anyRequest().authenticated()
-        ).formLogin(form -> form.loginPage("/admin/login") // Đường dẫn tới trang đăng nhập
-                .loginProcessingUrl("/login") // Đường dẫn xử lý POST
-                .defaultSuccessUrl("/", true) // Chuyển hướng khi thành công
-                .failureUrl("/admin/login?error=true") // Chuyển hướng khi thất bại
-        ).logout((logout) -> logout.logoutSuccessUrl("/admin/login").permitAll());
-        return http.build();
+        http.cors(cors -> cors.configurationSource(corsConfigurationSource()))
+        .csrf(c -> c.disable())
+        
+        .authorizeHttpRequests((requests) -> requests
+            .requestMatchers("/admin/login", "/api/login", "/api/users").permitAll()
+            .requestMatchers("/admin/**").hasRole("ADMIN")
+            // Khu vực này sẽ do JwtFilter bảo vệ
+            .requestMatchers("/api/secure/**").authenticated() 
+            .anyRequest().authenticated()
+        )
+        
+        // Khởi tạo JwtFilter và đặt nó gác ở cửa kiểm tra API
+        .addFilterBefore(new com.group3.filters.JwtFilter(), UsernamePasswordAuthenticationFilter.class)
+        
+        .formLogin(form -> form
+            .loginPage("/admin/login")
+            .loginProcessingUrl("/admin/login")
+            .defaultSuccessUrl("/admin", true)
+            .failureUrl("/admin/login?error=true")
+            .permitAll()
+        )
+        .logout((logout) -> logout.logoutSuccessUrl("/admin/login").permitAll());
+        
+    return http.build();
     }
 
     @Bean

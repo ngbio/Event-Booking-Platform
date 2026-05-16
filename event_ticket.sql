@@ -129,9 +129,9 @@ INSERT INTO `category` (`name`) VALUES
 ('Cộng đồng'), ('Giáo dục'), ('Công nghệ'), ('Kinh doanh'), ('Giải trí');
 
 INSERT INTO `user` (`role_id`, `status_id`, `username`, `password`, `email`, `full_name`, `phone`) VALUES 
-(1, 2, 'super_admin', '$2a$10$7zBCl5.S7W.mK9K1yTqOue9BvYqI6yM1.8g9GfVzE6B6zXzXzXzXz', 'admin@eventhub.vn', 'Quản Trị Viên Hệ Thống', '0901112223'),
-(2, 2, 'vibe_ent', '$2a$10$7zBCl5.S7W.mK9K1yTqOue9BvYqI6yM1.8g9GfVzE6B6zXzXzXzXz', 'contact@vibe.vn', 'Vibe Entertainment', '0912333444'),
-(3, 2, 'user_tester', '$2a$10$7zBCl5.S7W.mK9K1yTqOue9BvYqI6yM1.8g9GfVzE6B6zXzXzXzXz', 'tester@gmail.com', 'Người Dùng Thử Nghiệm', '0988000111');
+(1, 2, 'super_admin', '$2a$10$5X9k5N1sTc1/CjVH5XJoje3QMYijH3ETpgkox00R0MdPaJPPrf7wO', 'admin@eventhub.vn', 'Quản Trị Viên Hệ Thống', '0901112223'),
+(2, 2, 'vibe_ent', '$2a$10$5X9k5N1sTc1/CjVH5XJoje3QMYijH3ETpgkox00R0MdPaJPPrf7wO', 'contact@vibe.vn', 'Vibe Entertainment', '0912333444'),
+(3, 2, 'user_tester', '$2a$10$5X9k5N1sTc1/CjVH5XJoje3QMYijH3ETpgkox00R0MdPaJPPrf7wO', 'tester@gmail.com', 'Người Dùng Thử Nghiệm', '0988000111');
 
 -- ------------------------------------------------------
 -- 3. DỮ LIỆU SỰ KIỆN MẪU

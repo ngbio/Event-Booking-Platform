@@ -1,0 +1,49 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Quản lý Người dùng</title>
+    <th:block th:replace="base :: css"></th:block>
+</head>
+<body>
+    <div th:replace="base :: header"></div>
+
+    <section class="container mt-4">
+        <h2 class="mb-4">Danh sách Người dùng</h2>
+        <table class="table table-bordered table-hover">
+            <thead class="table-dark">
+                <tr>
+                    <th>ID</th>
+                    <th>Tên đăng nhập</th>
+                    <th>Họ và tên</th>
+                    <th>Email</th>
+                    <th>Vai trò</th>
+                    <th>Trạng thái</th>
+                    <th>Hành động</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="u: ${users}">
+                    <td th:text="${u.id}">1</td>
+                    <td th:text="${u.username}">thanhduong</td>
+                    <td th:text="${u.fullName}">Dương Thanh</td>
+                    <td th:text="${u.email}">thanh@gmail.com</td>
+                    <td th:text="${u.roleName}">ROLE_USER</td>
+                    <td>
+                        <span th:if="${u.active}" class="badge bg-success">Hoạt động</span>
+                        <span th:unless="${u.active}" class="badge bg-danger">Bị khóa</span>
+                    </td>
+                    <td>
+                        <form method="post" th:action="@{/admin/users/toggle-status}" class="d-inline">
+                            <input type="hidden" name="userId" th:value="${u.id}" />
+                            <button th:if="${u.active}" class="btn btn-sm btn-warning">Khóa</button>
+                            <button th:unless="${u.active}" class="btn btn-sm btn-success">Mở khóa</button>
+                        </form>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+
+    <div th:replace="base :: footer"></div>
+</body>
+</html>
