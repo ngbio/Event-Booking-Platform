@@ -21,7 +21,6 @@ public class BookingMapper {
         response.setQuantity(booking.getQuantity());
         response.setUnitPrice(booking.getUnitPrice());
         response.setTotalPrice(booking.getTotalPrice());
-        response.setActive(booking.getActive());
         response.setCreatedDate(booking.getCreatedDate());
         response.setUpdatedDate(booking.getUpdatedDate());
         
@@ -32,7 +31,7 @@ public class BookingMapper {
         
         if (booking.getUserId() != null) {
             response.setUserId(booking.getUserId().getId());
-            response.setUsername(booking.getUserId().getUsername());
+            response.setEmail(booking.getUserId().getEmail());
         }
         
         if (booking.getStatusId() != null) {

@@ -28,16 +28,15 @@ import java.util.Date;
  * @author thanh
  */
 @Entity
-@Table(name = "payment")
+@Table(name = "event_fee")
 @NamedQueries({
-    @NamedQuery(name = "Payment.findAll", query = "SELECT p FROM Payment p"),
-    @NamedQuery(name = "Payment.findById", query = "SELECT p FROM Payment p WHERE p.id = :id"),
-    @NamedQuery(name = "Payment.findByAmount", query = "SELECT p FROM Payment p WHERE p.amount = :amount"),
-    @NamedQuery(name = "Payment.findByMethod", query = "SELECT p FROM Payment p WHERE p.method = :method"),
-    @NamedQuery(name = "Payment.findByTransactionId", query = "SELECT p FROM Payment p WHERE p.transactionId = :transactionId"),
-    @NamedQuery(name = "Payment.findByCreatedDate", query = "SELECT p FROM Payment p WHERE p.createdDate = :createdDate"),
-    @NamedQuery(name = "Payment.findByUpdatedDate", query = "SELECT p FROM Payment p WHERE p.updatedDate = :updatedDate")})
-public class Payment implements Serializable {
+    @NamedQuery(name = "EventFee.findAll", query = "SELECT e FROM EventFee e"),
+    @NamedQuery(name = "EventFee.findById", query = "SELECT e FROM EventFee e WHERE e.id = :id"),
+    @NamedQuery(name = "EventFee.findByAmount", query = "SELECT e FROM EventFee e WHERE e.amount = :amount"),
+    @NamedQuery(name = "EventFee.findByPaymentMethod", query = "SELECT e FROM EventFee e WHERE e.paymentMethod = :paymentMethod"),
+    @NamedQuery(name = "EventFee.findByTransactionId", query = "SELECT e FROM EventFee e WHERE e.transactionId = :transactionId"),
+    @NamedQuery(name = "EventFee.findByCreatedDate", query = "SELECT e FROM EventFee e WHERE e.createdDate = :createdDate")})
+public class EventFee implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -50,41 +49,32 @@ public class Payment implements Serializable {
     @NotNull
     @Column(name = "amount")
     private BigDecimal amount;
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 50)
-    @Column(name = "method")
-    private String method;
+    @Size(max = 50)
+    @Column(name = "payment_method")
+    private String paymentMethod;
     @Size(max = 255)
     @Column(name = "transaction_id")
     private String transactionId;
     @Column(name = "created_date")
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdDate;
-    @Column(name = "updated_date")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date updatedDate;
-    @JoinColumn(name = "booking_id", referencedColumnName = "id")
+    @JoinColumn(name = "event_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
-    private Booking bookingId;
+    private Event eventId;
     @JoinColumn(name = "status_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
     private StatusPay statusId;
-    @JoinColumn(name = "user_id", referencedColumnName = "id")
-    @ManyToOne(optional = false)
-    private User userId;
 
-    public Payment() {
+    public EventFee() {
     }
 
-    public Payment(Integer id) {
+    public EventFee(Integer id) {
         this.id = id;
     }
 
-    public Payment(Integer id, BigDecimal amount, String method) {
+    public EventFee(Integer id, BigDecimal amount) {
         this.id = id;
         this.amount = amount;
-        this.method = method;
     }
 
     public Integer getId() {
@@ -103,12 +93,12 @@ public class Payment implements Serializable {
         this.amount = amount;
     }
 
-    public String getMethod() {
-        return method;
+    public String getPaymentMethod() {
+        return paymentMethod;
     }
 
-    public void setMethod(String method) {
-        this.method = method;
+    public void setPaymentMethod(String paymentMethod) {
+        this.paymentMethod = paymentMethod;
     }
 
     public String getTransactionId() {
@@ -127,20 +117,12 @@ public class Payment implements Serializable {
         this.createdDate = createdDate;
     }
 
-    public Date getUpdatedDate() {
-        return updatedDate;
+    public Event getEventId() {
+        return eventId;
     }
 
-    public void setUpdatedDate(Date updatedDate) {
-        this.updatedDate = updatedDate;
-    }
-
-    public Booking getBookingId() {
-        return bookingId;
-    }
-
-    public void setBookingId(Booking bookingId) {
-        this.bookingId = bookingId;
+    public void setEventId(Event eventId) {
+        this.eventId = eventId;
     }
 
     public StatusPay getStatusId() {
@@ -149,14 +131,6 @@ public class Payment implements Serializable {
 
     public void setStatusId(StatusPay statusId) {
         this.statusId = statusId;
-    }
-
-    public User getUserId() {
-        return userId;
-    }
-
-    public void setUserId(User userId) {
-        this.userId = userId;
     }
 
     @Override
@@ -169,10 +143,10 @@ public class Payment implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Payment)) {
+        if (!(object instanceof EventFee)) {
             return false;
         }
-        Payment other = (Payment) object;
+        EventFee other = (EventFee) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
@@ -181,7 +155,7 @@ public class Payment implements Serializable {
 
     @Override
     public String toString() {
-        return "com.group3.pojo.Payment[ id=" + id + " ]";
+        return "com.group3.pojo.EventFee[ id=" + id + " ]";
     }
     
 }

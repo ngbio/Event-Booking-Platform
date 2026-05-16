@@ -2,23 +2,18 @@
 <persistence version="3.0" xmlns="https://jakarta.ee/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://jakarta.ee/xml/ns/persistence https://jakarta.ee/xml/ns/persistence/persistence_3_0.xsd">
   <!-- Define Persistence Unit -->
   <persistence-unit name="my_persistence_unit">
-    <class>com.group3.pojo.Ticketdetail</class>
-    <class>com.group3.pojo.Statuspay</class>
-    <class>com.group3.pojo.Statususer</class>
-    <class>com.group3.pojo.Statusevent</class>
     <class>com.group3.pojo.Event</class>
-    <class>com.group3.pojo.Statusbooking</class>
     <class>com.group3.pojo.Booking</class>
     <class>com.group3.pojo.Category</class>
     <class>com.group3.pojo.Payment</class>
     <class>com.group3.pojo.User</class>
     <class>com.group3.pojo.Role</class>
-    <class>com.group3.pojo.Statusticket</class>
     <class>com.group3.pojo.StatusPay</class>
     <class>com.group3.pojo.StatusEvent</class>
     <class>com.group3.pojo.StatusTicket</class>
     <class>com.group3.pojo.TicketDetail</class>
     <class>com.group3.pojo.StatusBooking</class>
     <class>com.group3.pojo.StatusUser</class>
+    <class>com.group3.pojo.EventFee</class>
   </persistence-unit>
 </persistence>

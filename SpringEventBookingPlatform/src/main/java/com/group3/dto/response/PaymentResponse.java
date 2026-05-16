@@ -8,11 +8,10 @@ public class PaymentResponse {
     private Integer id;
     private Integer bookingId;
     private Integer userId;
-    private String username;
+    private String email;
     private BigDecimal amount;
     private String method;
     private String transactionId;
-    private Boolean active;
     private Integer statusId;
     private String statusName;
     
@@ -25,17 +24,16 @@ public class PaymentResponse {
     public PaymentResponse() {
     }
 
-    public PaymentResponse(Integer id, Integer bookingId, Integer userId, String username, BigDecimal amount, 
-                        String method, String transactionId, Boolean active, Integer statusId, String statusName, 
+    public PaymentResponse(Integer id, Integer bookingId, Integer userId, String email, BigDecimal amount, 
+                        String method, String transactionId, Integer statusId, String statusName, 
                         Date createdDate, Date updatedDate) {
         this.id = id;
         this.bookingId = bookingId;
         this.userId = userId;
-        this.username = username;
+        this.email = email;
         this.amount = amount;
         this.method = method;
         this.transactionId = transactionId;
-        this.active = active;
         this.statusId = statusId;
         this.statusName = statusName;
         this.createdDate = createdDate;
@@ -66,12 +64,12 @@ public class PaymentResponse {
         this.userId = userId;
     }
 
-    public String getUsername() {
-        return username;
+    public String getEmail() {
+        return email;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setUsername(String email) {
+        this.email= email;
     }
 
     public BigDecimal getAmount() {
@@ -97,15 +95,7 @@ public class PaymentResponse {
     public void setTransactionId(String transactionId) {
         this.transactionId = transactionId;
     }
-
-    public Boolean getActive() {
-        return active;
-    }
-
-    public void setActive(Boolean active) {
-        this.active = active;
-    }
-
+    
     public Integer getStatusId() {
         return statusId;
     }

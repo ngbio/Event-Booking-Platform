@@ -22,7 +22,7 @@ import jakarta.transaction.Transactional;
 @Repository
 @Transactional
 public class EventRepositoryImpl implements EventRepository {
-    
+
     @Autowired
     private LocalSessionFactoryBean factory;
 
@@ -35,10 +35,11 @@ public class EventRepositoryImpl implements EventRepository {
 
     @Override
     public Event getEventById(Integer id) {
+        if (id == null) {
+            return null;
+        }
         Session session = this.factory.getObject().getCurrentSession();
-        Query<Event> q = session.createNamedQuery("Event.findById", Event.class);
-        q.setParameter("id", id);
-        return q.uniqueResult();
+        return session.get(Event.class, id);
     }
 
     @Override
@@ -83,7 +84,7 @@ public class EventRepositoryImpl implements EventRepository {
     public List<Event> findByParams(Map<String, String> params) {
         Session session = this.factory.getObject().getCurrentSession();
         String hql = "SELECT e FROM Event e WHERE 1=1";
-        
+
         if (params.containsKey("title") && !params.get("title").isEmpty()) {
             hql += " AND e.title LIKE :title";
         }
@@ -93,9 +94,9 @@ public class EventRepositoryImpl implements EventRepository {
         if (params.containsKey("categoryId") && !params.get("categoryId").isEmpty()) {
             hql += " AND :categoryId IN (SELECT c.id FROM e.categoryCollection c)";
         }
-        
+
         Query<Event> q = session.createQuery(hql, Event.class);
-        
+
         if (params.containsKey("title") && !params.get("title").isEmpty()) {
             q.setParameter("title", "%" + params.get("title") + "%");
         }
@@ -105,7 +106,7 @@ public class EventRepositoryImpl implements EventRepository {
         if (params.containsKey("categoryId") && !params.get("categoryId").isEmpty()) {
             q.setParameter("categoryId", Integer.parseInt(params.get("categoryId")));
         }
-        
+
         return q.list();
     }
 }

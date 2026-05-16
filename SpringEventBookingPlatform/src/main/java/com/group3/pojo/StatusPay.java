@@ -42,6 +42,8 @@ public class StatusPay implements Serializable {
     @Column(name = "name")
     private String name;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "statusId")
+    private Collection<EventFee> eventFeeCollection;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "statusId")
     private Collection<Payment> paymentCollection;
 
     public StatusPay() {
@@ -70,6 +72,14 @@ public class StatusPay implements Serializable {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public Collection<EventFee> getEventFeeCollection() {
+        return eventFeeCollection;
+    }
+
+    public void setEventFeeCollection(Collection<EventFee> eventFeeCollection) {
+        this.eventFeeCollection = eventFeeCollection;
     }
 
     public Collection<Payment> getPaymentCollection() {

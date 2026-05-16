@@ -46,7 +46,10 @@ import java.util.Date;
     @NamedQuery(name = "Event.findByLocation", query = "SELECT e FROM Event e WHERE e.location = :location"),
     @NamedQuery(name = "Event.findByTotalTickets", query = "SELECT e FROM Event e WHERE e.totalTickets = :totalTickets"),
     @NamedQuery(name = "Event.findByPrice", query = "SELECT e FROM Event e WHERE e.price = :price"),
-    @NamedQuery(name = "Event.findByActive", query = "SELECT e FROM Event e WHERE e.active = :active"),
+    @NamedQuery(name = "Event.findBySoldTickets", query = "SELECT e FROM Event e WHERE e.soldTickets = :soldTickets"),
+    @NamedQuery(name = "Event.findByListingFee", query = "SELECT e FROM Event e WHERE e.listingFee = :listingFee"),
+    @NamedQuery(name = "Event.findByIsPaidFee", query = "SELECT e FROM Event e WHERE e.isPaidFee = :isPaidFee"),
+    @NamedQuery(name = "Event.findBySettlementCode", query = "SELECT e FROM Event e WHERE e.settlementCode = :settlementCode"),
     @NamedQuery(name = "Event.findByCreatedDate", query = "SELECT e FROM Event e WHERE e.createdDate = :createdDate"),
     @NamedQuery(name = "Event.findByUpdatedDate", query = "SELECT e FROM Event e WHERE e.updatedDate = :updatedDate")})
 public class Event implements Serializable {
@@ -94,8 +97,17 @@ public class Event implements Serializable {
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Column(name = "price")
     private BigDecimal price;
-    @Column(name = "active")
-    private Boolean active;
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "sold_tickets")
+    private int soldTickets;
+    @Column(name = "listing_fee")
+    private BigDecimal listingFee;
+    @Column(name = "is_paid_fee")
+    private Boolean isPaidFee;
+    @Size(max = 100)
+    @Column(name = "settlement_code")
+    private String settlementCode;
     @Column(name = "created_date")
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdDate;
@@ -109,6 +121,8 @@ public class Event implements Serializable {
     private Collection<Category> categoryCollection;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "eventId")
     private Collection<Booking> bookingCollection;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "eventId")
+    private Collection<EventFee> eventFeeCollection;
     @JoinColumn(name = "status_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
     private StatusEvent statusId;
@@ -123,13 +137,14 @@ public class Event implements Serializable {
         this.id = id;
     }
 
-    public Event(Integer id, String title, Date startTime, Date endTime, String location, int totalTickets) {
+    public Event(Integer id, String title, Date startTime, Date endTime, String location, int totalTickets, int soldTickets) {
         this.id = id;
         this.title = title;
         this.startTime = startTime;
         this.endTime = endTime;
         this.location = location;
         this.totalTickets = totalTickets;
+        this.soldTickets = soldTickets;
     }
 
     public Integer getId() {
@@ -212,12 +227,36 @@ public class Event implements Serializable {
         this.price = price;
     }
 
-    public Boolean getActive() {
-        return active;
+    public int getSoldTickets() {
+        return soldTickets;
     }
 
-    public void setActive(Boolean active) {
-        this.active = active;
+    public void setSoldTickets(int soldTickets) {
+        this.soldTickets = soldTickets;
+    }
+
+    public BigDecimal getListingFee() {
+        return listingFee;
+    }
+
+    public void setListingFee(BigDecimal listingFee) {
+        this.listingFee = listingFee;
+    }
+
+    public Boolean getIsPaidFee() {
+        return isPaidFee;
+    }
+
+    public void setIsPaidFee(Boolean isPaidFee) {
+        this.isPaidFee = isPaidFee;
+    }
+
+    public String getSettlementCode() {
+        return settlementCode;
+    }
+
+    public void setSettlementCode(String settlementCode) {
+        this.settlementCode = settlementCode;
     }
 
     public Date getCreatedDate() {
@@ -250,6 +289,14 @@ public class Event implements Serializable {
 
     public void setBookingCollection(Collection<Booking> bookingCollection) {
         this.bookingCollection = bookingCollection;
+    }
+
+    public Collection<EventFee> getEventFeeCollection() {
+        return eventFeeCollection;
+    }
+
+    public void setEventFeeCollection(Collection<EventFee> eventFeeCollection) {
+        this.eventFeeCollection = eventFeeCollection;
     }
 
     public StatusEvent getStatusId() {

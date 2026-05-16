@@ -17,23 +17,19 @@ public interface UserRepository {
 
     Long countUsers(Map<String, String> params);
 
-    User findUserById(int id);
+    User findUserById(Integer id);
 
     User findUserByEmail(String email);
 
     boolean existEmail(String email);
-    
-    boolean existUsername(String username);
 
     void addOrUpdateUser(User u);
 
-    void deleteUser(int id);
-
-    User getUserByUsername(String username);
+    void deleteUser(Integer id);
 
     Long count();
 
     User addUser(User u);
         
-    boolean authenticate(String username, String password);
+    boolean authenticate(String email, String password);
 }

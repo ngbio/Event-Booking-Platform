@@ -15,9 +15,14 @@ public class EventResponse {
     private String location;
     private int totalTickets;
     private BigDecimal price;
-    private Boolean active;
     private Integer categoryId;
     private String categoryName;
+    private int soldTickets;
+    private BigDecimal listingFee;
+    private Boolean isPaidFee;
+    private String settlementCode;
+    private Integer statusId;
+    private String statusName;
     
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Ho_Chi_Minh")
     private Date startTime;
@@ -34,10 +39,7 @@ public class EventResponse {
     public EventResponse() {
     }
 
-    public EventResponse(Integer id, String title, String description, String imageUrl, String videoUrl, 
-                       Integer organizerId, String organizerName, String location, int totalTickets, 
-                       BigDecimal price, Boolean active, Integer categoryId, String categoryName, 
-                       Date startTime, Date endTime, Date createdDate, Date updatedDate) {
+    public EventResponse(Integer id, String title, String description, String imageUrl, String videoUrl, Integer organizerId, String organizerName, String location, int totalTickets, BigDecimal price, Integer categoryId, String categoryName, int soldTickets, BigDecimal listingFee, Boolean isPaidFee, String settlementCode, Integer statusId, String statusName, Date startTime, Date endTime, Date createdDate, Date updatedDate) {
         this.id = id;
         this.title = title;
         this.description = description;
@@ -48,14 +50,21 @@ public class EventResponse {
         this.location = location;
         this.totalTickets = totalTickets;
         this.price = price;
-        this.active = active;
         this.categoryId = categoryId;
         this.categoryName = categoryName;
+        this.soldTickets = soldTickets;
+        this.listingFee = listingFee;
+        this.isPaidFee = isPaidFee;
+        this.settlementCode = settlementCode;
+        this.statusId = statusId;
+        this.statusName = statusName;
         this.startTime = startTime;
         this.endTime = endTime;
         this.createdDate = createdDate;
         this.updatedDate = updatedDate;
     }
+
+    
 
     public Integer getId() {
         return id;
@@ -137,14 +146,6 @@ public class EventResponse {
         this.price = price;
     }
 
-    public Boolean getActive() {
-        return active;
-    }
-
-    public void setActive(Boolean active) {
-        this.active = active;
-    }
-
     public Integer getCategoryId() {
         return categoryId;
     }
@@ -191,5 +192,53 @@ public class EventResponse {
 
     public void setUpdatedDate(Date updatedDate) {
         this.updatedDate = updatedDate;
+    }
+
+    public int getSoldTickets() {
+        return soldTickets;
+    }
+
+    public void setSoldTickets(int soldTickets) {
+        this.soldTickets = soldTickets;
+    }
+
+    public BigDecimal getListingFee() {
+        return listingFee;
+    }
+
+    public void setListingFee(BigDecimal listingFee) {
+        this.listingFee = listingFee;
+    }
+
+    public Boolean getIsPaidFee() {
+        return isPaidFee;
+    }
+
+    public void setIsPaidFee(Boolean isPaidFee) {
+        this.isPaidFee = isPaidFee;
+    }
+
+    public String getSettlementCode() {
+        return settlementCode;
+    }
+
+    public void setSettlementCode(String settlementCode) {
+        this.settlementCode = settlementCode;
+    }
+    
+       public Integer getStatusId() {
+        return statusId;
+    }
+
+    public void setStatusId(Integer statusId) {
+        this.statusId = statusId;
+    }
+
+    public String getStatusName() {
+        return statusName;
+    }
+
+    public void setStatusName(String statusName) {
+        this.statusName = statusName;
     }
 }

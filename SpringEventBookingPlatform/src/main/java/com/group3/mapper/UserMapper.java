@@ -20,18 +20,21 @@ public class UserMapper {
         
         UserResponse response = new UserResponse();
         response.setId(user.getId());
-        response.setUsername(user.getUsername());
         response.setEmail(user.getEmail());
         response.setFullName(user.getFullName());
         response.setPhone(user.getPhone());
         response.setAvatar(user.getAvatar());
-        response.setActive(user.getActive());
         response.setCreatedDate(user.getCreatedDate());
         response.setUpdatedDate(user.getUpdatedDate());
         
         if (user.getRoleId() != null) {
             response.setRoleId(user.getRoleId().getId());
             response.setRoleName(user.getRoleId().getName());
+        }
+        
+        if (user.getStatusId() != null) {
+            response.setStatusId(user.getStatusId().getId());
+            response.setStatusName(user.getStatusId().getName());
         }
         
         return response;
@@ -52,7 +55,7 @@ public class UserMapper {
     public static User toEntity(RegisterRequest request){ 
         if (request==null) return null;
         User user = new User();
-        user.setUsername(request.getUsername());
+        //user.setUsername(request.getUsername());
         user.setFullName(request.getFullName());
         user.setPassword(request.getPassword());
         user.setEmail(request.getEmail());

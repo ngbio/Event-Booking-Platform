@@ -27,16 +27,17 @@ public interface UserService extends UserDetailsService {
 
     boolean checkExistEmail(String email);
     
-    boolean checkExistUsername(String username);
+//    boolean checkExistUsername(String username);
 
     void deleteUser(int id);
 
     Long countUsers();
 
-    UserResponse getUserByUsername(String username);
+//    UserResponse getUserByUsername(String username);
 
-    UserResponse addUser(RegisterRequest request, MultipartFile avatar);
+    UserResponse addUser(RegisterRequest request, MultipartFile avatar,int roleId);
 
     UserResponse authenticate(LoginRequest request);
+    
 
 }

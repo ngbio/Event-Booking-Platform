@@ -27,11 +27,16 @@ public class EventMapper {
         response.setLocation(event.getLocation());
         response.setTotalTickets(event.getTotalTickets());
         response.setPrice(event.getPrice());
-        response.setActive(event.getActive());
         response.setStartTime(event.getStartTime());
         response.setEndTime(event.getEndTime());
         response.setCreatedDate(event.getCreatedDate());
         response.setUpdatedDate(event.getUpdatedDate());
+        response.setSoldTickets(event.getSoldTickets());
+        response.setIsPaidFee(event.getIsPaidFee());
+        response.setListingFee(event.getListingFee());
+        response.setSettlementCode(event.getSettlementCode());
+        response.setStatusId(event.getStatusId().getId());
+        response.setStatusName(event.getStatusId().getName());
         
         if (event.getOrganizerId() != null) {
             response.setOrganizerId(event.getOrganizerId().getId());
@@ -70,6 +75,8 @@ public class EventMapper {
         event.setLocation(request.getLocation());
         event.setTotalTickets(request.getTotalTickets());
         event.setPrice(request.getPrice());
+        event.setSoldTickets(0);
+        event.setSettlementCode(null);
         return event;
     }
 }
