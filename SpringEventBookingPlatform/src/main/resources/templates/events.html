@@ -1,45 +1,147 @@
 <!doctype html>
 <html xmlns:th="http://www.thymeleaf.org">
-    <head>
-        <title>Dashboard - Tổng quan</title>
+<head>
+    <title>Quản lý Sự kiện</title>
     <th:block th:replace="base :: css"></th:block>
 </head>
 <body>
     <div th:replace="base :: header"></div>
 
     <section class="container mt-4">
-        <table class="table table-hover">
-            <thead class="table-dark">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2>Quản lý Sự kiện</h2>
+
+            <div class="w-75">
+                <form th:action="@{/admin/events}" method="GET" class="d-flex gap-2 justify-content-end">
+                    
+                    <select name="statusId" class="form-select" style="width: 180px;">
+                        <option value="">-- Tất cả trạng thái --</option>
+                        <option value="1" th:selected="${param.statusId != null and param.statusId[0] == '1'}">Chờ Duyệt</option>
+                        <option value="2" th:selected="${param.statusId != null and param.statusId[0] == '2'}">Đang Mở Bán</option>
+                        <option value="3" th:selected="${param.statusId != null and param.statusId[0] == '3'}">Nháp</option>
+                        <option value="4" th:selected="${param.statusId != null and param.statusId[0] == '4'}">Hoàn Thành</option>
+                        <option value="5" th:selected="${param.statusId != null and param.statusId[0] == '5'}">Đã Hủy</option>
+                    </select>
+
+                    <select name="searchBy" class="form-select" style="width: 180px;">
+                        <option value="title" th:selected="${searchBy == 'title'}">Tìm theo tên sự kiện</option>
+                        <option value="category" th:selected="${searchBy == 'category'}">Tìm theo danh mục</option>
+                    </select>
+
+                    <input type="text" name="kw" class="form-control" 
+                           placeholder="Nhập từ khóa..." 
+                           th:value="${param.kw}" autocomplete="off" style="width: 220px;">
+
+                    <button type="submit" class="btn btn-outline-secondary text-nowrap">Tìm</button>
+                    
+                    <a th:if="${(param.kw != null and param.kw[0] != '') or (param.statusId != null and param.statusId[0] != '') or (param.searchBy != null and param.searchBy[0] != 'title')}" 
+                       th:href="@{/admin/events}" class="btn btn-danger text-nowrap">Xóa lọc</a>
+
+                    <a th:href="@{/admin/events(statusId=1)}" class="btn btn-warning text-dark text-nowrap fw-bold">
+                         Cần duyệt
+                    </a>
+                </form>
+            </div>
+        </div>
+
+        <div th:if="${errMsg != null}" class="alert alert-danger alert-dismissible fade show shadow-sm">
+            <strong>Lỗi!</strong> <span th:text="${errMsg}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        <div th:if="${successMsg != null}" class="alert alert-success alert-dismissible fade show shadow-sm">
+            <strong>Thành công!</strong> <span th:text="${successMsg}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+
+        <table class="table table-hover table-bordered align-middle bg-white shadow-sm">
+            <thead class="table-dark text-center">
                 <tr>
                     <th>Tên sự kiện</th>
+                    <th>Ngày bắt đầu</th>
                     <th>Giá vé</th>
-                    <th>Vé đã bán</th>
+                    <th>Tiến độ vé</th>
                     <th>Trạng thái</th>
                     <th>Hành động</th>
                 </tr>
             </thead>
             <tbody>
                 <tr th:each="e : ${events}">
-                    <td th:text="${e.title}"></td>
-                    <td th:text="${e.price}"></td>
-                    <td th:text="${e.soldQuantity}">0</td> <td>
-                        <span th:if="${e.active}" class="badge bg-success">Đang hiện</span>
-                        <span th:unless="${e.active}" class="badge bg-secondary">Đã ẩn</span>
-                    </td>
-                    <td>
-                        <form th:action="@{/admin/events/toggle}" method="post" class="d-inline">
-                            <input type="hidden" name="id" th:value="${e.id}"/>
-                            <button class="btn btn-sm btn-warning" th:text="${e.active ? 'Ẩn tin' : 'Hiện tin'}"></button>
-                        </form>
+                    <td class="fw-bold text-primary" th:text="${e.title}"></td>
+                    <td class="text-center" th:text="${#dates.format(e.startTime, 'dd/MM/yyyy HH:mm')}"></td>
+                    <td class="text-end text-danger fw-bold" th:text="${e.price != null ? #numbers.formatDecimal(e.price, 0, 'COMMA', 0, 'POINT') + ' đ' : '0 đ'}"></td>
 
-                        <form th:if="${e.soldQuantity == 0}" th:action="@{/admin/events/delete}" method="post" class="d-inline">
-                            <input type="hidden" name="id" th:value="${e.id}"/>
-                            <button class="btn btn-sm btn-danger" onclick="return confirm('Xóa vĩnh viễn sự kiện này?')">Xóa</button>
-                        </form>
+                    <td class="text-center">
+                        <span th:text="${e.soldTickets}">0</span> / <span th:text="${e.totalTickets}">100</span>
+                    </td>
+
+                    <td class="text-center">
+                        <span th:if="${e.statusId == 1}" class="badge bg-warning text-dark">Chờ Duyệt</span>
+                        <span th:if="${e.statusId == 2}" class="badge bg-success">Đang Mở Bán</span>
+                        <span th:if="${e.statusId == 3}" class="badge bg-secondary">Nháp</span>
+                        <span th:if="${e.statusId == 4}" class="badge bg-info text-dark">Hoàn Thành</span>
+                        <span th:if="${e.statusId == 5}" class="badge bg-danger">Đã Hủy</span>
+                        <span th:if="${e.statusId == null or e.statusId < 1 or e.statusId > 5}" class="badge bg-dark">Lỗi Status</span>
+                    </td>
+
+                    <td class="text-center">
+                        <div class="dropdown">
+                            <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Thao tác
+                            </button>
+
+                            <ul class="dropdown-menu dropdown-menu-end shadow">
+                                <li>
+                                    <a class="dropdown-item py-2" th:href="@{/admin/events/detail(id=${e.id})}">Xem chi tiết</a>
+                                </li>
+
+                                <li th:if="${e.statusId == 1 or e.statusId == 2 or e.soldTickets == 0}"><hr class="dropdown-divider"></li>
+
+                                <li th:if="${e.statusId == 1}">
+                                    <form th:action="@{/admin/events/approve}" method="post" class="d-inline">
+                                        <input type="hidden" name="id" th:value="${e.id}"/>
+                                        <button type="submit" class="dropdown-item text-success py-2 fw-bold" onclick="return confirm('Xác nhận phê duyệt và cho phép mở bán sự kiện này?')">
+                                            Phê duyệt
+                                        </button>
+                                    </form>
+                                </li>
+
+                                <li th:if="${e.statusId == 1 or e.statusId == 2}">
+                                    <form th:action="@{/admin/events/cancel}" method="post" class="d-inline">
+                                        <input type="hidden" name="id" th:value="${e.id}"/>
+                                        <button type="submit" class="dropdown-item text-warning py-2" onclick="return confirm('Bạn có chắc muốn HỦY sự kiện này không?')">
+                                            Hủy bỏ
+                                        </button>
+                                    </form>
+                                </li>
+
+                                <li th:if="${e.soldTickets == 0}">
+                                    <form th:action="@{/admin/events/delete}" method="post" class="d-inline">
+                                        <input type="hidden" name="id" th:value="${e.id}"/>
+                                        <button type="submit" class="dropdown-item text-danger py-2" onclick="return confirm('Xóa vĩnh viễn sự kiện này khỏi hệ thống?')">
+                                            Xóa vĩnh viễn
+                                        </button>
+                                    </form>
+                                </li>
+                            </ul>
+                        </div>
                     </td>
                 </tr>
             </tbody>
         </table>
+
+        <nav th:if="${totalPages > 1}" aria-label="Page navigation" class="mt-4">
+            <ul class="pagination justify-content-center">
+                <li class="page-item" th:classappend="${currentPage == 1} ? 'disabled'">
+                    <a class="page-link" th:href="@{/admin/events(page=${currentPage - 1}, kw=${param.kw}, searchBy=${searchBy}, statusId=${param.statusId})}">Trước</a>
+                </li>
+                <li class="page-item" th:each="i : ${#numbers.sequence(1, totalPages)}" th:classappend="${currentPage == i} ? 'active'">
+                    <a class="page-link" th:href="@{/admin/events(page=${i}, kw=${param.kw}, searchBy=${searchBy}, statusId=${param.statusId})}" th:text="${i}">1</a>
+                </li>
+                <li class="page-item" th:classappend="${currentPage == totalPages} ? 'disabled'">
+                    <a class="page-link" th:href="@{/admin/events(page=${currentPage + 1}, kw=${param.kw}, searchBy=${searchBy}, statusId=${param.statusId})}">Sau</a>
+                </li>
+            </ul>
+        </nav>
     </section>
 
     <div th:replace="base :: footer"></div>

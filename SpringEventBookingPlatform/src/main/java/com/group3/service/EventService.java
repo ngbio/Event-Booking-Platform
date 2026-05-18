@@ -15,4 +15,7 @@ public interface EventService {
     boolean deleteEvent(Integer id);
     int getAvailableTickets(Integer eventId);
     boolean updateTicketsAfterBooking(Integer eventId, int quantityBooked);
+    Long countEvents(Map<String, String> params);
+   
+    
 }

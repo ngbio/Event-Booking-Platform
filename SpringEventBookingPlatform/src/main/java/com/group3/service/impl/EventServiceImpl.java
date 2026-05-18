@@ -58,7 +58,7 @@ public class EventServiceImpl implements EventService {
     @Override
     @Transactional
     public List<EventResponse> getEvents(Map<String, String> params) {
-        List<Event> events = this.eventRepo.findByParams(params);
+        List<Event> events = this.eventRepo.getEvents(params);
         return DTOMapper.toEventResponseList(events);
     }
 
@@ -194,7 +194,7 @@ public class EventServiceImpl implements EventService {
                 //Su kien co ban ve => Tinh lai phi & chuyen ve DRAFT
                 double calculatedFee = event.getTotalTickets() * feePerTicket;
                 event.setListingFee(BigDecimal.valueOf(calculatedFee));
-                event.setIsPaidFee(false); // Bắt phải thanh toán lại phí chênh lệch
+                event.setIsPaidFee(false); //Thanh toan lai phi chenh lech
 
                 StatusEvent statusDraft = this.statusEventRepo.getStatusEventById(1);
                 event.setStatusId(statusDraft);
@@ -246,4 +246,11 @@ public class EventServiceImpl implements EventService {
 
         return false;
     }
+    
+    @Override
+    public Long countEvents(Map<String, String> params){
+        return this.eventRepo.countEvents(params);
+    }
+    
 }
+

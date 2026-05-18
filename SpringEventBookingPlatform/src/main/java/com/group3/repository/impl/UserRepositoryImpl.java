@@ -18,35 +18,37 @@ import org.springframework.core.env.Environment;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Repository;
+
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-
 /**
  *
  * @author THUAN
  */
 @Repository
 @Transactional
-public class UserRepositoryImpl implements UserRepository{
-    
+public class UserRepositoryImpl implements UserRepository {
+
     @Autowired
     private Environment env;
 
     @Autowired
     private LocalSessionFactoryBean factory;
-    
+
     @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 
     private Session currentSession() {
         return Objects.requireNonNull(this.factory.getObject(), "SessionFactory is null").getCurrentSession();
     }
-    
+
     @Override
     public User findUserById(Integer id) {
-        if (id == null) return null;
+        if (id == null) {
+            return null;
+        }
         Session s = currentSession();
         return s.get(User.class, id);
     }
@@ -62,7 +64,7 @@ public class UserRepositoryImpl implements UserRepository{
     @Override
     public User updateUser(User user) {
         Session s = currentSession();
-        return (User)s.merge(user);
+        return (User) s.merge(user);
     }
 
     @Override
@@ -95,9 +97,19 @@ public class UserRepositoryImpl implements UserRepository{
             String kw = params.get("kw");
             if (kw != null && !kw.isBlank()) {
                 String t = kw.trim();
-                Predicate byFullname = b.like(root.get("fullName"), "%" + t + "%");
+                Predicate byFullname = b.like(root.get("fullName"), "%" + t + "%"); // Đã sửa thành fullName
                 Predicate byEmail = b.like(root.get("email"), "%" + t + "%");
                 predicates.add(b.or(byFullname, byEmail));
+            }
+
+            String roleId = params.get("roleId");
+            if (roleId != null && !roleId.isBlank()) {
+                predicates.add(b.equal(root.get("roleId").get("id"), Integer.parseInt(roleId)));
+            }
+
+            String statusId = params.get("statusId");
+            if (statusId != null && !statusId.isBlank()) {
+                predicates.add(b.equal(root.get("statusId").get("id"), Integer.parseInt(statusId)));
             }
         }
 
@@ -105,22 +117,23 @@ public class UserRepositoryImpl implements UserRepository{
             q.where(predicates.toArray(Predicate[]::new));
         }
 
-        q.orderBy(b.desc(root.get("id")));
+        q.orderBy(
+                b.asc(root.get("statusId").get("id")),//Xep tai khoan chua duyet len truoc
+                b.desc(root.get("id"))
+        );
         Query<User> query = s.createQuery(q);
 
-        int defaultPageSize = Integer.parseInt(this.env.getProperty("user.page_size", "10"));
+        int defaultPageSize = Integer.parseInt(this.env.getProperty("user.page_size"));
         int pageSize = defaultPageSize;
         int page = 1;
         if (params != null) {
             try {
                 page = Integer.parseInt(params.getOrDefault("page", "1"));
             } catch (NumberFormatException ignored) {
-                page = 1;
             }
             try {
                 pageSize = Integer.parseInt(params.getOrDefault("size", String.valueOf(defaultPageSize)));
             } catch (NumberFormatException ignored) {
-                pageSize = defaultPageSize;
             }
         }
         if (page < 1) {
@@ -150,9 +163,19 @@ public class UserRepositoryImpl implements UserRepository{
             String kw = params.get("kw");
             if (kw != null && !kw.isBlank()) {
                 String t = kw.trim();
-                Predicate byFullname = b.like(root.get("fullname"), "%" + t + "%");
+                Predicate byFullname = b.like(root.get("fullName"), "%" + t + "%"); // Đã sửa thành fullName
                 Predicate byEmail = b.like(root.get("email"), "%" + t + "%");
                 predicates.add(b.or(byFullname, byEmail));
+            }
+
+            String roleId = params.get("roleId");
+            if (roleId != null && !roleId.isBlank()) {
+                predicates.add(b.equal(root.get("roleId").get("id"), Integer.parseInt(roleId)));
+            }
+
+            String statusId = params.get("statusId");
+            if (statusId != null && !statusId.isBlank()) {
+                predicates.add(b.equal(root.get("statusId").get("id"), Integer.parseInt(statusId)));
             }
         }
 
@@ -182,7 +205,7 @@ public class UserRepositoryImpl implements UserRepository{
     public User addUser(User u) {
         Session s = currentSession();
         s.persist(u);
-        
+
         return u;
     }
 
@@ -194,4 +217,5 @@ public class UserRepositoryImpl implements UserRepository{
         }
         return this.bCryptPasswordEncoder.matches(password, user.getPassword());
     }
+
 }

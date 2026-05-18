@@ -13,11 +13,13 @@ import java.util.Map;
  * @author THUAN
  */
 public interface EventRepository {
-    List<Event> getEvents();
+    List<Event> getEvents(Map<String, String> params);
     Event getEventById(Integer id);
     Event addEvent(Event event);
     Event updateEvent(Event event);
     boolean deleteEvent(Integer id);
     List<Event> findByCategory(Integer categoryId);
     List<Event> findByParams(Map<String, String> params);
+    long countEvents(Map<String, String> params);
+  
 }
