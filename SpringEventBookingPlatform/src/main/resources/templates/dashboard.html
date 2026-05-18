@@ -3,14 +3,124 @@
 <head>
     <title>Thống kê hệ thống</title>
     <th:block th:replace="base :: css"></th:block>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body class="bg-light">
     <div th:replace="base :: header"></div>
 
     <section class="container mt-4">
+        <h2 class="mb-4 fw-bold">Tổng quan hệ thống</h2>
         
+        <div class="row g-3 mb-4">
+            <div class="col-md-3">
+                <div class="card bg-primary text-white shadow-sm border-0">
+                    <div class="card-body p-4">
+                        <h6 class="card-title text-white-50 text-uppercase small fw-bold">Doanh thu bán vé</h6>
+                        <h3 class="card-text fw-bold" th:text="${#numbers.formatDecimal(totalRevenue, 0, 'COMMA', 0, 'POINT')} + ' đ'">0 đ</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card bg-success text-white shadow-sm border-0">
+                    <div class="card-body p-4">
+                        <h6 class="card-title text-white-50 text-uppercase small fw-bold">Phí dịch vụ sàn thu</h6>
+                        <h3 class="card-text fw-bold" th:text="${#numbers.formatDecimal(totalFees, 0, 'COMMA', 0, 'POINT')} + ' đ'">0 đ</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card bg-warning text-dark shadow-sm border-0">
+                    <div class="card-body p-4">
+                        <h6 class="card-title text-black-50 text-uppercase small fw-bold">Tổng số vé bán ra</h6>
+                        <h3 class="card-text fw-bold" th:text="${totalTicketsSold} + ' Vé'">0 Vé</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card bg-info text-dark shadow-sm border-0">
+                    <div class="card-body p-4">
+                        <h6 class="card-title text-black-50 text-uppercase small fw-bold">Sự kiện đang mở bán</h6>
+                        <h3 class="card-text fw-bold" th:text="${activeEventsCount} + ' Sự kiện'">0</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-md-7">
+                <div class="card shadow-sm border-0 bg-white p-4">
+                    <h5 class="fw-bold mb-3" style="color: #2c3e50;">Doanh thu theo các tháng (2026)</h5>
+                    <div style="height: 320px;">
+                        <canvas id="revenueChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-5">
+                <div class="card shadow-sm border-0 bg-white p-4">
+                    <h5 class="fw-bold mb-3" style="color: #2c3e50;">Vé bán ra theo danh mục</h5>
+                    <div style="height: 320px;">
+                        <canvas id="categoryChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
     </section>
 
     <div th:replace="base :: footer"></div>
+
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        
+        var revenueData = /*[[${revenueMonthList}]]*/ [12000000, 19000000, 3000000, 5000000, 2000000, 3000000, 0, 0, 0, 0, 0, 0];
+        var categoryLabels = /*[[${categoryNames}]]*/ ['Âm nhạc', 'Hội thảo', 'Thể thao', 'Nghệ thuật', 'Công nghệ'];
+        var categoryData = /*[[${categoryCounts}]]*/ [150, 85, 230, 45, 110];
+
+        const ctxRevenue = document.getElementById('revenueChart').getContext('2d');
+        new Chart(ctxRevenue, {
+            type: 'line',
+            data: {
+                labels: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'T8', 'T9', 'T10', 'T11', 'T12'],
+                datasets: [{
+                    label: 'Doanh thu (VNĐ)',
+                    data: revenueData,
+                    borderColor: '#2bc3e50',
+                    backgroundColor: 'rgba(44, 62, 80, 0.1)',
+                    borderWidth: 3,
+                    tension: 0.3, // Tạo độ cong cho nét vẽ
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false
+            }
+        });
+
+        const ctxCategory = document.getElementById('categoryChart').getContext('2d');
+        new Chart(ctxCategory, {
+            type: 'bar',
+            data: {
+                labels: categoryLabels,
+                datasets: [{
+                    label: 'Số vé đã bán',
+                    data: categoryData,
+                    backgroundColor: [
+                        '#1abc9c', '#3498db', '#9b59b6', '#e67e22', '#f1c40f'
+                    ],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false } 
+                }
+            }
+        });
+        
+        /*]]>*/
+    </script>
 </body>
 </html>

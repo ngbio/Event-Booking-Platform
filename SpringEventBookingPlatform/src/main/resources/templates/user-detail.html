@@ -1,0 +1,111 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Hồ sơ Người dùng</title>
+    <th:block th:replace="base :: css"></th:block>
+</head>
+<body>
+    <div th:replace="base :: header"></div>
+
+    <section class="container mt-4 mb-5">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h2>Hồ sơ tài khoản: <span th:text="${user.fullName}"></span></h2>
+                <p class="text-muted">Tài khoản ID: #<span th:text="${user.id}"></span></p>
+            </div>
+            <a th:href="@{/admin/users}" class="btn btn-secondary">Quay lại danh sách</a>
+        </div>
+
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-dark text-white">
+                <h5 class="mb-0">Thông tin cá nhân cơ bản</h5>
+            </div>
+            <div class="card-body">
+                <table class="table table-bordered align-middle">
+                    <tbody>
+                        <tr>
+                            <th style="width: 30%;">Ảnh đại diện:</th>
+                            <td>
+                                <div th:if="${user.avatar != null and user.avatar != ''}">
+                                    <img th:src="${user.avatar}" alt="Avatar" class="img-thumbnail" style="max-width: 120px; max-height: 120px; object-fit: cover;">
+                                </div>
+                                <span th:unless="${user.avatar != null and user.avatar != ''}" class="text-muted">Chưa cập nhật ảnh đại diện</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>Địa chỉ Email:</th>
+                            <td th:text="${user.email}"></td>
+                        </tr>
+                        <tr>
+                            <th>Số điện thoại:</th>
+                            <td th:text="${user.phone != null and user.phone != '' ? user.phone : 'Chưa cập nhật'}"></td>
+                        </tr>
+                        <tr>
+                            <th>Vai trò hệ thống:</th>
+                            <td class="fw-bold text-primary" th:text="${user.roleName}"></td>
+                        </tr>
+                        <tr>
+                            <th>Trạng thái tài khoản:</th>
+                            <td>
+                                <span th:if="${user.statusId == 1}" class="text-success fw-bold">Hoạt động</span>
+                                <span th:if="${user.statusId == 2}" class="text-warning fw-bold">Chờ kiểm duyệt</span>
+                                <span th:if="${user.statusId == 3}" class="text-danger fw-bold">Đang bị khóa</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>Ngày tham gia hệ thống:</th>
+                            <td th:text="${#dates.format(user.createdDate, 'dd/MM/yyyy HH:mm:ss')}"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="card shadow-sm" th:if="${user.roleId == 2}">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">Hồ sơ pháp lý (Dành cho Nhà tổ chức)</h5>
+            </div>
+            <div class="card-body">
+                <table class="table table-bordered align-middle">
+                    <tbody>
+                        <tr>
+                            <th style="width: 30%;">Tên công ty / Tổ chức:</th>
+                            <td class="fw-bold text-dark" th:text="${user.organizationName != null and user.organizationName != '' ? user.organizationName : 'Chưa cung cấp'}"></td>
+                        </tr>
+                        <tr>
+                            <th>Mã số thuế doanh nghiệp:</th>
+                            <td class="text-monospace fw-bold" th:text="${user.taxCode != null and user.taxCode != '' ? user.taxCode : 'Chưa cung cấp'}"></td>
+                        </tr>
+                        <tr>
+                            <th>Số CMND / CCCD đại diện:</th>
+                            <td th:text="${user.identityCard != null and user.identityCard != '' ? user.identityCard : 'Chưa cung cấp'}"></td>
+                        </tr>
+                        <tr>
+                            <th>Giấy phép đăng ký kinh doanh:</th>
+                            <td>
+                                <div th:if="${user.businessLicense != null and user.businessLicense != ''}">
+                                    <a th:href="${user.businessLicense}" target="_blank">
+                                        <img th:src="${user.businessLicense}" alt="Business License" class="img-thumbnail" style="max-width: 250px; max-height: 150px; object-fit: cover;">
+                                    </a>
+                                    <div class="small text-muted mt-1">(Bấm vào hình ảnh để xem văn bản kích thước lớn trên tab mới)</div>
+                                </div>
+                                <span th:unless="${user.businessLicense != null and user.businessLicense != ''}" class="text-muted">Chưa đăng tải tài liệu chứng minh</span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="card-footer bg-white text-end py-3" th:if="${user.statusId == 2}">
+                <form th:action="@{/admin/users/approve}" method="post" class="d-inline">
+                    <input type="hidden" name="id" th:value="${user.id}"/>
+                    <button type="submit" class="btn btn-success px-5 fw-bold" onclick="return confirm('Xác nhận phê duyệt hồ sơ doanh nghiệp này?')">
+                        Phê duyệt thông tin & Kích hoạt tài khoản
+                    </button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <div th:replace="base :: footer"></div>
+</body>
+</html>

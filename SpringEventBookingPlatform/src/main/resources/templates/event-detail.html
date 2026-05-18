@@ -1,0 +1,129 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Chi tiết Sự kiện</title>
+    <th:block th:replace="base :: css"></th:block>
+</head>
+<body>
+    <div th:replace="base :: header"></div>
+
+    <section class="container mt-4 mb-5">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h2>Chi tiết Sự kiện: <span th:text="${event.title}"></span></h2>
+                <p class="text-muted">ID Sự kiện: <span th:text="${event.id}"></span></p>
+            </div>
+            <a th:href="@{/admin/events}" class="btn btn-secondary">Quay lại danh sách</a>
+        </div>
+
+        <div class="card shadow-sm">
+            <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Thông tin tổng quan</h5>
+                <div>
+                    <span th:if="${event.statusId == 1}" class="badge bg-secondary">Nháp</span>
+                    <span th:if="${event.statusId == 2}" class="badge bg-warning text-dark">Chờ Duyệt</span>
+                    <span th:if="${event.statusId == 3}" class="badge bg-success">Đang Mở Bán</span>
+                    <span th:if="${event.statusId == 4}" class="badge bg-danger">Đã Hủy</span>
+                    <span th:if="${event.statusId == 5}" class="badge bg-info text-dark">Hoàn Thành</span>
+                    <span th:if="${event.statusId == null or event.statusId < 1 or event.statusId > 5}" 
+                          class="badge bg-dark" th:text="${event.statusName != null ? event.statusName : 'Lỗi Status'}"></span>
+                </div>
+            </div>
+
+            <div class="card-body row">
+                <div class="col-md-7">
+                    <table class="table table-bordered align-middle">
+                        <tbody>
+                            <tr>
+                                <th style="width: 35%;">Nhà tổ chức:</th>
+                                <td class="fw-bold text-primary" th:text="${event.organizerName != null ? event.organizerName : 'Chưa cập nhật'}"></td>
+                            </tr>
+                            <tr>
+                                <th>Danh mục:</th>
+                                <td class="fw-bold text-success" th:text="${event.categoryName != null ? event.categoryName : 'Chưa phân loại'}"></td>
+                            </tr>
+                            <tr>
+                                <th>Thời gian bắt đầu:</th>
+                                <td th:text="${#dates.format(event.startTime, 'dd/MM/yyyy HH:mm')}"></td>
+                            </tr>
+                            <tr>
+                                <th>Thời gian kết thúc:</th>
+                                <td th:text="${#dates.format(event.endTime, 'dd/MM/yyyy HH:mm')}"></td>
+                            </tr>
+                            <tr>
+                                <th>Địa điểm:</th>
+                                <td th:text="${event.location}"></td>
+                            </tr>
+                            <tr>
+                                <th>Giá vé niêm yết:</th>
+                                <td class="text-danger fw-bold" th:text="${event.price != null ? #numbers.formatDecimal(event.price, 0, 'COMMA', 0, 'POINT') + ' đ' : '0 đ'}"></td>
+                            </tr>
+                            <tr>
+                                <th>Tiến độ vé:</th>
+                                <td>
+                                    Đã bán <span class="fw-bold text-dark" th:text="${event.soldTickets}">0</span> / <span th:text="${event.totalTickets}">0</span> vé
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Phí dịch vụ:</th>
+                                <td th:text="${event.listingFee != null ? #numbers.formatDecimal(event.listingFee, 0, 'COMMA', 0, 'POINT') + ' đ' : '0 đ'}"></td>
+                            </tr>
+                            <tr>
+                                <th>Thanh toán phí:</th>
+                                <td>
+                                    <span th:if="${event.isPaidFee != null and event.isPaidFee}" class="text-success fw-bold">Đã thanh toán</span>
+                                    <span th:unless="${event.isPaidFee != null and event.isPaidFee}" class="text-danger fw-bold">Chưa thanh toán</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Ảnh banner sự kiện:</th>
+                                <td>
+                                    <div th:if="${event.imageUrl != null and event.imageUrl != ''}">
+                                        <a th:href="${event.imageUrl}" target="_blank">
+                                            <img th:src="${event.imageUrl}" alt="Banner" class="img-thumbnail" style="max-width: 200px; max-height: 120px; object-fit: cover;">
+                                        </a>
+                                        <div class="small text-muted mt-1">(Bấm vào ảnh để xem kích thước đầy đủ)</div>
+                                    </div>
+                                    <span th:unless="${event.imageUrl != null and event.imageUrl != ''}" class="text-muted">Không có ảnh banner</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Video giới thiệu:</th>
+                                <td>
+                                    <div th:if="${event.videoUrl != null and event.videoUrl != ''}">
+                                        <a th:href="${event.videoUrl}" target="_blank" class="btn btn-sm btn-outline-primary">
+                                            Xem Video giới thiệu
+                                        </a>
+                                    </div>
+                                    <span th:unless="${event.videoUrl != null and event.videoUrl != ''}" class="text-muted">Không có video đính kèm</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="col-md-5 border-start">
+                    <h5 class="fw-bold mb-3">Mô tả chi tiết từ nhà tổ chức:</h5>
+                    <div class="p-3 bg-light rounded text-muted" style="white-space: pre-line; max-height: 400px; overflow-y: auto;" 
+                         th:text="${event.description != null ? event.description : 'Sự kiện này không có nội dung mô tả cụ thể.'}">
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-footer bg-white text-end py-3">
+                <form th:if="${event.statusId == 2}" th:action="@{/admin/events/approve}" method="post" class="d-inline">
+                    <input type="hidden" name="id" th:value="${event.id}"/>
+                    <button type="submit" class="btn btn-success px-4 me-2" onclick="return confirm('Duyệt sự kiện này và cho phép lên sàn?')">Duyệt và Mở Bán</button>
+                </form>
+
+                <form th:if="${event.statusId == 2 or event.statusId == 3}" th:action="@{/admin/events/cancel}" method="post" class="d-inline">
+                    <input type="hidden" name="id" th:value="${event.id}"/>
+                    <button type="submit" class="btn btn-danger px-4" onclick="return confirm('Bạn có chắc muốn HỦY sự kiện này không?')">Hủy Sự Kiện</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <div th:replace="base :: footer"></div>
+</body>
+</html>

@@ -5,6 +5,7 @@
 package com.group3.repository.impl;
 
 import com.group3.pojo.StatusUser;
+import com.group3.pojo.User;
 import com.group3.repository.StatusUserRepository;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
@@ -29,5 +30,25 @@ public class StatusUserRepositoryImpl implements StatusUserRepository{
         Query<StatusUser> q = session.createNamedQuery("StatusUser.findById",StatusUser.class);
         q.setParameter("id", id);
         return q.uniqueResult();
+    }
+    
+    @Override
+    public boolean changeStatusUser(Integer userId, Integer statusId){
+        try {
+            Session session = this.factory.getObject().getCurrentSession();
+            if (userId == null || statusId == null) {
+                return false;
+            }
+            User user = session.get(User.class, userId);
+            if (user != null) {
+                StatusUser newStatus = session.get(StatusUser.class, statusId);
+                user.setStatusId(newStatus);
+                session.merge(user);
+                return true;
+            }
+            return false;
+        } catch (Exception e) {
+            return false;
+        }
     }
 }

@@ -8,40 +8,133 @@
     <div th:replace="base :: header"></div>
 
     <section class="container mt-4">
-        <h2 class="mb-4">Danh sách Người dùng</h2>
-        <table class="table table-bordered table-hover">
-            <thead class="table-dark">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2>Quản lý Người dùng</h2>
+
+            <div class="w-75">
+                <form th:action="@{/admin/users}" method="GET" class="d-flex gap-2 justify-content-end">
+                    
+                    <select name="statusId" class="form-select" style="width: 180px;">
+                        <option value="">-- Tất cả trạng thái --</option>
+                        <option value="1" th:selected="${param.statusId != null and param.statusId[0] == '1'}">Chờ Duyệt</option>
+                        <option value="2" th:selected="${param.statusId != null and param.statusId[0] == '2'}">Hoạt động</option>
+                        <option value="3" th:selected="${param.statusId != null and param.statusId[0] == '3'}">Bị Khóa</option>
+                    </select>
+
+                    <select name="roleId" class="form-select" style="width: 180px;">
+                        <option value="">-- Tất cả vai trò --</option>
+                        <option value="1" th:selected="${selectedRole == '1'}">Quản trị viên</option>
+                        <option value="2" th:selected="${selectedRole == '2'}">Nhà tổ chức</option>
+                        <option value="3" th:selected="${selectedRole == '3'}">Người dùng (Khách)</option>
+                    </select>
+
+                    <input type="text" name="kw" class="form-control" 
+                           placeholder="Tìm theo họ tên, email..." 
+                           th:value="${param.kw}" autocomplete="off" style="width: 220px;">
+
+                    <button type="submit" class="btn btn-outline-secondary text-nowrap">Tìm</button>
+
+                    <a th:if="${(param.kw != null and param.kw[0] != '') or (selectedRole != '') or (param.statusId != null and param.statusId[0] != '')}" 
+                       th:href="@{/admin/users}" class="btn btn-danger text-nowrap">Xóa lọc</a>
+
+                    <a th:href="@{/admin/users(roleId=2, statusId=1)}" class="btn btn-warning text-dark text-nowrap fw-bold">
+                        Tài khoản cần duyệt
+                    </a>
+                </form>
+            </div>
+        </div>
+
+        <div th:if="${errMsg != null}" class="alert alert-danger" th:text="${errMsg}"></div>
+        <div th:if="${successMsg != null}" class="alert alert-success" th:text="${successMsg}"></div>
+
+        <table class="table table-hover table-bordered align-middle bg-white shadow-sm">
+            <thead class="table-dark text-center">
                 <tr>
-                    <th>ID</th>
-                    <th>Tên đăng nhập</th>
                     <th>Họ và tên</th>
                     <th>Email</th>
+                    <th>Số điện thoại</th>
                     <th>Vai trò</th>
                     <th>Trạng thái</th>
                     <th>Hành động</th>
                 </tr>
             </thead>
             <tbody>
-                <tr th:each="u: ${users}">
-                    <td th:text="${u.id}">1</td>
-                    <td th:text="${u.username}">thanhduong</td>
-                    <td th:text="${u.fullName}">Dương Thanh</td>
-                    <td th:text="${u.email}">thanh@gmail.com</td>
-                    <td th:text="${u.roleName}">ROLE_USER</td>
-                    <td>
-                        <span th:if="${u.active}" class="badge bg-success">Hoạt động</span>
-                        <span th:unless="${u.active}" class="badge bg-danger">Bị khóa</span>
+                <tr th:each="u : ${users}">
+                    <td class="fw-bold text-dark" th:text="${u.fullName}"></td>
+                    <td th:text="${u.email}"></td>
+                    <td th:text="${u.phone != null and u.phone != '' ? u.phone : 'Chưa cập nhật'}"></td>
+                    <td class="text-center">
+                        <span th:if="${u.roleId == 1}" class="badge bg-danger" th:text="${u.roleName}"></span>
+                        <span th:if="${u.roleId == 2}" class="badge bg-primary" th:text="${u.roleName}"></span>
+                        <span th:if="${u.roleId == 3}" class="badge bg-info text-dark" th:text="${u.roleName}"></span>
+                        <span th:if="${u.roleId == null or u.roleId < 1 or u.roleId > 3}" class="badge bg-dark">N/A</span>
                     </td>
-                    <td>
-                        <form method="post" th:action="@{/admin/users/toggle-status}" class="d-inline">
-                            <input type="hidden" name="userId" th:value="${u.id}" />
-                            <button th:if="${u.active}" class="btn btn-sm btn-warning">Khóa</button>
-                            <button th:unless="${u.active}" class="btn btn-sm btn-success">Mở khóa</button>
-                        </form>
+                    <td class="text-center">
+                        <span th:if="${u.statusId == 1}" class="badge bg-warning text-dark">Chờ Duyệt</span>
+                        <span th:if="${u.statusId == 2}" class="badge bg-success">Hoạt động</span>
+                        <span th:if="${u.statusId == 3}" class="badge bg-danger">Bị Khóa</span>
+                    </td>
+                    <td class="text-center">
+                        <div class="dropdown">
+                            <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                Thao tác
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end shadow">
+                                <li>
+                                    <a class="dropdown-item py-2" th:href="@{/admin/users/detail(id=${u.id})}">Xem chi tiết</a>
+                                </li>
+                                
+                                <li th:if="${u.roleId != 1}"><hr class="dropdown-divider"></li>
+
+                                <li th:if="${u.statusId == 1}">
+                                    <form th:action="@{/admin/users/update-status}" method="post">
+                                        <input type="hidden" name="id" th:value="${u.id}"/>
+                                        <input type="hidden" name="statusId" value="2"/>
+                                        <button type="submit" class="dropdown-item text-success py-2 fw-bold" onclick="return confirm('Xác nhận kích hoạt tài khoản này?')">
+                                            Duyệt tài khoản
+                                        </button>
+                                    </form>
+                                </li>
+
+                                <li th:if="${u.statusId == 2 and u.roleId != 1}">
+                                    <form th:action="@{/admin/users/update-status}" method="post">
+                                        <input type="hidden" name="id" th:value="${u.id}"/>
+                                        <input type="hidden" name="statusId" value="3"/>
+                                        <button type="submit" class="dropdown-item text-danger py-2" onclick="return confirm('Bạn có chắc chắn muốn KHÓA tài khoản này không?')">
+                                            Khóa tài khoản
+                                        </button>
+                                    </form>
+                                </li>
+
+                                <li th:if="${u.statusId == 3}">
+                                    <form th:action="@{/admin/users/update-status}" method="post">
+                                        <input type="hidden" name="id" th:value="${u.id}"/>
+                                        <input type="hidden" name="statusId" value="2"/>
+                                        <button type="submit" class="dropdown-item text-primary py-2 fw-bold" onclick="return confirm('Xác nhận mở khóa lại cho tài khoản này?')">
+                                            Mở khóa tài khoản
+                                        </button>
+                                    </form>
+                                </li>
+                            </ul>
+                        </div>
                     </td>
                 </tr>
             </tbody>
         </table>
+
+        <nav th:if="${totalPages > 1}" class="mt-4">
+            <ul class="pagination justify-content-center">
+                <li class="page-item" th:classappend="${currentPage == 1} ? 'disabled'">
+                    <a class="page-link" th:href="@{/admin/users(page=${currentPage - 1}, kw=${param.kw}, roleId=${param.roleId}, statusId=${param.statusId})}">Trước</a>
+                </li>
+                <li class="page-item" th:each="i : ${#numbers.sequence(1, totalPages)}" th:classappend="${currentPage == i} ? 'active'">
+                    <a class="page-link" th:href="@{/admin/users(page=${i}, kw=${param.kw}, roleId=${param.roleId}, statusId=${param.statusId})}" th:text="${i}">1</a>
+                </li>
+                <li class="page-item" th:classappend="${currentPage == totalPages} ? 'disabled'">
+                    <a class="page-link" th:href="@{/admin/users(page=${currentPage + 1}, kw=${param.kw}, roleId=${param.roleId}, statusId=${param.statusId})}">Sau</a>
+                </li>
+            </ul>
+        </nav>
     </section>
 
     <div th:replace="base :: footer"></div>
