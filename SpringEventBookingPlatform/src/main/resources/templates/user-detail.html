@@ -47,8 +47,8 @@
                         <tr>
                             <th>Trạng thái tài khoản:</th>
                             <td>
-                                <span th:if="${user.statusId == 1}" class="text-success fw-bold">Hoạt động</span>
-                                <span th:if="${user.statusId == 2}" class="text-warning fw-bold">Chờ kiểm duyệt</span>
+                                <span th:if="${user.statusId == 2}" class="text-success fw-bold">Hoạt động</span>
+                                <span th:if="${user.statusId == 1}" class="text-warning fw-bold">Chờ kiểm duyệt</span>
                                 <span th:if="${user.statusId == 3}" class="text-danger fw-bold">Đang bị khóa</span>
                             </td>
                         </tr>
