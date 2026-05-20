@@ -57,6 +57,14 @@ public class SpringSecurityConfigs {
         .csrf(c -> c.disable())
         
         .authorizeHttpRequests((requests) -> requests
+            .requestMatchers(
+                    "/swagger-ui/**",
+                    "/swagger-ui.html",
+                    "/v3/api-docs/**",
+                    "/v3/api-docs",
+                    "/swagger-resources/**",
+                    "/webjars/**"
+            ).permitAll()
             .requestMatchers("/admin/login", "/api/login", "/api/users").permitAll()
             .requestMatchers("/admin/**").hasRole("ADMIN")
             // Khu vực này sẽ do JwtFilter bảo vệ
