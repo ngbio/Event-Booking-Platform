@@ -65,10 +65,14 @@ public class SpringSecurityConfigs {
                     "/swagger-resources/**",
                     "/webjars/**"
             ).permitAll()
-            .requestMatchers("/admin/login", "/api/login", "/api/users").permitAll()
+            .requestMatchers(
+                    "/admin/login",
+                    "/api/users/login",
+                    "/api/users/register/**"
+            ).permitAll()            
             .requestMatchers("/admin/**").hasRole("ADMIN")
             // Khu vực này sẽ do JwtFilter bảo vệ
-            .requestMatchers("/api/secure/**").authenticated() 
+            .requestMatchers("/api/users/secure/**").authenticated() 
             .anyRequest().authenticated()
         )
         

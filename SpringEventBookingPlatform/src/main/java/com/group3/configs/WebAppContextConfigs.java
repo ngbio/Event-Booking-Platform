@@ -7,6 +7,8 @@ import org.springframework.web.servlet.config.annotation.DefaultServletHandlerCo
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.multipart.support.StandardServletMultipartResolver;
+import org.springframework.context.annotation.Bean;
 
 @Configuration
 @ComponentScan(
@@ -35,5 +37,10 @@ public class WebAppContextConfigs implements WebMvcConfigurer{
         registry.addResourceHandler("/webjars/**")
                 .addResourceLocations("classpath:/META-INF/resources/webjars/")
                 .resourceChain(false);
+    }
+
+    @Bean
+    public StandardServletMultipartResolver multipartResolver() {
+        return new StandardServletMultipartResolver();
     }
 }
