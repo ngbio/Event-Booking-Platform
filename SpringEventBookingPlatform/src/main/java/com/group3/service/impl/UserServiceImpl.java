@@ -21,6 +21,7 @@ import com.group3.service.UserService;
 import com.group3.utils.DTOMapper;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -110,6 +111,9 @@ public class UserServiceImpl implements UserService {
     public UserResponse addUser(RegisterRequest request, MultipartFile avatar, int roleId) {
         User user = DTOMapper.toUserEntity(request);
         user.setPassword(passwordEncoder.encode(request.getPassword()));
+        Date now = new Date();
+        user.setCreatedDate(now);
+        user.setUpdatedDate(now);
 
         Role userRole = roleRepo.findById(roleId);
         user.setRoleId(userRole);
