@@ -11,15 +11,15 @@ package com.group3.dto.response;
 public class LoginResponse {
     private String token;
     private Integer userId;
-    private String username;
+    private String email;
     private String role;
 
     public LoginResponse() {}
 
-    public LoginResponse(String token, Integer userId, String username, String role) {
+    public LoginResponse(String token, Integer userId, String email, String role) {
         this.token = token;
         this.userId = userId;
-        this.username = username;
+        this.email = email;
         this.role = role;
     }
 
@@ -29,8 +29,8 @@ public class LoginResponse {
     public Integer getUserId() { return userId; }
     public void setUserId(Integer userId) { this.userId = userId; }
 
-    public String getUsername() { return username; }
-    public void setUsername(String username) { this.username = username; }
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
 
     /**
      * @return the role

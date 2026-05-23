@@ -6,6 +6,7 @@ package com.group3.configs;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
+import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -38,7 +39,8 @@ import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
         }
 )
 public class SpringSecurityConfigs {
-     @Autowired
+
+    @Autowired
     private UserDetailsService userDetailsService;
 
     @Bean
@@ -54,41 +56,50 @@ public class SpringSecurityConfigs {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.cors(cors -> cors.configurationSource(corsConfigurationSource()))
-        .csrf(c -> c.disable())
-        
-        .authorizeHttpRequests((requests) -> requests
-            .requestMatchers(
-                    "/swagger-ui/**",
-                    "/swagger-ui.html",
-                    "/v3/api-docs/**",
-                    "/v3/api-docs",
-                    "/swagger-resources/**",
-                    "/webjars/**"
-            ).permitAll()
-            .requestMatchers(
-                    "/admin/login",
-                    "/api/users/login",
-                    "/api/users/register/**"
-            ).permitAll()            
-            .requestMatchers("/admin/**").hasRole("ADMIN")
-            // Khu vực này sẽ do JwtFilter bảo vệ
-            .requestMatchers("/api/users/secure/**").authenticated() 
-            .anyRequest().authenticated()
-        )
-        
-        // Khởi tạo JwtFilter và đặt nó gác ở cửa kiểm tra API
-        .addFilterBefore(new com.group3.filters.JwtFilter(), UsernamePasswordAuthenticationFilter.class)
-        
-        .formLogin(form -> form
-            .loginPage("/admin/login")
-            .loginProcessingUrl("/admin/login")
-            .defaultSuccessUrl("/admin", true)
-            .failureUrl("/admin/login?error=true")
-            .permitAll()
-        )
-        .logout((logout) -> logout.logoutSuccessUrl("/admin/login").permitAll());
-        
-    return http.build();
+                .csrf(c -> c.disable())
+                .exceptionHandling(exception -> exception
+                .authenticationEntryPoint((request, response, authException) -> {
+                    response.setStatus(401);
+                    response.setContentType("application/json;charset=UTF-8");
+                    response.getWriter().write("{\"status\": 401, \"message\": \"Chưa xác thực: " + authException.getMessage() + "\"}");
+                })
+                .accessDeniedHandler((request, response, accessDeniedException) -> {
+                    response.setStatus(403);
+                    response.setContentType("application/json;charset=UTF-8");
+                    response.getWriter().write("{\"status\": 403, \"message\": \"Không có quyền truy cập: " + accessDeniedException.getMessage() + "\"}");
+                })
+                )
+                .authorizeHttpRequests((requests) -> requests
+                .requestMatchers(
+                        "/swagger-ui/**",
+                        "/swagger-ui.html",
+                        "/v3/api-docs/**",
+                        "/v3/api-docs",
+                        "/swagger-resources/**",
+                        "/webjars/**"
+                ).permitAll()
+                .requestMatchers(
+                        "/admin/login",
+                        "/api/users/login",
+                        "/api/users/register/**"
+                ).permitAll()
+                .requestMatchers("/admin/**").hasRole("ADMIN")
+                // Khu vực này sẽ do JwtFilter bảo vệ
+                .requestMatchers("/api/users/secure/**").authenticated()
+                .anyRequest().authenticated()
+                )
+                // Khởi tạo JwtFilter và đặt nó gác ở cửa kiểm tra API
+                .addFilterBefore(new com.group3.filters.JwtFilter(), UsernamePasswordAuthenticationFilter.class)
+                .formLogin(form -> form
+                .loginPage("/admin/login")
+                .loginProcessingUrl("/admin/login")
+                .defaultSuccessUrl("/admin", true)
+                .failureUrl("/admin/login?error=true")
+                .permitAll()
+                )
+                .logout((logout) -> logout.logoutSuccessUrl("/admin/login").permitAll());
+
+        return http.build();
     }
 
     @Bean
@@ -101,17 +112,17 @@ public class SpringSecurityConfigs {
                         "secure", true));
         return cloudinary;
     }
-    
+
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
 
         CorsConfiguration config = new CorsConfiguration();
 
-        config.setAllowedOrigins(List.of("http://localhost:3000/")); 
+        config.setAllowedOrigins(List.of("http://localhost:3000/"));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("Authorization", "Content-Type"));
         config.setExposedHeaders(List.of("Authorization"));
-        config.setAllowCredentials(true); 
+        config.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);

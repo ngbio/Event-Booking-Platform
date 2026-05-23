@@ -11,6 +11,9 @@ import com.group3.dto.request.RegisterRequest;
 import com.group3.dto.request.UserUpdateRequest;
 import com.group3.pojo.User;
 import com.group3.dto.response.UserResponse;
+import com.group3.exceptions.BusinessException;
+import com.group3.exceptions.DuplicateResourceException;
+import com.group3.exceptions.ResourceNotFoundException;
 import com.group3.pojo.Role;
 import com.group3.pojo.StatusUser;
 import com.group3.repository.UserRepository;
@@ -59,6 +62,16 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private StatusUserRepository statusUserRepo;
+
+    private void validateAvatar(MultipartFile avatar) {
+        if (avatar == null || avatar.isEmpty()) {
+            throw new BusinessException("Avatar bắt buộc không được để trống");
+        }
+        //Kiem tra dung luong avatar
+        if (avatar.getSize() > 2 * 1024 * 1024) {
+            throw new BusinessException("Avatar tối đa 2MB!");
+        }
+    }
 
     @Override
     public List<UserResponse> getUsers(Map<String, String> params) {
@@ -109,6 +122,11 @@ public class UserServiceImpl implements UserService {
 //    }
     @Override
     public UserResponse addUser(RegisterRequest request, MultipartFile avatar, int roleId) {
+        if (this.userRepo.existEmail(request.getEmail())) {
+            throw new DuplicateResourceException("Email này đã có người đăng ký!");
+        }
+        validateAvatar(avatar);
+        
         User user = DTOMapper.toUserEntity(request);
         user.setPassword(passwordEncoder.encode(request.getPassword()));
         Date now = new Date();
@@ -139,8 +157,9 @@ public class UserServiceImpl implements UserService {
     public UserResponse updateUser(Integer id, UserUpdateRequest request, MultipartFile avatar) {
         User user = this.userRepo.findUserById(id);
         if (user == null) {
-            return null;
+            throw new ResourceNotFoundException("Không tìm thấy người dùng với id = "+id);
         }
+        
         //Kiem tra 4 cot cua nha to chuc  co thay doi hay khong
         boolean isLegalDocumentChanged = false;
 
@@ -161,6 +180,7 @@ public class UserServiceImpl implements UserService {
         user = DTOMapper.toUserEntity(request, user);
 
         if (avatar != null && !avatar.isEmpty()) {
+            validateAvatar(avatar);
             try {
                 Map res = this.cloudinary.uploader().upload(avatar.getBytes(),
                         ObjectUtils.asMap("resource_type", "auto"));
@@ -174,7 +194,7 @@ public class UserServiceImpl implements UserService {
             StatusUser pendingStatus = statusUserRepo.getStatusUserById(1);
             user.setStatusId(pendingStatus);
         }
-        
+
         User savedUser = this.userRepo.updateUser(user);
         return DTOMapper.toUserResponse(savedUser);
 
@@ -183,20 +203,20 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserResponse authenticate(LoginRequest request
     ) {
-        boolean isAuthenticated = this.userRepo.authenticate(request.getUsername(), request.getPassword());
+        boolean isAuthenticated = this.userRepo.authenticate(request.getEmail(), request.getPassword());
 
         if (isAuthenticated) {
-            User user = this.userRepo.findUserByEmail(request.getUsername());
+            User user = this.userRepo.findUserByEmail(request.getEmail());
             return DTOMapper.toUserResponse(user);
         }
         return null;
     }
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = this.userRepo.findUserByEmail(username);
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        User user = this.userRepo.findUserByEmail(email);
         if (user == null) {
-            throw new UsernameNotFoundException("Không tồn tại!");
+            throw new ResourceNotFoundException("Không tồn người dùng với email: "+email);
         }
 
         Set<GrantedAuthority> authorities = new HashSet<>();

@@ -101,6 +101,6 @@ public class EventController {
             return "redirect:/admin/events";
         }
         model.addAttribute("event", event);
-        return "event-detail"; // Trả về trang chi tiết
+        return "event-detail"; 
     }
 }

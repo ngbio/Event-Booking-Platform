@@ -11,7 +11,7 @@ public class DispatcherServletInit extends AbstractAnnotationConfigDispatcherSer
         return new Class[]{
             HibernateConfigs.class,
             ThymeleafConfigs.class,
-            SpringSecurityConfigs.class
+            SpringSecurityConfigs.class,
         };
     }
 
@@ -22,6 +22,7 @@ public class DispatcherServletInit extends AbstractAnnotationConfigDispatcherSer
            OpenApiConfig.class,
        };
     }
+    @Override
     protected String[] getServletMappings() {
         return new String[]{"/"};
     }
@@ -34,6 +35,7 @@ public class DispatcherServletInit extends AbstractAnnotationConfigDispatcherSer
         int fileSizeThreshold = 0;
 
         registration.setMultipartConfig(new MultipartConfigElement(location, maxFileSize, maxRequestSize, fileSizeThreshold));
+        registration.setInitParameter("throwExceptionIfNoHandlerFound", "true");
     }
 
 }

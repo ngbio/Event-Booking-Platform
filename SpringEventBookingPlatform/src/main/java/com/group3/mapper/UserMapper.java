@@ -76,7 +76,6 @@ public class UserMapper {
     public static User toEntity(UserUpdateRequest request,User user){
         if (request == null || user == null) return null;
         user.setFullName(request.getFullName());
-        user.setEmail(request.getEmail());
         user.setPhone(request.getPhone());
         user.setPassword(request.getPassword());
         

@@ -10,7 +10,6 @@ public class UserResponse {
     private String fullName;
     private String phone;
     private String avatar;
-    private Boolean active;
     private String identityCard;
     private String businessLicense;
     private String organizationName;
@@ -31,13 +30,12 @@ public class UserResponse {
     public UserResponse() {
     }
 
-    public UserResponse(Integer id, String email, String fullName, String phone, String avatar, Boolean active, String identityCard, String businessLicense, String organizationName, String taxCode, Integer roleId, String roleName, Integer statusId, String statusName, Date createdDate, Date updatedDate) {
+    public UserResponse(Integer id, String email, String fullName, String phone, String avatar, String identityCard, String businessLicense, String organizationName, String taxCode, Integer roleId, String roleName, Integer statusId, String statusName, Date createdDate, Date updatedDate) {
         this.id = id;
         this.email = email;
         this.fullName = fullName;
         this.phone = phone;
         this.avatar = avatar;
-        this.active = active;
         this.identityCard = identityCard;
         this.businessLicense = businessLicense;
         this.organizationName = organizationName;
@@ -90,14 +88,6 @@ public class UserResponse {
 
     public void setAvatar(String avatar) {
         this.avatar = avatar;
-    }
-
-    public Boolean getActive() {
-        return active;
-    }
-
-    public void setActive(Boolean active) {
-        this.active = active;
     }
 
     public Integer getRoleId() {
