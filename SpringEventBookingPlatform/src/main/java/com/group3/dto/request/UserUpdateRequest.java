@@ -22,10 +22,6 @@ public class UserUpdateRequest {
     
     @NotBlank(message = "Họ và tên không được để trống")
     private String fullName;
-    
-    @NotBlank(message = "Email không được để trống")
-    @Email(message = "Email không hợp lệ")
-    private String email;
 
     @NotBlank(message = "Số điện thoại không được để trống")
     private String phone;
@@ -50,14 +46,6 @@ public class UserUpdateRequest {
 
     public void setFullName(String fullName) {
         this.fullName = fullName;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
     }
 
     public String getPhone() {

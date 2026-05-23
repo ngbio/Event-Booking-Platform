@@ -6,7 +6,6 @@ package com.group3.repository.impl;
 
 import com.group3.pojo.Category;
 import com.group3.pojo.Event;
-import com.group3.pojo.StatusEvent;
 import com.group3.repository.EventRepository;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;

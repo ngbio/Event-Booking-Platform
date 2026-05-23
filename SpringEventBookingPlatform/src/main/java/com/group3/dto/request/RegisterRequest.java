@@ -4,8 +4,10 @@
  */
 package com.group3.dto.request;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
@@ -15,39 +17,39 @@ import jakarta.validation.constraints.Size;
  */
 public class RegisterRequest {
 
-    @NotBlank(message = "Tên đăng nhập không được để trống")
-    private String username;
+    @NotBlank(message = "Email không được để trống")
+    @Email(message = "Email không hợp lệ")
+    @Pattern(regexp = ".+@.+\\..+", message = "Email phải có đuôi domain (ví dụ: .com, .vn)")
+    private String email;
 
     @NotBlank(message = "Mật khẩu không được để trống")
     @Size(min = 6, message = "Mật khẩu phải từ 6 ký tự trở lên")
-    @Pattern(regexp = "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{6,}$", message = "Mật khẩu chứa ít nhất một kí tự chữ và một số")
+    @Pattern(regexp = "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d@$!%*#?&]{6,}$",
+            message = "Mật khẩu phải từ 6 ký tự, gồm ít nhất một chữ cái và một số")
     private String password;
-    
+
     @NotBlank(message = "Họ và tên không được để trống")
     private String fullName;
 
-    @NotBlank(message = "Email không được để trống")
-    @Email(message = "Email không hợp lệ")
-    private String email;
-
     @NotBlank(message = "Số điện thoại không được để trống")
+    @Pattern(regexp = "^0\\d{9}$", message = "Số điện thoại phải bắt đầu bằng số 0 và có đúng 10 chữ số")
     private String phone;
 
-    @NotBlank(message = "Vai trò của user không được trống")
-    private String Role;
-    
+    @NotNull(message = "Vai trò của user không được trống")
+    private Integer Role;
+
     //Cho nha to chuc
     private String identityCard;
     private String businessLicense;
     private String organizationName;
     private String taxCode;
 
-    public String getUsername() {
-        return username;
+    public String getEmail() {
+        return email;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public String getPassword() {
@@ -66,14 +68,6 @@ public class RegisterRequest {
         this.fullName = fullName;
     }
 
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
     public String getPhone() {
         return phone;
     }
@@ -82,11 +76,11 @@ public class RegisterRequest {
         this.phone = phone;
     }
 
-    public String getRole() {
+    public Integer getRole() {
         return Role;
     }
 
-    public void setRole(String Role) {
+    public void setRole(Integer Role) {
         this.Role = Role;
     }
 
@@ -121,7 +115,5 @@ public class RegisterRequest {
     public void setTaxCode(String taxCode) {
         this.taxCode = taxCode;
     }
-    
-    
-    
+
 }

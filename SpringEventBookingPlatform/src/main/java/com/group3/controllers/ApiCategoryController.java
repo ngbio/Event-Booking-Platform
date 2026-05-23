@@ -1,5 +1,6 @@
 package com.group3.controllers;
 
+import com.group3.dto.response.ApiResponse;
 import com.group3.dto.response.CategoryResponse;
 import com.group3.service.CategoryService;
 import java.util.List;
@@ -19,7 +20,9 @@ public class ApiCategoryController {
     private CategoryService cateService;
     
     @GetMapping("/categories")
-    public ResponseEntity<List<CategoryResponse>> list(){
-        return new ResponseEntity<>(this.cateService.getCategories(),HttpStatus.OK);
+    public ResponseEntity<ApiResponse<List<CategoryResponse>>> list(){
+        //return new ResponseEntity<>(this.cateService.getCategories(),HttpStatus.OK);
+        List<CategoryResponse> categories = this.cateService.getCategories();
+        return ResponseEntity.ok(new ApiResponse<>(200, "Lấy thông tin danh lục thành công",categories));
     } 
 }

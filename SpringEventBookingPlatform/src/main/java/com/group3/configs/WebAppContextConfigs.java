@@ -16,7 +16,8 @@ import org.springframework.context.annotation.Bean;
             "com.group3.controllers",
             "com.group3.repository",
             "com.group3.service",
-            "org.springdoc"
+            "org.springdoc",
+            "com.group3.exceptions"
         }
 )
 @EnableWebMvc
@@ -28,7 +29,7 @@ public class WebAppContextConfigs implements WebMvcConfigurer{
          configurer.enable();
     }
 
-    // http://localhost:8080/swagger-ui/index.html
+    //http://localhost:8080/SpringEventBookingPlatform/swagger-ui/index.html
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/swagger-ui/**")
@@ -42,5 +43,9 @@ public class WebAppContextConfigs implements WebMvcConfigurer{
     @Bean
     public StandardServletMultipartResolver multipartResolver() {
         return new StandardServletMultipartResolver();
+    }
+    @Bean
+    public org.springframework.validation.beanvalidation.LocalValidatorFactoryBean validator() {
+        return new org.springframework.validation.beanvalidation.LocalValidatorFactoryBean();
     }
 }
