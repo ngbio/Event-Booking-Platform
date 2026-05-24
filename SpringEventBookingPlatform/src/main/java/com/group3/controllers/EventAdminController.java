@@ -23,7 +23,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
  */
 @Controller
 @RequestMapping("/admin/events")
-public class EventController {
+public class EventAdminController {
 
     @Autowired
     private EventService eventService;

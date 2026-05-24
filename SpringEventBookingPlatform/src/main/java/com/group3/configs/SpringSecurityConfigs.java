@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -59,6 +60,14 @@ public class SpringSecurityConfigs {
                 .csrf(c -> c.disable())
                 .exceptionHandling(exception -> exception
                 .authenticationEntryPoint((request, response, authException) -> {
+                    String requestUri = request.getRequestURI();
+                    String apiPrefix = request.getContextPath() + "/api/";
+
+                    if (!requestUri.startsWith(apiPrefix)) {
+                        response.sendRedirect(request.getContextPath() + "/admin/login");
+                        return;
+                    }
+
                     response.setStatus(401);
                     response.setContentType("application/json;charset=UTF-8");
                     response.getWriter().write("{\"status\": 401, \"message\": \"Chưa xác thực: " + authException.getMessage() + "\"}");
@@ -70,6 +79,7 @@ public class SpringSecurityConfigs {
                 })
                 )
                 .authorizeHttpRequests((requests) -> requests
+                .requestMatchers("/").permitAll()
                 .requestMatchers(
                         "/swagger-ui/**",
                         "/swagger-ui.html",
@@ -83,6 +93,8 @@ public class SpringSecurityConfigs {
                         "/api/users/login",
                         "/api/users/register/**"
                 ).permitAll()
+                .requestMatchers("/api/events/organizer/**").authenticated()
+                .requestMatchers(HttpMethod.GET, "/api/events/**").permitAll()
                 .requestMatchers("/admin/**").hasRole("ADMIN")
                 // Khu vực này sẽ do JwtFilter bảo vệ
                 .requestMatchers("/api/users/secure/**").authenticated()

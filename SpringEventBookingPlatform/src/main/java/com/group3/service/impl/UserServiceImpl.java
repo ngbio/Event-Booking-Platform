@@ -102,6 +102,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public User getUserEntityByEmail(String email) {
+        return this.userRepo.findUserByEmail(email);
+    }
+
+    @Override
     public boolean checkExistEmail(String email) {
         return this.userRepo.existEmail(email);
     }
