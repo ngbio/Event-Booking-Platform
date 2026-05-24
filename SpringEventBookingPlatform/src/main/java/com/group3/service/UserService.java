@@ -27,6 +27,8 @@ public interface UserService extends UserDetailsService {
 
     UserResponse getUserByEmail(String email);
 
+    User getUserEntityByEmail(String email);
+
     boolean checkExistEmail(String email);
     
 //    boolean checkExistUsername(String username);

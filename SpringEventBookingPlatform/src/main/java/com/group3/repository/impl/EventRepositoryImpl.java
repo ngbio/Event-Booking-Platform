@@ -54,8 +54,12 @@ public class EventRepositoryImpl implements EventRepository {
             String kw = params.get("kw");
             String searchBy = params.get("searchBy");
             String statusId = params.get("statusId");
+            String organizerId = params.get("organizerId");
             if (statusId != null && !statusId.isBlank()) {
                 predicates.add(b.equal(root.get("statusId").get("id"), Integer.parseInt(statusId)));
+            }
+            if (organizerId != null && !organizerId.isBlank()) {
+                predicates.add(b.equal(root.get("organizerId").get("id"), Integer.parseInt(organizerId)));
             }
             if (kw != null && !kw.isBlank()) {
                 String t = kw.trim();
@@ -216,8 +220,12 @@ public class EventRepositoryImpl implements EventRepository {
             String kw = params.get("kw");
             String searchBy = params.get("searchBy");
             String statusId = params.get("statusId");
+            String organizerId = params.get("organizerId");
             if (statusId != null && !statusId.isBlank()) {
                 predicates.add(b.equal(root.get("statusId").get("id"), Integer.parseInt(statusId)));
+            }
+            if (organizerId != null && !organizerId.isBlank()) {
+                predicates.add(b.equal(root.get("organizerId").get("id"), Integer.parseInt(organizerId)));
             }
             if (kw != null && !kw.isBlank()) {
                 String t = kw.trim();
