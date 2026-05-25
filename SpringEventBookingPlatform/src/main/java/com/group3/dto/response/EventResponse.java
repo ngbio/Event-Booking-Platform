@@ -14,6 +14,7 @@ public class EventResponse {
     private String organizerName;
     private String location;
     private int totalTickets;
+    private int availableTickets;
     private BigDecimal price;
     private Integer categoryId;
     private String categoryName;
@@ -39,7 +40,7 @@ public class EventResponse {
     public EventResponse() {
     }
 
-    public EventResponse(Integer id, String title, String description, String imageUrl, String videoUrl, Integer organizerId, String organizerName, String location, int totalTickets, BigDecimal price, Integer categoryId, String categoryName, int soldTickets, BigDecimal listingFee, Boolean isPaidFee, String settlementCode, Integer statusId, String statusName, Date startTime, Date endTime, Date createdDate, Date updatedDate) {
+    public EventResponse(Integer id, String title, String description, String imageUrl, String videoUrl, Integer organizerId, String organizerName, String location, int totalTickets, int availableTickets, BigDecimal price, Integer categoryId, String categoryName, int soldTickets, BigDecimal listingFee, Boolean isPaidFee, String settlementCode, Integer statusId, String statusName, Date startTime, Date endTime, Date createdDate, Date updatedDate) {
         this.id = id;
         this.title = title;
         this.description = description;
@@ -49,6 +50,7 @@ public class EventResponse {
         this.organizerName = organizerName;
         this.location = location;
         this.totalTickets = totalTickets;
+        this.availableTickets = availableTickets;
         this.price = price;
         this.categoryId = categoryId;
         this.categoryName = categoryName;
@@ -136,6 +138,14 @@ public class EventResponse {
 
     public void setTotalTickets(int totalTickets) {
         this.totalTickets = totalTickets;
+    }
+
+    public int getAvailableTickets() {
+        return availableTickets;
+    }
+
+    public void setAvailableTickets(int availableTickets) {
+        this.availableTickets = availableTickets;
     }
 
     public BigDecimal getPrice() {

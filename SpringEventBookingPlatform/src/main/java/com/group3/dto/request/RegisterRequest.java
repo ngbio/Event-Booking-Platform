@@ -35,9 +35,6 @@ public class RegisterRequest {
     @Pattern(regexp = "^0\\d{9}$", message = "Số điện thoại phải bắt đầu bằng số 0 và có đúng 10 chữ số")
     private String phone;
 
-    @NotNull(message = "Vai trò của user không được trống")
-    private Integer Role;
-
     //Cho nha to chuc
     private String identityCard;
     private String businessLicense;
@@ -74,14 +71,6 @@ public class RegisterRequest {
 
     public void setPhone(String phone) {
         this.phone = phone;
-    }
-
-    public Integer getRole() {
-        return Role;
-    }
-
-    public void setRole(Integer Role) {
-        this.Role = Role;
     }
 
     public String getIdentityCard() {

@@ -71,6 +71,15 @@ public class ApiUserController {
         return ResponseEntity.ok(new ApiResponse<>(200, "Đăng nhập thành công", response));
     }
 
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(Principal principal) {
+        if (principal == null) {
+            throw new UnauthorizedException("Chua dang nhap hoac token het han");
+        }
+
+        return ResponseEntity.ok(new ApiResponse<>(200, "Dang xuat thanh cong"));
+    }
+
     @GetMapping("/secure/profile")
     public ResponseEntity<?> getProfile(Principal principal) {
         if (principal == null) {
