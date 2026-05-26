@@ -71,7 +71,7 @@ public class ApiUserController {
         return ResponseEntity.ok(new ApiResponse<>(200, "Đăng nhập thành công", response));
     }
 
-    @PostMapping("/logout")
+    @PostMapping("/secure/logout")
     public ResponseEntity<?> logout(Principal principal) {
         if (principal == null) {
             throw new UnauthorizedException("Chua dang nhap hoac token het han");
