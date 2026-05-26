@@ -32,8 +32,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -62,6 +60,12 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private StatusUserRepository statusUserRepo;
+
+    private static final Integer ROLE_ATTENDEE = 3;
+    private static final Integer ROLE_ORGANIZER = 2;
+    private static final Integer PENDING= 1;
+    private static final Integer ACTIVE= 2;
+    private static final Integer REJECTED= 3;
 
     private void validateAvatar(MultipartFile avatar) {
         if (avatar == null || avatar.isEmpty()) {
@@ -144,9 +148,9 @@ public class UserServiceImpl implements UserService {
         if (this.userRepo.existEmail(request.getEmail())) {
             throw new DuplicateResourceException("Email này đã có người đăng ký!");
         }
-        if (roleId == 3) {
+        if (roleId == ROLE_ATTENDEE) {
             validateAttendeeInfo(request);
-        } else if (roleId == 2) {
+        } else if (roleId == ROLE_ORGANIZER) {
             validateOrganizerInfo(request);
         }
         validateAvatar(avatar);
@@ -160,7 +164,7 @@ public class UserServiceImpl implements UserService {
         Role userRole = roleRepo.findById(roleId);
         user.setRoleId(userRole);
 
-        int statusId = roleId == 2 ? 1 : 2;
+        int statusId = roleId == ROLE_ORGANIZER ? PENDING : ACTIVE;
         StatusUser statusUser = statusUserRepo.getStatusUserById(statusId);
         user.setStatusId(statusUser);
 
@@ -170,7 +174,7 @@ public class UserServiceImpl implements UserService {
                         ObjectUtils.asMap("resource_type", "auto"));
                 user.setAvatar(res.get("secure_url").toString());
             } catch (IOException ex) {
-                Logger.getLogger(UserServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
+                throw new BusinessException("Cập nhật avatar thất bại!");
             }
         }
 
@@ -183,13 +187,13 @@ public class UserServiceImpl implements UserService {
         if (user == null) {
             throw new ResourceNotFoundException("Không tìm thấy người dùng với id = " + id);
         }
-        if (user.getRoleId().getId() == 3) {
+        if (user.getRoleId().getId() == ROLE_ATTENDEE) {
             if ((request.getIdentityCard() != null && !request.getIdentityCard().isEmpty())
                     || (request.getOrganizationName() != null && !request.getOrganizationName().isEmpty())
                     || (request.getTaxCode() != null && !request.getTaxCode().isEmpty())) {
                 throw new BusinessException("Lỗi dữ liệu: Người mua vé không có các thông tin của Nhà tổ chức");
             }
-        } else if (user.getRoleId().getId() == 2) {
+        } else if (user.getRoleId().getId() == ROLE_ORGANIZER) {
             if (request.getIdentityCard() == null || request.getIdentityCard().isEmpty()) {
                 throw new BusinessException("Người tổ chức bắt buộc phải cung cấp CCCD");
             }
@@ -204,7 +208,7 @@ public class UserServiceImpl implements UserService {
         //Kiem tra 3 cot cua nha to chuc  co thay doi hay khong
         boolean isLegalDocumentChanged = false;
 
-        if (user.getRoleId() != null && user.getRoleId().getId() == 2) {
+        if (user.getRoleId() != null && user.getRoleId().getId() == ROLE_ORGANIZER) {
             if (request.getIdentityCard() != null && !request.getIdentityCard().equals(user.getIdentityCard())) {
                 isLegalDocumentChanged = true;
             }
@@ -224,12 +228,12 @@ public class UserServiceImpl implements UserService {
                         ObjectUtils.asMap("resource_type", "auto"));
                 user.setAvatar(res.get("secure_url").toString());
             } catch (IOException ex) {
-                Logger.getLogger(UserServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
+                throw new BusinessException("Cập nhật avatar thất bại!");
             }
         }
         //Neu 4 truong co thay doi thi chuyen sang Pending
         if (isLegalDocumentChanged) {
-            StatusUser pendingStatus = statusUserRepo.getStatusUserById(1);
+            StatusUser pendingStatus = statusUserRepo.getStatusUserById(PENDING);
             user.setStatusId(pendingStatus);
         }
 
@@ -269,20 +273,16 @@ public class UserServiceImpl implements UserService {
         if (principal == null) {
             throw new UnauthorizedException("Chưa đăng nhập hoặc token hết hạn");
         }
-
         User user = userRepo.findUserByEmail(principal.getName());
         if (user == null) {
             throw new ResourceNotFoundException("Không tìm thấy thông tin tài khoản người dùng!");
         }
-
         if (!request.getNewPassword().equals(request.getConfirmPassword())) {
             throw new BusinessException("Mật khẩu xác nhận không trùng khớp!");
         }
-
         if (!passwordEncoder.matches(request.getOldPassword(), user.getPassword())) {
             throw new BusinessException("Mật khẩu cũ không chính xác!");
         }
-
         String newEncryptedPassword = passwordEncoder.encode(request.getNewPassword());
         boolean isSuccess = userRepo.changePassword(user.getId(), newEncryptedPassword);
 

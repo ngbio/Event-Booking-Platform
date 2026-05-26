@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -24,6 +25,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/api/auth")
+@CrossOrigin
 public class ApiAuthController {
 //      @RequestMapping("/api/auth")
 //Chứa các API (Nhóm 1 - Xác thực):
@@ -33,12 +35,15 @@ public class ApiAuthController {
     @Autowired
     private UserService userService;
 
+    private static final Integer ROLE_ATTENDEE = 3;
+    private static final Integer ROLE_ORGANIZER = 2;
+
     @PostMapping(path = "/register/attendee",
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> registerAttendee(@Valid @ModelAttribute RegisterRequest request,
             @RequestParam(value = "avatar", required = false) MultipartFile avatar) {
-        UserResponse savedUser = userService.addUser(request, avatar, 3);
+        UserResponse savedUser = userService.addUser(request, avatar, ROLE_ATTENDEE);
         return new ResponseEntity<>(new ApiResponse<>(201, "Đăng ký thành công", savedUser), HttpStatus.CREATED);
     }
 
@@ -47,7 +52,7 @@ public class ApiAuthController {
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> registerOrganizer(@Valid @ModelAttribute RegisterRequest request,
             @RequestParam(value = "avatar", required = false) MultipartFile avatar) {
-        UserResponse savedUser = userService.addUser(request, avatar, 2);
+        UserResponse savedUser = userService.addUser(request, avatar, ROLE_ORGANIZER);
         return new ResponseEntity<>(new ApiResponse<>(201, "Đăng ký thành công", savedUser), HttpStatus.CREATED);
     }
 

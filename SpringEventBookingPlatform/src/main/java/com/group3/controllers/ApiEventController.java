@@ -3,6 +3,7 @@ package com.group3.controllers;
 import com.group3.dto.request.EventRequest;
 import com.group3.dto.response.ApiResponse;
 import com.group3.dto.response.EventResponse;
+import com.group3.exceptions.BusinessException;
 import com.group3.exceptions.ResourceNotFoundException;
 import com.group3.exceptions.UnauthorizedException;
 import com.group3.pojo.User;
@@ -28,7 +29,8 @@ import org.springframework.web.bind.annotation.RestController;
 public class ApiEventController {
 //      @RequestMapping("/api/events")
 //Chứa các API (Nhóm 2 - Public Event - Dành cho khách vãng lai):
-/// (GET: Lấy danh sách sự kiện PUBLISHED)
+
+    /// (GET: Lấy danh sách sự kiện PUBLISHED)
 /// /{id} (GET: Xem chi tiết sự kiện)
 /// /{id}/available (GET: Xem số lượng vé còn lại)
 /// /compare (GET: So sánh các sự kiện)
@@ -65,5 +67,16 @@ public class ApiEventController {
 
         int availableTickets = eventService.getAvailableTickets(id);
         return ResponseEntity.ok(new ApiResponse<>(200, "Lấy thông tin số vé còn lại thành công", availableTickets));
+    }
+
+    @GetMapping("/compare")
+    public ResponseEntity<?> compareEvents(@RequestParam List<Integer> eventIds) {
+        // Validate: Ví dụ người dùng chọn nhiều hơn 3 sự kiện thì báo lỗi
+        if (eventIds == null || eventIds.size() < 2 || eventIds.size() > 3) {
+            throw new BusinessException("Vui lòng chọn từ 2 đến 3 sự kiện để so sánh!");
+        }
+
+        List<EventResponse> events = eventService.getEventsByIds(eventIds);
+        return ResponseEntity.ok(new ApiResponse<>(200, "So sánh sự kiện thành công", events));
     }
 }

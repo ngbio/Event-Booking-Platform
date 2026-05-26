@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.group3.repository.impl;
 
 import com.group3.pojo.Category;
@@ -22,14 +18,9 @@ import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.stereotype.Repository;
 import jakarta.transaction.Transactional;
 import java.util.ArrayList;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 
-/**
- *
- * @author THUAN
- */
 @Repository
 @Transactional
 @PropertySource("classpath:configs.properties")
@@ -261,5 +252,12 @@ public class EventRepositoryImpl implements EventRepository {
         Query query = session.createQuery(q);
         return (long) query.getSingleResult();
     }
-
+    
+    @Override
+    public List<Event>getEventsByIds(List<Integer> EventIds){
+        Session session = this.factory.getObject().getCurrentSession();
+        Query<Event> q = session.createQuery("FROM Event e WHERE e.id IN :ids",Event.class);
+        q.setParameter("ids",EventIds);
+        return q.getResultList();
+    }
 }
