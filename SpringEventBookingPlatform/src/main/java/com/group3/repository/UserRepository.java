@@ -3,7 +3,6 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package com.group3.repository;
-import com.group3.dto.response.UserResponse;
 import com.group3.pojo.User;
 import java.util.List;
 import java.util.Map;
@@ -32,4 +31,8 @@ public interface UserRepository {
     User addUser(User u);
         
     boolean authenticate(String email, String password);
+    
+    String getEncryptedPasswordById(Integer userId);
+    
+    boolean changePassword(Integer userId, String newEncryptedPassword);
 }

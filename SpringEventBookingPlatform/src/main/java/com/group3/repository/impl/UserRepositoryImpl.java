@@ -19,14 +19,6 @@ import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Repository;
 
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
-/**
- *
- * @author THUAN
- */
 @Repository
 @Transactional
 public class UserRepositoryImpl implements UserRepository {
@@ -52,14 +44,6 @@ public class UserRepositoryImpl implements UserRepository {
         Session s = currentSession();
         return s.get(User.class, id);
     }
-//
-//    @Override
-//    public User getUserByUsername(String username) {
-//        Session s = currentSession();
-//        Query<User> q = s.createNamedQuery("User.findByUsername", User.class);
-//        q.setParameter("username", username);
-//        return q.uniqueResult();
-//    }
 
     @Override
     public User updateUser(User user) {
@@ -218,4 +202,29 @@ public class UserRepositoryImpl implements UserRepository {
         return this.bCryptPasswordEncoder.matches(password, user.getPassword());
     }
 
+    @Override
+    public String getEncryptedPasswordById(Integer userId) {
+        if (userId == null) {
+            return null;
+        }
+        Session session = this.currentSession();
+        Query<String> q = session.createQuery("SELECT u.password FROM User u WHERE u.id:id", String.class);
+        q.setParameter("id", userId);
+        return q.uniqueResult();
+    }
+
+    @Override
+    public boolean changePassword(Integer userId, String newEncryptedPassword) {
+        if (userId == null || newEncryptedPassword == null || newEncryptedPassword.isEmpty()) {
+            return false;
+        }
+        Session session = this.currentSession();
+        String hql = "UPDATE User u SET u.password = :neq WHERE u.id = :id";
+        int rowsAffected = session.createMutationQuery(hql)
+                .setParameter("nep", newEncryptedPassword)
+                .setParameter("id", userId)
+                .executeUpdate();
+
+        return rowsAffected > 0;
+    }
 }

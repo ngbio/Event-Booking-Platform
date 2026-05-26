@@ -9,11 +9,13 @@ import com.cloudinary.utils.ObjectUtils;
 import com.group3.dto.request.LoginRequest;
 import com.group3.dto.request.RegisterRequest;
 import com.group3.dto.request.UserUpdateRequest;
+import com.group3.dto.request.ChangePasswordRequest;
 import com.group3.pojo.User;
 import com.group3.dto.response.UserResponse;
 import com.group3.exceptions.BusinessException;
 import com.group3.exceptions.DuplicateResourceException;
 import com.group3.exceptions.ResourceNotFoundException;
+import com.group3.exceptions.UnauthorizedException;
 import com.group3.pojo.Role;
 import com.group3.pojo.StatusUser;
 import com.group3.repository.UserRepository;
@@ -24,6 +26,7 @@ import com.group3.service.UserService;
 import com.group3.utils.DTOMapper;
 
 import java.io.IOException;
+import java.security.Principal;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -38,14 +41,11 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-/**
- *
- * @author THUAN
- */
 @Service
-
+@Transactional
 public class UserServiceImpl implements UserService {
 
     @Autowired
@@ -188,16 +188,16 @@ public class UserServiceImpl implements UserService {
                     || (request.getOrganizationName() != null && !request.getOrganizationName().isEmpty())
                     || (request.getTaxCode() != null && !request.getTaxCode().isEmpty())) {
                 throw new BusinessException("Lỗi dữ liệu: Người mua vé không có các thông tin của Nhà tổ chức");
-            } else if (user.getRoleId().getId() == 2) {
-                if (request.getIdentityCard() == null || request.getIdentityCard().isEmpty()) {
-                    throw new BusinessException("Người tổ chức bắt buộc phải cung cấp CCCD");
-                }
-                if (request.getOrganizationName() == null || request.getOrganizationName().isEmpty()) {
-                    throw new BusinessException("Bắt buộc phải cung cấp Tên tổ chức/doanh nghiệp");
-                }
-                if (request.getTaxCode() == null || request.getTaxCode().isEmpty()) {
-                    throw new BusinessException("Bắt buộc phải cung cấp Mã số thuế của doanh nghiệp");
-                }
+            }
+        } else if (user.getRoleId().getId() == 2) {
+            if (request.getIdentityCard() == null || request.getIdentityCard().isEmpty()) {
+                throw new BusinessException("Người tổ chức bắt buộc phải cung cấp CCCD");
+            }
+            if (request.getOrganizationName() == null || request.getOrganizationName().isEmpty()) {
+                throw new BusinessException("Bắt buộc phải cung cấp Tên tổ chức/doanh nghiệp");
+            }
+            if (request.getTaxCode() == null || request.getTaxCode().isEmpty()) {
+                throw new BusinessException("Bắt buộc phải cung cấp Mã số thuế của doanh nghiệp");
             }
         }
 
@@ -264,4 +264,30 @@ public class UserServiceImpl implements UserService {
                 user.getPassword(), authorities);
     }
 
+    @Override
+    public void changePassword(Principal principal, ChangePasswordRequest request) {
+        if (principal == null) {
+            throw new UnauthorizedException("Chưa đăng nhập hoặc token hết hạn");
+        }
+
+        User user = userRepo.findUserByEmail(principal.getName());
+        if (user == null) {
+            throw new ResourceNotFoundException("Không tìm thấy thông tin tài khoản người dùng!");
+        }
+
+        if (!request.getNewPassword().equals(request.getConfirmPassword())) {
+            throw new BusinessException("Mật khẩu xác nhận không trùng khớp!");
+        }
+
+        if (!passwordEncoder.matches(request.getOldPassword(), user.getPassword())) {
+            throw new BusinessException("Mật khẩu cũ không chính xác!");
+        }
+
+        String newEncryptedPassword = passwordEncoder.encode(request.getNewPassword());
+        boolean isSuccess = userRepo.changePassword(user.getId(), newEncryptedPassword);
+
+        if (!isSuccess) {
+            throw new BusinessException("Cập nhật thất bại, vui lòng thử lại sau!");
+        }
+    }
 }
