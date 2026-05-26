@@ -11,7 +11,6 @@ public class UserResponse {
     private String phone;
     private String avatar;
     private String identityCard;
-    private String businessLicense;
     private String organizationName;
     private String taxCode;
 
@@ -30,14 +29,13 @@ public class UserResponse {
     public UserResponse() {
     }
 
-    public UserResponse(Integer id, String email, String fullName, String phone, String avatar, String identityCard, String businessLicense, String organizationName, String taxCode, Integer roleId, String roleName, Integer statusId, String statusName, Date createdDate, Date updatedDate) {
+    public UserResponse(Integer id, String email, String fullName, String phone, String avatar, String identityCard,String organizationName, String taxCode, Integer roleId, String roleName, Integer statusId, String statusName, Date createdDate, Date updatedDate) {
         this.id = id;
         this.email = email;
         this.fullName = fullName;
         this.phone = phone;
         this.avatar = avatar;
         this.identityCard = identityCard;
-        this.businessLicense = businessLicense;
         this.organizationName = organizationName;
         this.taxCode = taxCode;
         this.roleId = roleId;
@@ -128,14 +126,6 @@ public class UserResponse {
 
     public void setIdentityCard(String identityCard) {
         this.identityCard = identityCard;
-    }
-
-    public String getBusinessLicense() {
-        return businessLicense;
-    }
-
-    public void setBusinessLicense(String businessLicense) {
-        this.businessLicense = businessLicense;
     }
 
     public String getOrganizationName() {
