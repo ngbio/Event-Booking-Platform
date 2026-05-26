@@ -4,6 +4,7 @@ import com.group3.service.UserService;
 import com.group3.utils.JwtUtils;
 import com.group3.dto.request.LoginRequest;
 import com.group3.dto.request.RegisterRequest;
+import com.group3.dto.request.UserUpdateRequest;
 import com.group3.dto.response.ApiResponse;
 import com.group3.dto.response.LoginResponse;
 import com.group3.dto.response.UserResponse;
@@ -24,6 +25,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import jakarta.validation.Valid;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 
 @RestController
 @RequestMapping("/api/users")
@@ -74,10 +77,10 @@ public class ApiUserController {
     @PostMapping("/secure/logout")
     public ResponseEntity<?> logout(Principal principal) {
         if (principal == null) {
-            throw new UnauthorizedException("Chua dang nhap hoac token het han");
+            throw new UnauthorizedException("Chưa đăng nhập hoặc token hết hạn");
         }
 
-        return ResponseEntity.ok(new ApiResponse<>(200, "Dang xuat thanh cong"));
+        return ResponseEntity.ok(new ApiResponse<>(200, "Đăng xuất thành công"));
     }
 
     @GetMapping("/secure/profile")
@@ -94,5 +97,22 @@ public class ApiUserController {
 
         return ResponseEntity.ok(new ApiResponse<>(200, "Lấy thông tin người dùng thành công", user));
 
+    }
+    
+    @PatchMapping(path = "/secure/profile",
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> updateProfile(Principal principal,
+            @Valid @ModelAttribute UserUpdateRequest request,
+            @RequestParam(value = "avatar", required = false) MultipartFile avatar){
+        if (principal==null)
+            throw new UnauthorizedException("Chưa đăng nhập hoặc token hết hạn");
+        UserResponse user = userService.getUserByEmail(principal.getName());
+
+        if (user == null) {
+            throw new ResourceNotFoundException("Không tìm thấy người dùng");
+        }
+        UserResponse updateUser = userService.updateUser(user.getId(),request,avatar);
+        return ResponseEntity.ok(new ApiResponse<>(200,"Cập nhật thông tin thành công",updateUser));
     }
 }

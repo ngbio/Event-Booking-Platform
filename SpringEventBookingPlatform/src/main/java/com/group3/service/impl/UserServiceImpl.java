@@ -73,6 +73,29 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    private void validateOrganizerInfo(RegisterRequest request) {
+        if (request.getIdentityCard() == null || request.getIdentityCard().isEmpty()) {
+            throw new BusinessException("Người tổ chức bắt buộc phải cung cấp CCCD");
+        }
+        if (request.getOrganizationName() == null || request.getOrganizationName().isEmpty()) {
+            throw new BusinessException("Bắt buộc phải cung cấp Tên tổ chức/doanh nghiệp");
+        }
+        if (request.getTaxCode() == null || request.getTaxCode().isEmpty()) {
+            throw new BusinessException("Bắt buộc phải cung cấp Mã số thuế của doanh nghiệp");
+        }
+    }
+
+    private void validateAttendeeInfo(RegisterRequest request) {
+        boolean hasOrganizerData
+                = (request.getIdentityCard() != null && !request.getIdentityCard().isEmpty())
+                || (request.getOrganizationName() != null && !request.getOrganizationName().isEmpty())
+                || (request.getTaxCode() != null && !request.getTaxCode().isEmpty());
+
+        if (hasOrganizerData) {
+            throw new BusinessException("Lỗi dữ liệu: Người mua vé không có các thông tin của Nhà tổ chức");
+        }
+    }
+
     @Override
     public List<UserResponse> getUsers(Map<String, String> params) {
         List<User> users = this.userRepo.getUsers(params);
@@ -111,27 +134,23 @@ public class UserServiceImpl implements UserService {
         return this.userRepo.existEmail(email);
     }
 
-//    @Override
-//    public boolean checkExistUsername(String username){
-//        return this.userRepo.existUsername(username);
-//    }
     @Override
     public Long countUsers() {
         return this.userRepo.count();
     }
 
-//    @Override
-//    public UserResponse getUserByUsername(String username) {
-//        User user = this.userRepo.getUserByUsername(username);
-//        return DTOMapper.toUserResponse(user);
-//    }
     @Override
     public UserResponse addUser(RegisterRequest request, MultipartFile avatar, int roleId) {
         if (this.userRepo.existEmail(request.getEmail())) {
             throw new DuplicateResourceException("Email này đã có người đăng ký!");
         }
+        if (roleId == 3) {
+            validateAttendeeInfo(request);
+        } else if (roleId == 2) {
+            validateOrganizerInfo(request);
+        }
         validateAvatar(avatar);
-        
+
         User user = DTOMapper.toUserEntity(request);
         user.setPassword(passwordEncoder.encode(request.getPassword()));
         Date now = new Date();
@@ -162,17 +181,31 @@ public class UserServiceImpl implements UserService {
     public UserResponse updateUser(Integer id, UserUpdateRequest request, MultipartFile avatar) {
         User user = this.userRepo.findUserById(id);
         if (user == null) {
-            throw new ResourceNotFoundException("Không tìm thấy người dùng với id = "+id);
+            throw new ResourceNotFoundException("Không tìm thấy người dùng với id = " + id);
         }
-        
-        //Kiem tra 4 cot cua nha to chuc  co thay doi hay khong
+        if (user.getRoleId().getId() == 3) {
+            if ((request.getIdentityCard() != null && !request.getIdentityCard().isEmpty())
+                    || (request.getOrganizationName() != null && !request.getOrganizationName().isEmpty())
+                    || (request.getTaxCode() != null && !request.getTaxCode().isEmpty())) {
+                throw new BusinessException("Lỗi dữ liệu: Người mua vé không có các thông tin của Nhà tổ chức");
+            } else if (user.getRoleId().getId() == 2) {
+                if (request.getIdentityCard() == null || request.getIdentityCard().isEmpty()) {
+                    throw new BusinessException("Người tổ chức bắt buộc phải cung cấp CCCD");
+                }
+                if (request.getOrganizationName() == null || request.getOrganizationName().isEmpty()) {
+                    throw new BusinessException("Bắt buộc phải cung cấp Tên tổ chức/doanh nghiệp");
+                }
+                if (request.getTaxCode() == null || request.getTaxCode().isEmpty()) {
+                    throw new BusinessException("Bắt buộc phải cung cấp Mã số thuế của doanh nghiệp");
+                }
+            }
+        }
+
+        //Kiem tra 3 cot cua nha to chuc  co thay doi hay khong
         boolean isLegalDocumentChanged = false;
 
         if (user.getRoleId() != null && user.getRoleId().getId() == 2) {
             if (request.getIdentityCard() != null && !request.getIdentityCard().equals(user.getIdentityCard())) {
-                isLegalDocumentChanged = true;
-            }
-            if (request.getBusinessLicense() != null && !request.getBusinessLicense().equals(user.getBusinessLicense())) {
                 isLegalDocumentChanged = true;
             }
             if (request.getOrganizationName() != null && !request.getOrganizationName().equals(user.getOrganizationName())) {
@@ -221,7 +254,7 @@ public class UserServiceImpl implements UserService {
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         User user = this.userRepo.findUserByEmail(email);
         if (user == null) {
-            throw new ResourceNotFoundException("Không tồn người dùng với email: "+email);
+            throw new ResourceNotFoundException("Không tồn tại người dùng với email: " + email);
         }
 
         Set<GrantedAuthority> authorities = new HashSet<>();

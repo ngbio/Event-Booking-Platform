@@ -24,7 +24,7 @@ public class RegisterRequest {
 
     @NotBlank(message = "Mật khẩu không được để trống")
     @Size(min = 6, message = "Mật khẩu phải từ 6 ký tự trở lên")
-    @Pattern(regexp = "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d@$!%*#?&]{6,}$",
+    @Pattern(regexp = "^(?=.*[A-Za-z])(?=.*\\d)(?!.*\\s)[A-Za-z\\d@$!%*#?&]{6,}$",
             message = "Mật khẩu phải từ 6 ký tự, gồm ít nhất một chữ cái và một số")
     private String password;
 
@@ -32,13 +32,17 @@ public class RegisterRequest {
     private String fullName;
 
     @NotBlank(message = "Số điện thoại không được để trống")
-    @Pattern(regexp = "^0\\d{9}$", message = "Số điện thoại phải bắt đầu bằng số 0 và có đúng 10 chữ số")
+    @Pattern(regexp = "^0[35789]\\d{8}$", message = "Số điện thoại không hợp lệ")
     private String phone;
 
     //Cho nha to chuc
+    @Pattern(regexp = "^(\\d{12})$", message = "CCCD phải có đúng 12 chữ số")
     private String identityCard;
-    private String businessLicense;
+
+    @Size(max = 100, message = "Tên tổ chức/doanh nghiệp không được vượt quá 100 ký tự")
     private String organizationName;
+
+    @Pattern(regexp = "^\\d{10}(\\-\\d{3})?$", message = "Mã số thuế phải là 10 chữ số, hoặc 13 chữ số có gạch nối")
     private String taxCode;
 
     public String getEmail() {
@@ -46,7 +50,7 @@ public class RegisterRequest {
     }
 
     public void setEmail(String email) {
-        this.email = email;
+        this.email = email.trim();
     }
 
     public String getPassword() {
@@ -62,7 +66,7 @@ public class RegisterRequest {
     }
 
     public void setFullName(String fullName) {
-        this.fullName = fullName;
+        this.fullName = fullName.trim();
     }
 
     public String getPhone() {
@@ -70,7 +74,7 @@ public class RegisterRequest {
     }
 
     public void setPhone(String phone) {
-        this.phone = phone;
+        this.phone = phone.trim();
     }
 
     public String getIdentityCard() {
@@ -78,15 +82,7 @@ public class RegisterRequest {
     }
 
     public void setIdentityCard(String identityCard) {
-        this.identityCard = identityCard;
-    }
-
-    public String getBusinessLicense() {
-        return businessLicense;
-    }
-
-    public void setBusinessLicense(String businessLicense) {
-        this.businessLicense = businessLicense;
+        this.identityCard = (identityCard != null) ? identityCard.trim() : null;
     }
 
     public String getOrganizationName() {
@@ -94,7 +90,7 @@ public class RegisterRequest {
     }
 
     public void setOrganizationName(String organizationName) {
-        this.organizationName = organizationName;
+        this.organizationName = (organizationName!=null)?organizationName.trim():null;
     }
 
     public String getTaxCode() {
@@ -102,7 +98,7 @@ public class RegisterRequest {
     }
 
     public void setTaxCode(String taxCode) {
-        this.taxCode = taxCode;
+        this.taxCode = (taxCode!=null)?taxCode.trim():null;
     }
 
 }

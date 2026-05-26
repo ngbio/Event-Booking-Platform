@@ -40,7 +40,6 @@ import java.util.Date;
     @NamedQuery(name = "User.findByPhone", query = "SELECT u FROM User u WHERE u.phone = :phone"),
     @NamedQuery(name = "User.findByAvatar", query = "SELECT u FROM User u WHERE u.avatar = :avatar"),
     @NamedQuery(name = "User.findByIdentityCard", query = "SELECT u FROM User u WHERE u.identityCard = :identityCard"),
-    @NamedQuery(name = "User.findByBusinessLicense", query = "SELECT u FROM User u WHERE u.businessLicense = :businessLicense"),
     @NamedQuery(name = "User.findByOrganizationName", query = "SELECT u FROM User u WHERE u.organizationName = :organizationName"),
     @NamedQuery(name = "User.findByTaxCode", query = "SELECT u FROM User u WHERE u.taxCode = :taxCode"),
     @NamedQuery(name = "User.findByCreatedDate", query = "SELECT u FROM User u WHERE u.createdDate = :createdDate"),
@@ -79,9 +78,6 @@ public class User implements Serializable {
     @Size(max = 255)
     @Column(name = "identity_card")
     private String identityCard;
-    @Size(max = 255)
-    @Column(name = "business_license")
-    private String businessLicense;
     @Size(max = 255)
     @Column(name = "organization_name")
     private String organizationName;
@@ -175,14 +171,6 @@ public class User implements Serializable {
 
     public void setIdentityCard(String identityCard) {
         this.identityCard = identityCard;
-    }
-
-    public String getBusinessLicense() {
-        return businessLicense;
-    }
-
-    public void setBusinessLicense(String businessLicense) {
-        this.businessLicense = businessLicense;
     }
 
     public String getOrganizationName() {
