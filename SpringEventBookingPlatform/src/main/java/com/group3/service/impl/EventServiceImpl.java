@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.group3.service.impl;
 
 import com.cloudinary.Cloudinary;
@@ -33,10 +29,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-/**
- *
- * @author THUAN
- */
 @Service
 @PropertySource("classpath:configs.properties")
 public class EventServiceImpl implements EventService {
@@ -54,6 +46,10 @@ public class EventServiceImpl implements EventService {
     private StatusEventRepository statusEventRepo;
     @Value("${event.feePerTicket}")
     private double feePerTicket;
+
+    private static final Integer PUBLISHED=2;
+    private static final Integer PENDING_REVIEW=1;
+    private static final Integer DRAFT=3;
 
     @Override
     @Transactional
@@ -118,8 +114,8 @@ public class EventServiceImpl implements EventService {
             event.setListingFee(BigDecimal.valueOf(calculatedFee));
             event.setIsPaidFee(false); // Chưa đóng tiền
 
-            // Gán trạng thái 1: DRAFT (Lưu nháp chờ thanh toán phí)
-            StatusEvent statusDraft = this.statusEventRepo.getStatusEventById(1);
+            // Gán trạng thái 3: DRAFT (Lưu nháp chờ thanh toán phí)
+            StatusEvent statusDraft = this.statusEventRepo.getStatusEventById(DRAFT);
             event.setStatusId(statusDraft);
         } else {
             // Sự kiện MIỄN PHÍ -> Không thu phí sàn
@@ -127,7 +123,7 @@ public class EventServiceImpl implements EventService {
             event.setIsPaidFee(true); // Coi như đã hoàn tất nghĩa vụ phí
 
             // Gán trạng thái 2: PENDING_REVIEW (Đẩy thẳng cho Admin chờ duyệt nội dung)
-            StatusEvent statusPending = this.statusEventRepo.getStatusEventById(2);
+            StatusEvent statusPending = this.statusEventRepo.getStatusEventById(PENDING_REVIEW);
             event.setStatusId(statusPending);
         }
         event.setSoldTickets(0);
@@ -142,7 +138,7 @@ public class EventServiceImpl implements EventService {
             return null;
         }
         if (event.getStatusId() != null) {
-            if (event.getStatusId().getId() == 3) {
+            if (event.getStatusId().getId() == PUBLISHED) {
                 throw new IllegalStateException("Sự kiện đang mở bán không được chỉnh sửa.");
             }
             event.setTitle(request.getTitle());
@@ -252,5 +248,10 @@ public class EventServiceImpl implements EventService {
         return this.eventRepo.countEvents(params);
     }
     
+    @Override 
+    public List<EventResponse> getEventsByIds(List<Integer> EventIds){
+        List<Event> events = this.eventRepo.getEventsByIds(EventIds);
+        return DTOMapper.toEventResponseList(events);
+    }
 }
 

@@ -124,6 +124,10 @@ public class DTOMapper {
         return EventMapper.toEntity(request);
     }
     
+    public static Event toEventEntity(EventRequest request, Event existingEvent){
+        return EventMapper.toEntity(request, existingEvent);
+    }
+    
     public static User toUserEntity(RegisterRequest request){
         return UserMapper.toEntity(request);
     }
