@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.group3.controllers;
 
 import com.group3.dto.response.EventResponse;
@@ -17,14 +13,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-/**
- *
- * @author thanh
- */
 @Controller
 @RequestMapping("/admin/events")
 public class EventController {
-
+//      @RequestMapping("/admin/events")
+//Chứa các Routes (Nhóm 8 - Quản lý Sự kiện):
+/// (GET: Hiển thị danh sách sự kiện toàn hệ thống cần duyệt/quản lý)
+/// /detail (GET: Hiển thị trang xem chi tiết thông tin sự kiện)
+/// /approve (POST: Form submit duyệt xuất bản sự kiện sang PUBLISHED)
+/// /cancel (POST: Form submit hủy bỏ sự kiện do vi phạm hoặc bất khả kháng)
+/// /delete (POST: Form submit xóa sự kiện - Soft Delete)
     @Autowired
     private EventService eventService;
     @Autowired

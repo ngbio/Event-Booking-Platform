@@ -5,7 +5,6 @@ import com.group3.dto.response.CategoryResponse;
 import com.group3.service.CategoryService;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,6 +15,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api")
 @CrossOrigin
 public class ApiCategoryController {
+//      @RequestMapping("/api/categories")
+//Chứa các API (Bổ sung - Public cho bộ lọc):
+/// (GET: Lấy danh sách các danh mục sự kiện đang hoạt động)
     @Autowired
     private CategoryService cateService;
     

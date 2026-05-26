@@ -83,10 +83,6 @@ public class UserMapper {
             user.setFullName(request.getFullName());
         }
 
-        if (request.getPassword() != null) {
-            user.setPassword(request.getPassword());
-        }
-
         if (request.getPhone() != null) {
             user.setPhone(request.getPhone());
         }

@@ -12,12 +12,6 @@ import jakarta.validation.constraints.Size;
  * @author thanh
  */
 public class UserUpdateRequest {
-
-    @Size(min = 6, message = "Mật khẩu phải từ 6 ký tự trở lên")
-    @Pattern(regexp = "^(?=.*[A-Za-z])(?=.*\\d)(?!.*\\s)[A-Za-z\\d@$!%*#?&]{6,}$",
-            message = "Mật khẩu phải từ 6 ký tự, gồm ít nhất một chữ cái và một số")
-    private String password;
-    
     private String fullName;
 
     @Pattern(regexp = "^0[35789]\\d{8}$", message = "Số điện thoại không hợp lệ")
@@ -33,14 +27,6 @@ public class UserUpdateRequest {
 
     @Pattern(regexp = "^\\d{10}(\\-\\d{3})?$", message = "Mã số thuế phải là 10 chữ số, hoặc 13 chữ số có gạch nối")
     private String taxCode;
-    
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
 
     public String getFullName() {
         return fullName;

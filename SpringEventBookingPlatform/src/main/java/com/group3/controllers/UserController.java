@@ -13,18 +13,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
-/**
- *
- * @author THUAN
- */
 @Controller
 @RequestMapping("/admin/users")
 public class UserController {
-
+//      @RequestMapping("/admin/users")
+//Chứa các Routes (Nhóm 8 - Quản lý Người dùng):
+/// (GET: Hiển thị danh sách và phân trang người dùng)
+/// /detail (GET: Hiển thị trang xem thông tin chi tiết một tài khoản)
+/// /update-status (POST: Form submit Khóa hoạt động hoặc Mở khóa tài khoản)
     @Autowired
     private StatusUserService statusUserService;
     @Autowired
