@@ -33,7 +33,12 @@ import org.springframework.web.multipart.MultipartFile;
 @RequestMapping("/api/events")
 @CrossOrigin
 public class ApiEventController {
-
+//@RequestMapping("/api/events")
+//Chứa các API (Dòng 8 - 11):
+/// (Lấy danh sách event đang public)
+/// {id} (Chi tiết event)
+/// {id}/available (Số vé còn lại)
+///compare?ids=...
     private static final String OPEN_FOR_SALE_STATUS = "2";
 
     @Autowired
@@ -48,28 +53,28 @@ public class ApiEventController {
         filters.put("statusId", OPEN_FOR_SALE_STATUS);
 
         List<EventResponse> events = eventService.getEvents(filters);
-        return ResponseEntity.ok(new ApiResponse<>(200, "Lay danh sach su kien thanh cong", events));
+        return ResponseEntity.ok(new ApiResponse<>(200, "Lấy danh sách sự kiện thành công", events));
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<EventResponse>> getPublicEvent(@PathVariable("id") Integer id) {
         EventResponse event = eventService.getEventById(id);
         if (event == null || !Integer.valueOf(OPEN_FOR_SALE_STATUS).equals(event.getStatusId())) {
-            throw new ResourceNotFoundException("Khong tim thay su kien");
+            throw new ResourceNotFoundException("Không tìm thấy sự kiện");
         }
 
-        return ResponseEntity.ok(new ApiResponse<>(200, "Lay thong tin su kien thanh cong", event));
+        return ResponseEntity.ok(new ApiResponse<>(200, "Lấy thông tin sự kiện thành công", event));
     }
 
     @GetMapping("/{id}/available-tickets")
     public ResponseEntity<ApiResponse<Integer>> getAvailableTickets(@PathVariable("id") Integer id) {
         EventResponse event = eventService.getEventById(id);
         if (event == null || !Integer.valueOf(OPEN_FOR_SALE_STATUS).equals(event.getStatusId())) {
-            throw new ResourceNotFoundException("Khong tim thay su kien");
+            throw new ResourceNotFoundException("Không tìm thấy sự kiện");
         }
 
         int availableTickets = eventService.getAvailableTickets(id);
-        return ResponseEntity.ok(new ApiResponse<>(200, "Lay so ve con lai thanh cong", availableTickets));
+        return ResponseEntity.ok(new ApiResponse<>(200, "Lấy thông tin số vé còn lại thành công", availableTickets));
     }
 
     @GetMapping("/organizer/my-events")
