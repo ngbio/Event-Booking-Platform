@@ -33,3 +33,4 @@ build/
 .vscode/
 /docs/
 application_secrets.properties
+node_modules

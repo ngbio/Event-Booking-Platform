@@ -55,11 +55,16 @@ public class EventRepositoryImpl implements EventRepository {
             String searchBy = params.get("searchBy");
             String statusId = params.get("statusId");
             String organizerId = params.get("organizerId");
+            String categoryId = params.get("categoryId");
             if (statusId != null && !statusId.isBlank()) {
                 predicates.add(b.equal(root.get("statusId").get("id"), Integer.parseInt(statusId)));
             }
             if (organizerId != null && !organizerId.isBlank()) {
                 predicates.add(b.equal(root.get("organizerId").get("id"), Integer.parseInt(organizerId)));
+            }
+            if (categoryId != null && !categoryId.isBlank()) {
+                Join<Event, Category> categoryJoin = root.join("categoryCollection", JoinType.INNER);
+                predicates.add(b.equal(categoryJoin.get("id"), Integer.parseInt(categoryId)));
             }
             if (kw != null && !kw.isBlank()) {
                 String t = kw.trim();
@@ -221,11 +226,16 @@ public class EventRepositoryImpl implements EventRepository {
             String searchBy = params.get("searchBy");
             String statusId = params.get("statusId");
             String organizerId = params.get("organizerId");
+            String categoryId = params.get("categoryId");
             if (statusId != null && !statusId.isBlank()) {
                 predicates.add(b.equal(root.get("statusId").get("id"), Integer.parseInt(statusId)));
             }
             if (organizerId != null && !organizerId.isBlank()) {
                 predicates.add(b.equal(root.get("organizerId").get("id"), Integer.parseInt(organizerId)));
+            }
+            if (categoryId != null && !categoryId.isBlank()) {
+                Join<Event, Category> categoryJoin = root.join("categoryCollection", JoinType.INNER);
+                predicates.add(b.equal(categoryJoin.get("id"), Integer.parseInt(categoryId)));
             }
             if (kw != null && !kw.isBlank()) {
                 String t = kw.trim();

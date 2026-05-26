@@ -26,6 +26,7 @@ public class EventMapper {
         response.setVideoUrl(event.getVideoUrl());
         response.setLocation(event.getLocation());
         response.setTotalTickets(event.getTotalTickets());
+        response.setAvailableTickets(Math.max(event.getTotalTickets() - event.getSoldTickets(), 0));
         response.setPrice(event.getPrice());
         response.setStartTime(event.getStartTime());
         response.setEndTime(event.getEndTime());

@@ -33,6 +33,7 @@ public class JwtFilter implements Filter {
         String requestUri = httpRequest.getRequestURI();
         String contextPath = httpRequest.getContextPath();
         boolean secureApi = requestUri.startsWith(contextPath + "/api/users/secure")
+                || requestUri.equals(contextPath + "/api/users/logout")
                 || requestUri.startsWith(contextPath + "/api/events/organizer");
 
         if (secureApi) {

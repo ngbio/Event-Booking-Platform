@@ -34,7 +34,7 @@ import org.springframework.web.multipart.MultipartFile;
 @CrossOrigin
 public class ApiEventController {
 
-    private static final String OPEN_FOR_SALE_STATUS = "4";
+    private static final String OPEN_FOR_SALE_STATUS = "2";
 
     @Autowired
     private EventService eventService;

@@ -97,6 +97,7 @@ public class SpringSecurityConfigs {
                 .requestMatchers(HttpMethod.GET, "/api/events/**").permitAll()
                 .requestMatchers("/admin/**").hasRole("ADMIN")
                 // Khu vực này sẽ do JwtFilter bảo vệ
+                .requestMatchers("/api/users/logout").authenticated()
                 .requestMatchers("/api/users/secure/**").authenticated()
                 .anyRequest().authenticated()
                 )
