@@ -75,11 +75,18 @@ public class BookingServiceImpl implements BookingService {
         if (event == null) {
             throw new ResourceNotFoundException("Khong tim thay su kien");
         }
-        if (event.getStatusId() == null || event.getStatusId().getId() != EVENT_PUBLISHED) {
-            throw new BusinessException("Su kien chua duoc mo ban");
+        if (event.getStatusId() == null) {
+            throw new BusinessException("Trang thai su kien khong hop le");
         }
-        if (event.getStatusId().getId() == EVENT_CANCELLED || event.getEndTime().before(new Date())) {
+
+        int statusId = event.getStatusId().getId();
+        Date now = new Date();
+
+        if (statusId == EVENT_CANCELLED || event.getEndTime().before(now)) {
             throw new BusinessException("Su kien da ket thuc hoac da bi huy");
+        }
+        if (statusId != EVENT_PUBLISHED) {
+            throw new BusinessException("Su kien chua duoc mo ban");
         }
     }
 
