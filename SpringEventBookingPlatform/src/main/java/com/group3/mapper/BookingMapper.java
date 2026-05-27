@@ -36,7 +36,7 @@ public class BookingMapper {
         
         if (booking.getStatusId() != null) {
             response.setStatusId(booking.getStatusId().getId());
-            // Note: Statusbooking entity should have getName() method
+            response.setStatusName(booking.getStatusId().getName());
         }
         
         return response;

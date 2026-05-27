@@ -1,6 +1,7 @@
 -- ======================================================
 -- PROJECT: EVENT TICKET MANAGEMENT SYSTEM (E-TICKET HUB)
 -- DATABASE SCRIPT: EXACT POJO MAPPING VERSION (UPDATED REFUND FLOW)
+-- DATABASE SCRIPT: EXACT POJO MAPPING VERSION (UPDATED REFUND FLOW)
 -- ======================================================
 
 DROP DATABASE IF EXISTS `event_ticket_db`;
@@ -155,6 +156,7 @@ CREATE TABLE `event_fee` (
 
 -- ------------------------------------------------------
 -- 3. SEEDING MOCK DATA
+-- 3. SEEDING MOCK DATA
 -- ------------------------------------------------------
 
 INSERT INTO `role` VALUES (1, 'ROLE_ADMIN'), (2, 'ROLE_ORGANIZER'), (3, 'ROLE_ATTENDEE');
@@ -175,6 +177,7 @@ INSERT INTO `category` (`id`, `name`, `active`) VALUES
 (11, 'Ẩm thực', 1), (12, 'Triển lãm', 1), (13, 'Sân khấu', 1), (14, 'Thời trang', 1), (15, 'Điện ảnh', 1),
 (16, 'Khoa học', 1), (17, 'Sức khỏe', 1), (18, 'Gia đình', 1), (19, 'Phong cách sống', 1), (20, 'Từ thiện', 1);
 
+-- 20 Users
 -- 20 Users
 INSERT INTO `user` (`id`, `role_id`, `status_id`, `email`, `password`, `full_name`, `phone`, `avatar`, `identity_card`, `organization_name`, `tax_code`) VALUES 
 (1, 1, 2, 'admin@eventhub.vn', '$2a$10$5X9k5N1sTc1/CjVH5XJoje3QMYijH3ETpgkox00R0MdPaJPPrf7wO', 'Quản Trị Viên Hệ Thống', '0901112223', 'admin_avatar.png', NULL, NULL, NULL),
@@ -229,6 +232,8 @@ INSERT INTO `event_category` (`event_id`, `category_id`) VALUES
 
 -- 20 Bookings 
 -- ĐÃ CẬP NHẬT MOCK DATA: Chuyển các booking có ID trạng thái cũ là 3 (CANCELLED) sang 5 (CANCELLED) để khớp với bảng status_booking mới.
+-- 20 Bookings 
+-- ĐÃ CẬP NHẬT MOCK DATA: Chuyển các booking có ID trạng thái cũ là 3 (CANCELLED) sang 5 (CANCELLED) để khớp với bảng status_booking mới.
 INSERT INTO `booking` (`id`, `event_id`, `user_id`, `status_id`, `quantity`, `unit_price`, `total_price`) VALUES 
 (1, 4, 6, 2, 2, 500000.00, 1000000.00),
 (2, 4, 7, 2, 2, 500000.00, 1000000.00),
@@ -237,7 +242,9 @@ INSERT INTO `booking` (`id`, `event_id`, `user_id`, `status_id`, `quantity`, `un
 (5, 5, 10, 2, 2, 150000.00, 300000.00),
 (6, 6, 11, 2, 3, 350000.00, 1050000.00),
 (7, 4, 9, 5, 2, 500000.00, 1000000.00), -- CANCELLED
+(7, 4, 9, 5, 2, 500000.00, 1000000.00), -- CANCELLED
 (8, 5, 6, 1, 1, 150000.00, 150000.00),
+(9, 6, 7, 5, 1, 350000.00, 350000.00), -- CANCELLED
 (9, 6, 7, 5, 1, 350000.00, 350000.00), -- CANCELLED
 (10, 12, 8, 1, 2, 20000.00, 40000.00),
 (11, 8, 12, 1, 1, 50000.00, 50000.00),
