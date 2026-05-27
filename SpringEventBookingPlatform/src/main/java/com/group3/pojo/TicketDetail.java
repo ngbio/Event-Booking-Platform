@@ -45,7 +45,7 @@ public class TicketDetail implements Serializable {
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 255)
-    @Column(name = "qr_code")
+    @Column(name = "qrCode")
     private String qrCode;
     @Column(name = "created_date")
     @Temporal(TemporalType.TIMESTAMP)

@@ -50,16 +50,24 @@ public class EventServiceImpl implements EventService {
     private static final Integer PUBLISHED=2;
     private static final Integer PENDING_REVIEW=1;
     private static final Integer DRAFT=3;
+    private static final Integer COMPLETED=4;
+
+    private void refreshExpiredPublishedEvents() {
+        this.eventRepo.updateExpiredPublishedEvents(PUBLISHED, COMPLETED, new Date());
+    }
 
     @Override
     @Transactional
     public List<EventResponse> getEvents(Map<String, String> params) {
+        refreshExpiredPublishedEvents();
         List<Event> events = this.eventRepo.getEvents(params);
         return DTOMapper.toEventResponseList(events);
     }
 
     @Override
+    @Transactional
     public EventResponse getEventById(Integer id) {
+        refreshExpiredPublishedEvents();
         return DTOMapper.toEventResponse(this.eventRepo.getEventById(id));
     }
 
@@ -213,8 +221,12 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public int getAvailableTickets(Integer eventId) {
+        refreshExpiredPublishedEvents();
         Event event = this.eventRepo.getEventById(eventId);
         if (event == null) {
+            return 0;
+        }
+        if (event.getStatusId() == null || !PUBLISHED.equals(event.getStatusId().getId())) {
             return 0;
         }
         return event.getTotalTickets() - event.getSoldTickets();
@@ -250,6 +262,7 @@ public class EventServiceImpl implements EventService {
     
     @Override 
     public List<EventResponse> getEventsByIds(List<Integer> EventIds){
+        refreshExpiredPublishedEvents();
         List<Event> events = this.eventRepo.getEventsByIds(EventIds);
         return DTOMapper.toEventResponseList(events);
     }

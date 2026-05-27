@@ -2,6 +2,7 @@ package com.group3.repository.impl;
 
 import com.group3.pojo.Category;
 import com.group3.pojo.Event;
+import com.group3.pojo.StatusEvent;
 import com.group3.repository.EventRepository;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
@@ -18,6 +19,7 @@ import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.stereotype.Repository;
 import jakarta.transaction.Transactional;
 import java.util.ArrayList;
+import java.util.Date;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 
@@ -47,8 +49,12 @@ public class EventRepositoryImpl implements EventRepository {
             String statusId = params.get("statusId");
             String organizerId = params.get("organizerId");
             String categoryId = params.get("categoryId");
+            String activeOnly = params.get("activeOnly");
             if (statusId != null && !statusId.isBlank()) {
                 predicates.add(b.equal(root.get("statusId").get("id"), Integer.parseInt(statusId)));
+            }
+            if ("true".equalsIgnoreCase(activeOnly)) {
+                predicates.add(b.greaterThanOrEqualTo(root.get("endTime"), new Date()));
             }
             if (organizerId != null && !organizerId.isBlank()) {
                 predicates.add(b.equal(root.get("organizerId").get("id"), Integer.parseInt(organizerId)));
@@ -218,8 +224,12 @@ public class EventRepositoryImpl implements EventRepository {
             String statusId = params.get("statusId");
             String organizerId = params.get("organizerId");
             String categoryId = params.get("categoryId");
+            String activeOnly = params.get("activeOnly");
             if (statusId != null && !statusId.isBlank()) {
                 predicates.add(b.equal(root.get("statusId").get("id"), Integer.parseInt(statusId)));
+            }
+            if ("true".equalsIgnoreCase(activeOnly)) {
+                predicates.add(b.greaterThanOrEqualTo(root.get("endTime"), new java.util.Date()));
             }
             if (organizerId != null && !organizerId.isBlank()) {
                 predicates.add(b.equal(root.get("organizerId").get("id"), Integer.parseInt(organizerId)));
@@ -259,5 +269,29 @@ public class EventRepositoryImpl implements EventRepository {
         Query<Event> q = session.createQuery("FROM Event e WHERE e.id IN :ids",Event.class);
         q.setParameter("ids",EventIds);
         return q.getResultList();
+    }
+
+    @Override
+    public int updateExpiredPublishedEvents(Integer publishedStatusId, Integer completedStatusId, Date now) {
+        if (publishedStatusId == null || completedStatusId == null || now == null) {
+            return 0;
+        }
+
+        Session session = this.factory.getObject().getCurrentSession();
+        StatusEvent completedStatus = session.get(StatusEvent.class, completedStatusId);
+        if (completedStatus == null) {
+            return 0;
+        }
+
+        Query<?> q = session.createQuery(
+                "UPDATE Event e "
+                + "SET e.statusId = :completedStatus, e.updatedDate = :now "
+                + "WHERE e.statusId.id = :publishedStatusId "
+                + "AND e.endTime IS NOT NULL "
+                + "AND e.endTime < :now");
+        q.setParameter("completedStatus", completedStatus);
+        q.setParameter("publishedStatusId", publishedStatusId);
+        q.setParameter("now", now);
+        return q.executeUpdate();
     }
 }

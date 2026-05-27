@@ -15,7 +15,7 @@ public interface OrganizerEventService {
 
     EventResponse createOrganizerEvent(Principal principal, EventRequest request, MultipartFile image, MultipartFile video);
 
-    EventResponse getOrganizerEventDetail(Principal principal, Integer eventId);
+    EventResponse getOrganizerEvent(Principal principal, Integer eventId);
 
     EventResponse updateOrganizerEvent(Principal principal, Integer eventId, EventRequest request, MultipartFile image, MultipartFile video);
 

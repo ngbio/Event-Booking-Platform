@@ -43,6 +43,7 @@ public class ApiEventController {
     public ResponseEntity<ApiResponse<List<EventResponse>>> listPublicEvents(@RequestParam Map<String, String> params) {
         Map<String, String> filters = new HashMap<>(params);
         filters.put("statusId", OPEN_FOR_SALE_STATUS);
+        filters.put("activeOnly", "true");
 
         List<EventResponse> events = eventService.getEvents(filters);
         return ResponseEntity.ok(new ApiResponse<>(200, "Lấy danh sách sự kiện thành công", events));

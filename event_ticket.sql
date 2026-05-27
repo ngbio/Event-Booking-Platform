@@ -155,6 +155,7 @@ CREATE TABLE `event_fee` (
 
 -- ------------------------------------------------------
 -- 3. SEEDING MOCK DATA
+-- 3. SEEDING MOCK DATA
 -- ------------------------------------------------------
 
 INSERT INTO `role` VALUES (1, 'ROLE_ADMIN'), (2, 'ROLE_ORGANIZER'), (3, 'ROLE_ATTENDEE');
@@ -175,6 +176,7 @@ INSERT INTO `category` (`id`, `name`, `active`) VALUES
 (11, 'Ẩm thực', 1), (12, 'Triển lãm', 1), (13, 'Sân khấu', 1), (14, 'Thời trang', 1), (15, 'Điện ảnh', 1),
 (16, 'Khoa học', 1), (17, 'Sức khỏe', 1), (18, 'Gia đình', 1), (19, 'Phong cách sống', 1), (20, 'Từ thiện', 1);
 
+-- 20 Users
 -- 20 Users
 INSERT INTO `user` (`id`, `role_id`, `status_id`, `email`, `password`, `full_name`, `phone`, `avatar`, `identity_card`, `organization_name`, `tax_code`) VALUES 
 (1, 1, 2, 'admin@eventhub.vn', '$2a$10$5X9k5N1sTc1/CjVH5XJoje3QMYijH3ETpgkox00R0MdPaJPPrf7wO', 'Quản Trị Viên Hệ Thống', '0901112223', 'admin_avatar.png', NULL, NULL, NULL),
@@ -227,6 +229,8 @@ INSERT INTO `event_category` (`event_id`, `category_id`) VALUES
 (5, 9), (6, 1), (7, 3), (7, 6), (8, 3), (8, 10), (9, 7), (10, 10), (10, 13), (11, 11),
 (12, 7), (13, 11), (14, 13), (15, 8), (15, 16), (16, 1), (17, 2), (17, 9), (18, 6), (20, 1);
 
+-- 20 Bookings 
+-- ĐÃ CẬP NHẬT MOCK DATA: Chuyển các booking có ID trạng thái cũ là 3 (CANCELLED) sang 5 (CANCELLED) để khớp với bảng status_booking mới.
 -- 20 Bookings 
 -- ĐÃ CẬP NHẬT MOCK DATA: Chuyển các booking có ID trạng thái cũ là 3 (CANCELLED) sang 5 (CANCELLED) để khớp với bảng status_booking mới.
 INSERT INTO `booking` (`id`, `event_id`, `user_id`, `status_id`, `quantity`, `unit_price`, `total_price`) VALUES 

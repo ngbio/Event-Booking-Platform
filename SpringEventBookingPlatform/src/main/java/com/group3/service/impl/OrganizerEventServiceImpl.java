@@ -173,7 +173,7 @@ public class OrganizerEventServiceImpl implements OrganizerEventService {
     }
 
     @Override
-    public EventResponse updateOrganizerEventDetail(Principal principal, Integer eventId, EventRequest request, MultipartFile image, MultipartFile video) {
+    public EventResponse updateOrganizerEvent(Principal principal, Integer eventId, EventRequest request, MultipartFile image, MultipartFile video) {
         User organizer = validateAndGetOrganizer(principal);
         Event existingEvent = validateEventOwnership(eventId, organizer);
 
