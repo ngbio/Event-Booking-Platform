@@ -152,13 +152,22 @@ public class TicketDetailRepositoryImpl implements TicketDetailRepository {
         Date toDate = parseDate(params.get("toDate"), true);
 
         if (statusId != null && !statusId.isBlank()) {
-            predicates.add(b.equal(root.get("statusId").get("id"), Integer.parseInt(statusId)));
+            try {
+                predicates.add(b.equal(root.get("statusId").get("id"), Integer.parseInt(statusId)));
+            } catch (NumberFormatException ignored) {
+            }
         }
         if (eventId != null && !eventId.isBlank()) {
-            predicates.add(b.equal(root.get("bookingId").get("eventId").get("id"), Integer.parseInt(eventId)));
+            try {
+                predicates.add(b.equal(root.get("bookingId").get("eventId").get("id"), Integer.parseInt(eventId)));
+            } catch (NumberFormatException ignored) {
+            }
         }
         if (bookingId != null && !bookingId.isBlank()) {
-            predicates.add(b.equal(root.get("bookingId").get("id"), Integer.parseInt(bookingId)));
+            try {
+                predicates.add(b.equal(root.get("bookingId").get("id"), Integer.parseInt(bookingId)));
+            } catch (NumberFormatException ignored) {
+            }
         }
         if (fromDate != null) {
             predicates.add(b.greaterThanOrEqualTo(root.get("createdDate"), fromDate));
