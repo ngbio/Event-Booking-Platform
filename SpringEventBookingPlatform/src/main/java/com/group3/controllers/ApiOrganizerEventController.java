@@ -64,7 +64,7 @@ public class ApiOrganizerEventController {
     public ResponseEntity<ApiResponse<EventResponse>> getOrganizerEvent(
             Principal principal,
             @PathVariable("id") Integer id) {
-        EventResponse eventDetail = organizerEventService.getOrganizerEvent(principal, id);
+        EventResponse eventDetail = organizerEventService.getOrganizerEventDetail(principal, id);
         return ResponseEntity.ok(new ApiResponse<>(200, "Lấy chi tiết sự kiện thành công", eventDetail));
     }
 
