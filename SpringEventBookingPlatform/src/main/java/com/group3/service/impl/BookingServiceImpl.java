@@ -143,16 +143,23 @@ public class BookingServiceImpl implements BookingService {
         booking.setTotalPrice(totalPrice);
         booking.setCreatedDate(now);
         booking.setUpdatedDate(now);
-        booking.setStatusId(getStatusBooking(freeEvent ? BOOKING_PAID : BOOKING_PENDING));
-
+        // booking.setStatusId(getStatusBooking(freeEvent ? BOOKING_PAID : BOOKING_PENDING));
+        booking.setStatusId(getStatusBooking(BOOKING_PAID));
         Booking savedBooking = this.bookingRepo.addBooking(booking);
-        if (freeEvent) {
-            increaseSoldTickets(event, request.getQuantity());
-            createTickets(savedBooking, request.getQuantity());
-        } else {
-            createPendingPayment(savedBooking, attendee, totalPrice, request.getPaymentMethod(), now);
-        }
+        // Khi nào lam thanh toán thì mới tăng soldTickets 
+            // và tạo payment để tránh trường hợp người dùng không thanh toán mà đã chiếm vé của người khác.
+            // Note: For paid booking, we create tickets first to ensure QR codes are generated even 
+            // if payment is not completed within 10 minutes.
 
+        // if (freeEvent) {
+        //     increaseSoldTickets(event, request.getQuantity());
+        //     createTickets(savedBooking, request.getQuantity());
+        // } else {
+        //     createPendingPayment(savedBooking, attendee, totalPrice, request.getPaymentMethod(), now);
+        // }
+
+        increaseSoldTickets(event, request.getQuantity());
+        createTickets(savedBooking, request.getQuantity());
         return DTOMapper.toBookingResponse(savedBooking);
     }
 
@@ -232,6 +239,8 @@ public class BookingServiceImpl implements BookingService {
         this.eventRepo.updateEvent(event);
     }
 
+    //hàm này để tạo payment với trạng thái pending, 
+    // chờ thanh toán xong mới chuyển booking sang paid và tạo vé
     private void createPendingPayment(Booking booking, User attendee, BigDecimal totalPrice, String paymentMethod, Date now) {
         Payment payment = new Payment();
         payment.setBookingId(booking);
