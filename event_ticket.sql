@@ -1,7 +1,6 @@
 -- ======================================================
 -- PROJECT: EVENT TICKET MANAGEMENT SYSTEM (E-TICKET HUB)
 -- DATABASE SCRIPT: EXACT POJO MAPPING VERSION (UPDATED REFUND FLOW)
--- DATABASE SCRIPT: EXACT POJO MAPPING VERSION (UPDATED REFUND FLOW)
 -- ======================================================
 
 DROP DATABASE IF EXISTS `event_ticket_db`;
