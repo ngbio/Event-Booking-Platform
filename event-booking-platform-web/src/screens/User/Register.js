@@ -45,16 +45,19 @@ const Register = () => {
         type: "text"
     }];
 
-    const [user, setUser] = useState({
-        role: "attendee"
-    })
+    const [role, setRole] = useState("attendee");
+    const [attendee, setAttendee] = useState({});
+    const [organizer, setOrganizer] = useState({});
     const [err, setErr] = useState("");
     const [loading, setLoading] = useState(false);
-    const avatar = useRef();
+    const attendeeAvatar = useRef();
+    const organizerAvatar = useRef();
     const nav = useNavigate();
 
+    const currentUser = role === "organizer" ? organizer : attendee;
+
     const validate = () => {
-        if (user.password !== user.confirm) {
+        if (currentUser.password !== currentUser.confirm) {
             setErr('Mat khau khong khop!');
             return false;
         }
@@ -69,17 +72,18 @@ const Register = () => {
         if (validate()) {
             let form = new FormData();
 
-            for (var key of Object.keys(user)) {
-                if (key !== 'confirm' && key !== 'role')
-                    form.append(key, user[key]);
+            for (var key of Object.keys(currentUser)) {
+                if (key !== 'confirm')
+                    form.append(key, currentUser[key]);
             }
 
-            if (avatar.current.files.length > 0)
-                form.append('avatar', avatar.current.files[0]);
+            const avatarRef = role === "organizer" ? organizerAvatar : attendeeAvatar;
+            if (avatarRef.current.files.length > 0)
+                form.append('avatar', avatarRef.current.files[0]);
 
             try {
                 setLoading(true);
-                let endpoint = user.role === "organizer" ? endpoints['register-organizer'] : endpoints['register-attendee'];
+                let endpoint = role === "organizer" ? endpoints['register-organizer'] : endpoints['register-attendee'];
                 const res = await Apis.post(endpoint, form, {
                     headers: {
                         'Content-Type': 'multipart/form-data'
@@ -97,40 +101,71 @@ const Register = () => {
     }
 
     return (
-        <>
-            <h1 className="text-center text-success mt-1">DANG KY NGUOI DUNG</h1>
+        <div className="auth-wrap glass-panel">
+            <div className="page-kicker mb-2">Join the list</div>
+            <h1 className="auth-title">Dang ky</h1>
+            <p className="auth-copy">Tao tai khoan moi cho nguoi mua ve hoac nha to chuc.</p>
 
             {err && <Alert variant="danger">{err}</Alert>}
 
-            <Form onSubmit={register}>
-                <Form.Group className="mb-3" controlId="role">
-                    <Form.Label>Loai tai khoan</Form.Label>
-                    <Form.Select value={user.role} onChange={e => setUser({...user, role: e.target.value})}>
-                        <option value="attendee">Nguoi mua ve</option>
-                        <option value="organizer">Nha to chuc</option>
-                    </Form.Select>
-                </Form.Group>
+            <div className="register-switch mb-4" role="tablist" aria-label="Loai tai khoan">
+                <button
+                    type="button"
+                    className={`register-switch-btn ${role === "attendee" ? "active" : ""}`}
+                    onClick={() => {
+                        setRole("attendee");
+                        setErr("");
+                    }}>
+                    Nguoi mua ve
+                </button>
+                <button
+                    type="button"
+                    className={`register-switch-btn ${role === "organizer" ? "active" : ""}`}
+                    onClick={() => {
+                        setRole("organizer");
+                        setErr("");
+                    }}>
+                    Nha to chuc
+                </button>
+            </div>
 
-                {userInfo.map(u => <Form.Group key={u.field} className="mb-3" controlId={u.field}>
+            {role === "attendee" ? <Form onSubmit={register}>
+                {userInfo.map(u => <Form.Group key={u.field} className="mb-3" controlId={`attendee-${u.field}`}>
                     <Form.Label>{u.label}</Form.Label>
-                    <Form.Control type={u.type} placeholder={u.label} value={user[u.field] || ""} onChange={e => setUser({...user, [u.field]: e.target.value})} required />
+                    <Form.Control type={u.type} placeholder={u.label} value={attendee[u.field] || ""} onChange={e => setAttendee({...attendee, [u.field]: e.target.value})} required />
                 </Form.Group>)}
 
-                {user.role === "organizer" && organizerInfo.map(u => <Form.Group key={u.field} className="mb-3" controlId={u.field}>
-                    <Form.Label>{u.label}</Form.Label>
-                    <Form.Control type={u.type} placeholder={u.label} value={user[u.field] || ""} onChange={e => setUser({...user, [u.field]: e.target.value})} />
-                </Form.Group>)}
-
-                <Form.Group className="mb-3" controlId="avatar">
+                <Form.Group className="mb-3" controlId="attendee-avatar">
                     <Form.Label>Anh dai dien</Form.Label>
-                    <Form.Control ref={avatar} type="file" accept="image/*" />
+                    <Form.Control ref={attendeeAvatar} type="file" accept="image/*" />
                 </Form.Group>
 
                 <Form.Group className="mb-3">
-                    {loading === true ? <MySpinner /> : <Button variant="success" type="submit">Dang ky</Button>}
+                    {loading === true ? <MySpinner /> : <Button className="btn-pink w-100" type="submit">Dang ky nguoi mua ve</Button>}
                 </Form.Group>
-            </Form>
-        </>
+            </Form> : <Form onSubmit={register}>
+                {userInfo.map(u => <Form.Group key={u.field} className="mb-3" controlId={`organizer-${u.field}`}>
+                    <Form.Label>{u.label}</Form.Label>
+                    <Form.Control type={u.type} placeholder={u.label} value={organizer[u.field] || ""} onChange={e => setOrganizer({...organizer, [u.field]: e.target.value})} required />
+                </Form.Group>)}
+
+                <div className="organizer-fields">
+                    {organizerInfo.map(u => <Form.Group key={u.field} className="mb-3" controlId={`organizer-${u.field}`}>
+                        <Form.Label>{u.label}</Form.Label>
+                        <Form.Control type={u.type} placeholder={u.label} value={organizer[u.field] || ""} onChange={e => setOrganizer({...organizer, [u.field]: e.target.value})} required />
+                    </Form.Group>)}
+                </div>
+
+                <Form.Group className="mb-3" controlId="organizer-avatar">
+                    <Form.Label>Anh dai dien</Form.Label>
+                    <Form.Control ref={organizerAvatar} type="file" accept="image/*" />
+                </Form.Group>
+
+                <Form.Group className="mb-3">
+                    {loading === true ? <MySpinner /> : <Button className="btn-pink w-100" type="submit">Dang ky nha to chuc</Button>}
+                </Form.Group>
+            </Form>}
+        </div>
     );
 }
 

@@ -62,8 +62,10 @@ const Login = () => {
     }
 
     return (
-        <>
-            <h1 className="text-center text-success mt-1">DANG NHAP NGUOI DUNG</h1>
+        <div className="auth-wrap glass-panel">
+            <div className="page-kicker mb-2">Welcome back</div>
+            <h1 className="auth-title">Dang nhap</h1>
+            <p className="auth-copy">Tiep tuc voi tai khoan Event Booking cua ban.</p>
 
             {err && <Alert variant="danger">{err}</Alert>}
 
@@ -74,10 +76,10 @@ const Login = () => {
                 </Form.Group>)}
 
                 <Form.Group className="mb-3">
-                    {loading === true ? <MySpinner /> : <Button variant="success" type="submit">Dang nhap</Button>}
+                    {loading === true ? <MySpinner /> : <Button className="btn-pink w-100" type="submit">Dang nhap</Button>}
                 </Form.Group>
             </Form>
-        </>
+        </div>
     );
 }
 

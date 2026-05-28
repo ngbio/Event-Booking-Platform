@@ -14,9 +14,12 @@ const Header = () => {
     }
 
     return (
-        <nav className="navbar navbar-expand-lg navbar-dark bg-success">
+        <nav className="navbar navbar-expand-lg navbar-dark site-navbar sticky-top">
             <div className="container">
-                <Link className="navbar-brand fw-bold" to="/">Event Booking</Link>
+                <Link className="navbar-brand fw-bold brand-mark" to="/">
+                    <span className="brand-dot"></span>
+                    <span>Event Booking</span>
+                </Link>
 
                 <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar" aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
                     <span className="navbar-toggler-icon"></span>
@@ -38,7 +41,7 @@ const Header = () => {
                                 <Link className="nav-link" to="/login">Dang nhap</Link>
                             </li>
                             <li className="nav-item">
-                                <Link className="nav-link" to="/register">Dang ky</Link>
+                                <Link className="btn btn-pink ms-lg-2 mt-2 mt-lg-0" to="/register">Dang ky</Link>
                             </li>
                         </> : <>
                             <li className="nav-item">
@@ -48,7 +51,7 @@ const Header = () => {
                                 <Link className="nav-link" to="/organizer/events">Su kien cua toi</Link>
                             </li>}
                             <li className="nav-item">
-                                <button className="btn btn-outline-light ms-lg-2" type="button" onClick={logout}>Dang xuat</button>
+                                <button className="btn btn-outline-pink ms-lg-2 mt-2 mt-lg-0" type="button" onClick={logout}>Dang xuat</button>
                             </li>
                         </>}
                     </ul>

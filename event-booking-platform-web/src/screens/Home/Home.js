@@ -76,27 +76,36 @@ const Home = () => {
 
     return (
         <>
-            {events.length === 0 && loading === false && <Alert variant="info" className="mt-2">KHONG co su kien nao!</Alert>}
-            <Row>
-                {events.map(e => <Col xs={6} md={3} key={e.id} className="p-2">
-                    <Card className="h-100">
-                        {e.imageUrl && <Card.Img variant="top" src={e.imageUrl} />}
-                        <Card.Body>
-                            <Card.Title>{e.title}</Card.Title>
-                            <Card.Text>{e.location}</Card.Text>
-                            <Card.Text>{formatDate(e.startTime)}</Card.Text>
-                            <Card.Text>Ve con lai: {e.availableTickets}</Card.Text>
-                            <Card.Text>{formatPrice(e.price)}</Card.Text>
+            <section className="event-hero">
+                <div className="page-kicker mb-3">Live events</div>
+                <h1 className="page-title mb-3">Find your next night out.</h1>
+                <p className="page-subtitle mb-0">Nhung su kien dang mo ban ve, cap nhat theo thoi gian thuc.</p>
+            </section>
+
+            {events.length === 0 && loading === false && <Alert className="alert-dark-pink mt-2">Khong co su kien nao.</Alert>}
+
+            <Row className="event-grid">
+                {events.map(e => <Col xs={12} sm={6} lg={4} xl={3} key={e.id}>
+                    <Card className="event-card">
+                        {e.imageUrl ? <Card.Img className="event-card-img" variant="top" src={e.imageUrl} /> :
+                            <div className="event-card-placeholder">EVENT</div>}
+                        <Card.Body className="d-flex flex-column">
+                            <div className="event-badge mb-3">Con {e.availableTickets} ve</div>
+                            <Card.Title className="event-title">{e.title}</Card.Title>
+                            <Card.Text className="event-meta mb-1">{e.location || "Dang cap nhat dia diem"}</Card.Text>
+                            <Card.Text className="event-meta">{formatDate(e.startTime)}</Card.Text>
+                            <Card.Text className="event-price mt-auto">{formatPrice(e.price)}</Card.Text>
                         </Card.Body>
 
-                        <Card.Body>
-                            <Button variant="info" onClick={() => nav(`/events/${e.id}`)}>Xem chi tiet</Button>
+                        <Card.Body className="pt-0">
+                            <Button className="btn-pink w-100" onClick={() => nav(`/events/${e.id}`)}>Xem chi tiet</Button>
                         </Card.Body>
                     </Card>
                 </Col>)}
             </Row>
-            {page > 0 && <div className="text-center mb-2">
-                <Button variant="success" onClick={loadMore}>Xem them...</Button>
+
+            {page > 0 && <div className="text-center mt-4 mb-2">
+                <Button className="btn-outline-pink px-4" onClick={loadMore}>Xem them</Button>
             </div>}
 
             {loading && <MySpinner />}

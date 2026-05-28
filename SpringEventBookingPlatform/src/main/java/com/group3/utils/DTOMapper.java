@@ -16,6 +16,7 @@ import com.group3.dto.response.EventFeeResponse;
 import com.group3.dto.response.EventResponse;
 import com.group3.dto.response.PaymentResponse;
 import com.group3.dto.response.RoleResponse;
+import com.group3.dto.response.TicketResponse;
 import com.group3.dto.response.UserResponse;
 import com.group3.mapper.BookingMapper;
 import com.group3.mapper.CategoryMapper;
@@ -23,8 +24,10 @@ import com.group3.mapper.EventFeeMapper;
 import com.group3.mapper.EventMapper;
 import com.group3.mapper.PaymentMapper;
 import com.group3.mapper.RoleMapper;
+import com.group3.mapper.TicketMapper;
 import com.group3.mapper.UserMapper;
 import com.group3.pojo.EventFee;
+import com.group3.pojo.TicketDetail;
 import java.util.List;
 
 /**
@@ -76,6 +79,13 @@ public class DTOMapper {
         return PaymentMapper.toResponse(payment);
     }
 
+    /**
+     * Convert TicketDetail entity to ResTicketDTO
+     */
+    public static TicketResponse toTicketResponse(TicketDetail ticket) {
+        return TicketMapper.toResponse(ticket);
+    }
+
     // ============ List Conversion Methods ============
 
     /**
@@ -111,6 +121,13 @@ public class DTOMapper {
      */
     public static List<PaymentResponse> toPaymentResponseList(List<Payment> payments) {
         return PaymentMapper.toResponseList(payments);
+    }
+
+    /**
+     * Convert List of TicketDetails to List of ResTicketDTOs
+     */
+    public static List<TicketResponse> toTicketResponseList(List<TicketDetail> tickets) {
+        return TicketMapper.toResponseList(tickets);
     }
 
     /**

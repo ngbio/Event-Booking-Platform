@@ -45,6 +45,29 @@ public class TicketDetailRepositoryImpl implements TicketDetailRepository {
     }
 
     @Override
+    public TicketDetail getTicketById(Integer id) {
+        if (id == null) {
+            return null;
+        }
+
+        String hql = "SELECT DISTINCT t FROM TicketDetail t "
+                + "LEFT JOIN FETCH t.bookingId b "
+                + "LEFT JOIN FETCH b.eventId e "
+                + "LEFT JOIN FETCH e.organizerId "
+                + "LEFT JOIN FETCH b.userId "
+                + "LEFT JOIN FETCH t.statusId "
+                + "WHERE t.id = :id";
+
+        try {
+            return getCurrentSession().createQuery(hql, TicketDetail.class)
+                    .setParameter("id", id)
+                    .getSingleResult();
+        } catch (NoResultException ex) {
+            return null;
+        }
+    }
+
+    @Override
     public TicketDetail getTicketByQrCode(String qrCode) {
         if (qrCode == null || qrCode.isBlank()) {
             return null;

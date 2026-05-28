@@ -1,7 +1,9 @@
 import { Spinner } from "react-bootstrap";
 
 const MySpinner = () => {
-    return  <Spinner animation="grow" variant="primary" className="p-2" />;
+    return <div className="py-3 text-center">
+        <Spinner animation="grow" className="spinner-pink" />
+    </div>;
 }
 
 export default MySpinner;
