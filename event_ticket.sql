@@ -1,6 +1,6 @@
 -- ======================================================
 -- PROJECT: EVENT TICKET MANAGEMENT SYSTEM (E-TICKET HUB)
--- DATABASE SCRIPT: EXACT POJO MAPPING VERSION (UPDATED REFUND FLOW)
+-- DATABASE SCRIPT: EXACT POJO MAPPING & LOGICAL SEEDING
 -- ======================================================
 
 DROP DATABASE IF EXISTS `event_ticket_db`;
@@ -8,37 +8,14 @@ CREATE DATABASE `event_ticket_db` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_
 USE `event_ticket_db`;
 
 -- ------------------------------------------------------
--- 1. DICTIONARY LOOKUP TABLES (STATIC STATUS & ROLES)
+-- 1. DICTIONARY LOOKUP TABLES
 -- ------------------------------------------------------
-CREATE TABLE `role` (
-  `id` int PRIMARY KEY,
-  `name` varchar(50) NOT NULL
-);
-
-CREATE TABLE `status_user` (
-  `id` int PRIMARY KEY,
-  `name` varchar(50) NOT NULL
-);
-
-CREATE TABLE `status_event` (
-  `id` int PRIMARY KEY,
-  `name` varchar(50) NOT NULL
-);
-
-CREATE TABLE `status_booking` (
-  `id` int PRIMARY KEY,
-  `name` varchar(50) NOT NULL
-);
-
-CREATE TABLE `status_pay` (
-  `id` int PRIMARY KEY,
-  `name` varchar(50) NOT NULL
-);
-
-CREATE TABLE `status_ticket` (
-  `id` int PRIMARY KEY,
-  `name` varchar(50) NOT NULL
-);
+CREATE TABLE `role` (`id` int PRIMARY KEY, `name` varchar(50) NOT NULL);
+CREATE TABLE `status_user` (`id` int PRIMARY KEY, `name` varchar(50) NOT NULL);
+CREATE TABLE `status_event` (`id` int PRIMARY KEY, `name` varchar(50) NOT NULL);
+CREATE TABLE `status_booking` (`id` int PRIMARY KEY, `name` varchar(50) NOT NULL);
+CREATE TABLE `status_pay` (`id` int PRIMARY KEY, `name` varchar(50) NOT NULL);
+CREATE TABLE `status_ticket` (`id` int PRIMARY KEY, `name` varchar(50) NOT NULL);
 
 -- ------------------------------------------------------
 -- 2. CORE SYSTEM TABLES
@@ -60,13 +37,27 @@ CREATE TABLE `user` (
   `full_name` varchar(100) NOT NULL,
   `phone` varchar(20),
   `avatar` varchar(255),
-  `identity_card` varchar(20) DEFAULT NULL, -- CCCD Của cá nhân/người đại diện (Dạng chuỗi số)
-  `organization_name` varchar(100) DEFAULT NULL, -- Tên tổ chức/doanh nghiệp
-  `tax_code` varchar(20) DEFAULT NULL, -- Mã số thuế
   `created_date` datetime DEFAULT CURRENT_TIMESTAMP,
   `updated_date` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   FOREIGN KEY (`role_id`) REFERENCES `role` (`id`),
   FOREIGN KEY (`status_id`) REFERENCES `status_user` (`id`)
+);
+
+-- Bảng thông tin riêng của Nhà tổ chức
+CREATE TABLE `organizer` (
+  `user_id` int PRIMARY KEY,
+  `identity_card` varchar(20) NOT NULL,
+  `organization_name` varchar(100) NOT NULL,
+  `tax_code` varchar(20) DEFAULT NULL,
+  FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE
+);
+
+-- Bảng thông tin riêng của Khách hàng dự sự kiện
+CREATE TABLE `attendee` (
+  `user_id` int PRIMARY KEY,
+  `birth_date` date DEFAULT NULL, 
+  `gender` varchar(10) DEFAULT NULL, 
+  FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE
 );
 
 CREATE TABLE `event` (
@@ -155,52 +146,76 @@ CREATE TABLE `event_fee` (
 
 -- ------------------------------------------------------
 -- 3. SEEDING MOCK DATA
--- 3. SEEDING MOCK DATA
 -- ------------------------------------------------------
 
-INSERT INTO `role` VALUES (1, 'ROLE_ADMIN'), (2, 'ROLE_ORGANIZER'), (3, 'ROLE_ATTENDEE');
-INSERT INTO `status_user` VALUES (1, 'PENDING'), (2, 'ACTIVE'), (3, 'BANNED');
+INSERT INTO `role` (`id`, `name`) VALUES (1, 'ROLE_ADMIN'), (2, 'ROLE_ORGANIZER'), (3, 'ROLE_ATTENDEE');
+INSERT INTO `status_user` (`id`, `name`) VALUES (1, 'PENDING'), (2, 'ACTIVE'), (3, 'BANNED');
+INSERT INTO `status_event` (`id`, `name`) VALUES (1, 'PENDING'), (2, 'PUBLISHED'), (3, 'DRAFT'), (4, 'COMPLETED'), (5, 'CANCELLED');
+INSERT INTO `status_booking` (`id`, `name`) VALUES (1, 'PENDING'), (2, 'PAID'), (3, 'REFUNDING'), (4, 'REFUNDED'), (5, 'CANCELLED');
+INSERT INTO `status_pay` (`id`, `name`) VALUES (1, 'PENDING'), (2, 'SUCCESS'), (3, 'FAILED');
+INSERT INTO `status_ticket` (`id`, `name`) VALUES (1, 'VALID'), (2, 'CHECKED_IN');
 
-INSERT INTO `status_event` VALUES (1, 'PENDING'), (2, 'PUBLISHED'), (3, 'DRAFT'), (4, 'COMPLETED'), (5, 'CANCELLED');
-
--- ĐÃ CẬP NHẬT: Thêm REFUNDING và REFUNDED, đổi PENDING_PAYMENT thành PENDING
-INSERT INTO `status_booking` VALUES (1, 'PENDING'), (2, 'PAID'), (3, 'REFUNDING'), (4, 'REFUNDED'), (5, 'CANCELLED');
-
-INSERT INTO `status_pay` VALUES (1, 'PENDING'), (2, 'SUCCESS'), (3, 'FAILED');
-INSERT INTO `status_ticket` VALUES (1, 'VALID'), (2, 'CHECKED_IN');
-
--- 20 Categories
 INSERT INTO `category` (`id`, `name`, `active`) VALUES 
 (1, 'Âm nhạc', 1), (2, 'Hội thảo', 1), (3, 'Thể thao', 1), (4, 'Nghệ thuật', 1), (5, 'Du lịch', 1), 
 (6, 'Cộng đồng', 1), (7, 'Giáo dục', 1), (8, 'Công nghệ', 1), (9, 'Kinh doanh', 1), (10, 'Giải trí', 1),
 (11, 'Ẩm thực', 1), (12, 'Triển lãm', 1), (13, 'Sân khấu', 1), (14, 'Thời trang', 1), (15, 'Điện ảnh', 1),
 (16, 'Khoa học', 1), (17, 'Sức khỏe', 1), (18, 'Gia đình', 1), (19, 'Phong cách sống', 1), (20, 'Từ thiện', 1);
 
--- 20 Users
--- 20 Users
-INSERT INTO `user` (`id`, `role_id`, `status_id`, `email`, `password`, `full_name`, `phone`, `avatar`, `identity_card`, `organization_name`, `tax_code`) VALUES 
-(1, 1, 2, 'admin@eventhub.vn', '$2a$10$5X9k5N1sTc1/CjVH5XJoje3QMYijH3ETpgkox00R0MdPaJPPrf7wO', 'Quản Trị Viên Hệ Thống', '0901112223', 'admin_avatar.png', NULL, NULL, NULL),
-(2, 2, 2, 'contact@gmail.com', '$2a$10$5X9k5N1sTc1/CjVH5XJoje3QMYijH3ETpgkox00R0MdPaJPPrf7wO', 'Vibe Entertainment', '0912333444', 'vibe_logo.png', '079090123456', 'Công ty TNHH Giải Trí Vibe', '0314556677'),
-(3, 2, 2, 'info@gmail.com', '$2a$10$5X9k5N1sTc1/CjVH5XJoje3QMYijH3ETpgkox00R0MdPaJPPrf7wO', 'Saigon Music Group', '0915666777', 'sgm_logo.png', '079091987654', 'Công ty Cổ phần Âm nhạc Sài Gòn', '0319888999'),
-(4, 2, 1, 'ceo.techtech@gmail.com', '$2a$10$5X9k5N1sTc1/CjVH5XJoje3QMYijH3ETpgkox00R0MdPaJPPrf7wO', 'Phạm Minh Trí', '0982777111', 'tri_avatar.png', '001092334455', 'Công ty Công Nghệ Trẻ TechTech', '0315551234'),
-(5, 2, 1, 'marketing@gmail.com', '$2a$10$5X9k5N1sTc1/CjVH5XJoje3QMYijH3ETpgkox00R0MdPaJPPrf7wO', 'Glory Event Agency', '0938444555', 'glory_logo.png', '030095667788', 'Hộ Kinh Doanh Sự Kiện Glory', '8811223344'),
-(6, 3, 2, 'nguyenvana@gmail.com', '$2a$10$5X9k5N1sTc1/CjVH5XJoje3QMYijH3ETpgkox00R0MdPaJPPrf7wO', 'Nguyễn Văn A', '0988000111', 'user1.png', NULL, NULL, NULL),
-(7, 3, 2, 'tranventh@gmail.com', '$2a$10$5X9k5N1sTc1/CjVH5XJoje3QMYijH3ETpgkox00R0MdPaJPPrf7wO', 'Trần Thị B', '0977222333', 'user2.png', NULL, NULL, NULL),
-(8, 3, 2, 'lehoangc@gmail.com', '$2a$10$5X9k5N1sTc1/CjVH5XJoje3QMYijH3ETpgkox00R0MdPaJPPrf7wO', 'Lê Hoàng C', '0966333444', 'user3.png', NULL, NULL, NULL),
-(9, 3, 2, 'phamvand@gmail.com', '$2a$10$5X9k5N1sTc1/CjVH5XJoje3QMYijH3ETpgkox00R0MdPaJPPrf7wO', 'Phạm Văn D', '0955444555', 'user4.png', NULL, NULL, NULL),
-(10, 3, 2, 'vuhoange@gmail.com', '$2a$10$5X9k5N1sTc1/CjVH5XJoje3QMYijH3ETpgkox00R0MdPaJPPrf7wO', 'Vũ Hoàng E', '0944555666', 'user5.png', NULL, NULL, NULL),
-(11, 3, 2, 'doanthif@gmail.com', '$2a$10$5X9k5N1sTc1/CjVH5XJoje3QMYijH3ETpgkox00R0MdPaJPPrf7wO', 'Đoàn Thị F', '0933666777', 'user6.png', NULL, NULL, NULL),
-(12, 3, 2, 'hoangvangg@gmail.com', '$2a$10$5X9k5N1sTc1/CjVH5XJoje3QMYijH3ETpgkox00R0MdPaJPPrf7wO', 'Hoàng Văn G', '0922777888', 'user7.png', NULL, NULL, NULL),
-(13, 3, 2, 'buitih@gmail.com', '$2a$10$5X9k5N1sTc1/CjVH5XJoje3QMYijH3ETpgkox00R0MdPaJPPrf7wO', 'Bùi Thị H', '0911888999', 'user8.png', NULL, NULL, NULL),
-(14, 3, 2, 'nguyenvani@gmail.com', '$2a$10$5X9k5N1sTc1/CjVH5XJoje3QMYijH3ETpgkox00R0MdPaJPPrf7wO', 'Nguyễn Văn I', '0912000111', 'user9.png', NULL, NULL, NULL),
-(15, 3, 2, 'tranvanj@gmail.com', '$2a$10$5X9k5N1sTc1/CjVH5XJoje3QMYijH3ETpgkox00R0MdPaJPPrf7wO', 'Trần Văn J', '0913000222', 'user10.png', NULL, NULL, NULL),
-(16, 3, 2, 'lethik@gmail.com', '$2a$10$5X9k5N1sTc1/CjVH5XJoje3QMYijH3ETpgkox00R0MdPaJPPrf7wO', 'Lê Thị K', '0914000333', 'user11.png', NULL, NULL, NULL),
-(17, 3, 3, 'banneduser@gmail.com', '$2a$10$5X9k5N1sTc1/CjVH5XJoje3QMYijH3ETpgkox00R0MdPaJPPrf7wO', 'Tài Khoản Vi Phạm', '0915000444', 'user12.png', NULL, NULL, NULL),
-(18, 2, 1, 'organizer.pending1@gmail.com', '$2a$10$5X9k5N1sTc1/CjVH5XJoje3QMYijH3ETpgkox00R0MdPaJPPrf7wO', 'Sài Gòn Đêm Lạnh Studio', '0916000555', 'studio_logo.png', '079199223344', 'Công ty Giải trí Đêm Lạnh', '0315559999'),
-(19, 2, 1, 'organizer.pending2@gmail.com', '$2a$10$5X9k5N1sTc1/CjVH5XJoje3QMYijH3ETpgkox00R0MdPaJPPrf7wO', 'Mekong Event Group', '0917000666', 'mekong_logo.png', '044088112233', 'Công ty TNHH Truyền thông Mekong', '0316668888'),
-(20, 2, 2, 'active.org3@gmail.com', '$2a$10$5X9k5N1sTc1/CjVH5XJoje3QMYijH3ETpgkox00R0MdPaJPPrf7wO', 'Hà Nội Show và Giải Trí', '0918000777', 'hnshow_logo.png', '001099556677', 'Công ty Cổ phần HN Show', '0317775555');
+-- TÀI KHOẢN ADMIN (Role = 1)
+INSERT INTO `user` (`id`, `role_id`, `status_id`, `email`, `password`, `full_name`, `phone`, `avatar`) VALUES 
+(1, 1, 2, 'admin@eventhub.vn', '$2a$10$5X9k5N1sTc1/CjVH5XJoje3QMYijH3ETpgkox00R0MdPaJPPrf7wO', 'Quản Trị Viên Hệ Thống', '0901112223', 'admin_avatar.png');
 
--- 20 Events
+-- TÀI KHOẢN NHÀ TỔ CHỨC (Role = 2)
+INSERT INTO `user` (`id`, `role_id`, `status_id`, `email`, `password`, `full_name`, `phone`, `avatar`) VALUES 
+(2, 2, 2, 'contact@gmail.com', '$2a$10$5X9k5N1sTc1/CjVH5XJoje3QMYijH3ETpgkox00R0MdPaJPPrf7wO', 'Vibe Entertainment', '0912333444', 'vibe_logo.png'),
+(3, 2, 2, 'info@gmail.com', '$2a$10$5X9k5N1sTc1/CjVH5XJoje3QMYijH3ETpgkox00R0MdPaJPPrf7wO', 'Saigon Music Group', '0915666777', 'sgm_logo.png'),
+(4, 2, 1, 'ceo.techtech@gmail.com', '$2a$10$5X9k5N1sTc1/CjVH5XJoje3QMYijH3ETpgkox00R0MdPaJPPrf7wO', 'Phạm Minh Trí', '0982777111', 'tri_avatar.png'),
+(5, 2, 1, 'marketing@gmail.com', '$2a$10$5X9k5N1sTc1/CjVH5XJoje3QMYijH3ETpgkox00R0MdPaJPPrf7wO', 'Glory Event Agency', '0938444555', 'glory_logo.png'),
+(18, 2, 1, 'organizer.pending1@gmail.com', '$2a$10$5X9k5N1sTc1/CjVH5XJoje3QMYijH3ETpgkox00R0MdPaJPPrf7wO', 'Sài Gòn Đêm Lạnh Studio', '0916000555', 'studio_logo.png'),
+(19, 2, 1, 'organizer.pending2@gmail.com', '$2a$10$5X9k5N1sTc1/CjVH5XJoje3QMYijH3ETpgkox00R0MdPaJPPrf7wO', 'Mekong Event Group', '0917000666', 'mekong_logo.png'),
+(20, 2, 2, 'active.org3@gmail.com', '$2a$10$5X9k5N1sTc1/CjVH5XJoje3QMYijH3ETpgkox00R0MdPaJPPrf7wO', 'Hà Nội Show và Giải Trí', '0918000777', 'hnshow_logo.png');
+
+-- TÀI KHOẢN NGƯỜI MUA VÉ (Role = 3)
+INSERT INTO `user` (`id`, `role_id`, `status_id`, `email`, `password`, `full_name`, `phone`, `avatar`) VALUES 
+(6, 3, 2, '2351010054hai@ou.edu.vn', '$2a$10$5X9k5N1sTc1/CjVH5XJoje3QMYijH3ETpgkox00R0MdPaJPPrf7wO', 'Mai Thanh Hải', '0988000111', 'user1.png'),
+(7, 3, 2, 'tranventh@gmail.com', '$2a$10$5X9k5N1sTc1/CjVH5XJoje3QMYijH3ETpgkox00R0MdPaJPPrf7wO', 'Trần Thị B', '0977222333', 'user2.png'),
+(8, 3, 2, 'lehoangc@gmail.com', '$2a$10$5X9k5N1sTc1/CjVH5XJoje3QMYijH3ETpgkox00R0MdPaJPPrf7wO', 'Lê Hoàng C', '0966333444', 'user3.png'),
+(9, 3, 2, 'phamvand@gmail.com', '$2a$10$5X9k5N1sTc1/CjVH5XJoje3QMYijH3ETpgkox00R0MdPaJPPrf7wO', 'Phạm Văn D', '0955444555', 'user4.png'),
+(10, 3, 2, 'vuhoange@gmail.com', '$2a$10$5X9k5N1sTc1/CjVH5XJoje3QMYijH3ETpgkox00R0MdPaJPPrf7wO', 'Vũ Hoàng E', '0944555666', 'user5.png'),
+(11, 3, 2, 'doanthif@gmail.com', '$2a$10$5X9k5N1sTc1/CjVH5XJoje3QMYijH3ETpgkox00R0MdPaJPPrf7wO', 'Đoàn Thị F', '0933666777', 'user6.png'),
+(12, 3, 2, 'hoangvangg@gmail.com', '$2a$10$5X9k5N1sTc1/CjVH5XJoje3QMYijH3ETpgkox00R0MdPaJPPrf7wO', 'Hoàng Văn G', '0922777888', 'user7.png'),
+(13, 3, 2, 'buitih@gmail.com', '$2a$10$5X9k5N1sTc1/CjVH5XJoje3QMYijH3ETpgkox00R0MdPaJPPrf7wO', 'Bùi Thị H', '0911888999', 'user8.png'),
+(14, 3, 2, 'nguyenvani@gmail.com', '$2a$10$5X9k5N1sTc1/CjVH5XJoje3QMYijH3ETpgkox00R0MdPaJPPrf7wO', 'Nguyễn Văn I', '0912000111', 'user9.png'),
+(15, 3, 2, 'tranvanj@gmail.com', '$2a$10$5X9k5N1sTc1/CjVH5XJoje3QMYijH3ETpgkox00R0MdPaJPPrf7wO', 'Trần Văn J', '0913000222', 'user10.png'),
+(16, 3, 2, 'lethik@gmail.com', '$2a$10$5X9k5N1sTc1/CjVH5XJoje3QMYijH3ETpgkox00R0MdPaJPPrf7wO', 'Lê Thị K', '0914000333', 'user11.png'),
+(17, 3, 3, 'banneduser@gmail.com', '$2a$10$5X9k5N1sTc1/CjVH5XJoje3QMYijH3ETpgkox00R0MdPaJPPrf7wO', 'Tài Khoản Vi Phạm', '0915000444', 'user12.png');
+
+-- PROFILE NHÀ TỔ CHỨC (Chỉ map với Role 2)
+INSERT INTO `organizer` (`user_id`, `identity_card`, `organization_name`, `tax_code`) VALUES 
+(2, '079090123456', 'Công ty TNHH Giải Trí Vibe', '0314556677'),
+(3, '079091987654', 'Công ty Cổ phần Âm nhạc Sài Gòn', '0319888999'),
+(4, '001092334455', 'Công ty Công Nghệ Trẻ TechTech', '0315551234'),
+(5, '030095667788', 'Hộ Kinh Doanh Sự Kiện Glory', '8811223344'),
+(18, '079199223344', 'Công ty Giải trí Đêm Lạnh', '0315559999'),
+(19, '044088112233', 'Công ty TNHH Truyền thông Mekong', '0316668888'),
+(20, '001099556677', 'Công ty Cổ phần HN Show', '0317775555');
+
+-- PROFILE NGƯỜI MUA VÉ (Sử dụng chuẩn tiếng Anh Male/Female)
+INSERT INTO `attendee` (`user_id`, `birth_date`, `gender`) VALUES 
+(6, '2005-04-07', 'Male'),
+(7, '1998-05-12', 'Female'),
+(8, '2000-11-20', 'Male'),
+(9, '1995-02-15', 'Male'),
+(10, '1998-08-08', 'Male'),
+(11, '2002-09-30', 'Female'),
+(12, '1996-12-01', 'Male'),
+(13, '2001-03-25', 'Female'),
+(14, '1994-07-14', 'Male'),
+(15, '1993-10-05', 'Male'),
+(16, '2003-01-19', 'Female'),
+(17, '1990-06-22', 'Male');
+
+-- Sự kiện, Đặt vé và Thanh toán
 INSERT INTO `event` (`id`, `organizer_id`, `status_id`, `title`, `description`, `start_time`, `end_time`, `location`, `total_tickets`, `price`, `sold_tickets`, `listing_fee`, `is_paid_fee`, `settlement_code`) VALUES 
 (1, 2, 1, 'Triển Lãm Tranh Sơn Dầu Việt', 'Trưng bày tác phẩm nghệ thuật.', '2026-10-05 09:00:00', '2026-10-12 18:00:00', 'Bảo tàng Mỹ thuật TP.HCM', 300, 80000.00, 0, 100000.00, 1, NULL),
 (2, 2, 1, 'Đại Hội Kpop Dance Cover 2026', 'Sân chơi âm nhạc vũ đạo trẻ.', '2026-07-20 18:00:00', '2026-07-20 22:00:00', 'Nhà thi đấu Phú Thọ', 800, 120000.00, 0, 150000.00, 1, NULL),
@@ -223,16 +238,11 @@ INSERT INTO `event` (`id`, `organizer_id`, `status_id`, `title`, `description`, 
 (19, 2, 5, 'Giải Marathon Quốc Tế Đà Nẵng', 'Sự kiện bị hủy do thời tiết bất lợi.', '2026-05-14 04:00:00', '2026-05-14 11:00:00', 'Công viên Biển Đông Đà Nẵng', 3000, 600000.00, 0, 400000.00, 1, NULL),
 (20, 2, 2, 'Đêm Nhạc Jazz Độc Bản Tháng 7', 'Thưởng thức nhạc Jazz nguyên bản tinh tế.', '2026-07-05 20:00:00', '2026-07-05 23:00:00', 'Nhà hát lớn Hà Nội', 250, 600000.00, 0, 250000.00, 1, NULL);
 
--- 20 Event Categories
 INSERT INTO `event_category` (`event_id`, `category_id`) VALUES 
 (1, 4), (1, 12), (2, 1), (2, 10), (3, 7), (3, 8), (4, 1), (4, 10), (5, 2), (5, 8), 
 (5, 9), (6, 1), (7, 3), (7, 6), (8, 3), (8, 10), (9, 7), (10, 10), (10, 13), (11, 11),
 (12, 7), (13, 11), (14, 13), (15, 8), (15, 16), (16, 1), (17, 2), (17, 9), (18, 6), (20, 1);
 
--- 20 Bookings 
--- ĐÃ CẬP NHẬT MOCK DATA: Chuyển các booking có ID trạng thái cũ là 3 (CANCELLED) sang 5 (CANCELLED) để khớp với bảng status_booking mới.
--- 20 Bookings 
--- ĐÃ CẬP NHẬT MOCK DATA: Chuyển các booking có ID trạng thái cũ là 3 (CANCELLED) sang 5 (CANCELLED) để khớp với bảng status_booking mới.
 INSERT INTO `booking` (`id`, `event_id`, `user_id`, `status_id`, `quantity`, `unit_price`, `total_price`) VALUES 
 (1, 4, 6, 2, 2, 500000.00, 1000000.00),
 (2, 4, 7, 2, 2, 500000.00, 1000000.00),
@@ -240,9 +250,9 @@ INSERT INTO `booking` (`id`, `event_id`, `user_id`, `status_id`, `quantity`, `un
 (4, 5, 9, 2, 2, 150000.00, 300000.00),
 (5, 5, 10, 2, 2, 150000.00, 300000.00),
 (6, 6, 11, 2, 3, 350000.00, 1050000.00),
-(7, 4, 9, 5, 2, 500000.00, 1000000.00), -- CANCELLED
+(7, 4, 9, 5, 2, 500000.00, 1000000.00), 
 (8, 5, 6, 1, 1, 150000.00, 150000.00),
-(9, 6, 7, 5, 1, 350000.00, 350000.00), -- CANCELLED
+(9, 6, 7, 5, 1, 350000.00, 350000.00), 
 (10, 12, 8, 1, 2, 20000.00, 40000.00),
 (11, 8, 12, 1, 1, 50000.00, 50000.00),
 (12, 10, 13, 1, 2, 200000.00, 400000.00),
@@ -255,7 +265,6 @@ INSERT INTO `booking` (`id`, `event_id`, `user_id`, `status_id`, `quantity`, `un
 (19, 16, 9, 2, 2, 450000.00, 900000.00),
 (20, 17, 10, 2, 1, 1200000.00, 1200000.00);
 
--- 20 Payments
 INSERT INTO `payment` (`id`, `booking_id`, `user_id`, `status_id`, `amount`, `method`, `transaction_id`) VALUES 
 (1, 1, 6, 2, 1000000.00, 'VNPAY', 'VNP20260701999'),
 (2, 2, 7, 2, 1000000.00, 'MOMO', 'MOMO_MM112233'),
@@ -278,7 +287,6 @@ INSERT INTO `payment` (`id`, `booking_id`, `user_id`, `status_id`, `amount`, `me
 (19, 11, 12, 1, 50000.00, 'MOMO', NULL),
 (20, 12, 13, 3, 400000.00, 'VNPAY', NULL);
 
--- 20 Ticket Details
 INSERT INTO `ticket_detail` (`id`, `booking_id`, `qrCode`, `status_id`) VALUES 
 (1, 1, 'E-TKT-UUID-A1B2-C3D4-0001', 1),
 (2, 1, 'E-TKT-UUID-A1B2-C3D4-0002', 2),
@@ -301,7 +309,6 @@ INSERT INTO `ticket_detail` (`id`, `booking_id`, `qrCode`, `status_id`) VALUES
 (19, 19, 'E-TKT-UUID-K7L8-M9N0-0019', 2),
 (20, 20, 'E-TKT-UUID-O1P2-Q3R4-0020', 1);
 
--- 20 Event Fees
 INSERT INTO `event_fee` (`id`, `event_id`, `amount`, `status_id`, `payment_method`, `transaction_id`) VALUES 
 (1, 4, 200000.00, 2, 'VNPAY', 'FEE_VNP111'),
 (2, 5, 100000.00, 2, 'MOMO', 'FEE_MOMO222'),
