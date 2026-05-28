@@ -17,6 +17,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -41,6 +43,24 @@ public class ApiBookingController {
         User attendee = getCurrentUser(principal);
         List<BookingResponse> bookings = this.bookingService.getMyBookings(attendee, params);
         return ResponseEntity.ok(new ApiResponse<>(200, "Lay lich su dat ve thanh cong", bookings));
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<ApiResponse<BookingResponse>> getBookingDetail(
+            Principal principal,
+            @PathVariable("id") Integer id) {
+        User currentUser = getCurrentUser(principal);
+        BookingResponse booking = this.bookingService.getBookingDetail(id, currentUser);
+        return ResponseEntity.ok(new ApiResponse<>(200, "Lay chi tiet booking thanh cong", booking));
+    }
+
+    @PatchMapping("/{id}/cancel")
+    public ResponseEntity<ApiResponse<Boolean>> cancelBooking(
+            Principal principal,
+            @PathVariable("id") Integer id) {
+        User attendee = getCurrentUser(principal);
+        boolean cancelled = this.bookingService.cancelBooking(id, attendee);
+        return ResponseEntity.ok(new ApiResponse<>(200, "Huy don dat ve thanh cong", cancelled));
     }
 
     @PostMapping
