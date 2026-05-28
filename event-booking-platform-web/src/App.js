@@ -11,21 +11,23 @@ import './App.css';
 const App = () => {
   return (
     <BrowserRouter>
-      <Header />
+      <div className="app-shell">
+        <Header />
 
-      <main className="py-3">
-        <Container>
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/events" element={<Home />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="*" element={<h2 className="text-center text-danger">Khong tim thay trang</h2>} />
-          </Routes>
-        </Container>
-      </main>
+        <main className="app-main">
+          <Container>
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/events" element={<Home />} />
+              <Route path="/register" element={<Register />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="*" element={<h2 className="text-center text-danger">Khong tim thay trang</h2>} />
+            </Routes>
+          </Container>
+        </main>
 
-      <Footer />
+        <Footer />
+      </div>
     </BrowserRouter>
   );
 }

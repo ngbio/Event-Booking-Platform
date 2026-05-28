@@ -1,38 +1,316 @@
-.App {
-  text-align: center;
+:root {
+  --eb-bg: #07070b;
+  --eb-surface: #111118;
+  --eb-surface-2: #191923;
+  --eb-border: rgba(255, 255, 255, 0.1);
+  --eb-text: #f8f2f7;
+  --eb-muted: #b9aebb;
+  --eb-pink: #ff3d9a;
+  --eb-pink-2: #ff78bf;
+  --eb-deep-pink: #c3156b;
+  --eb-shadow: 0 18px 48px rgba(0, 0, 0, 0.32);
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+* {
+  box-sizing: border-box;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+body {
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at 14% 0%, rgba(255, 61, 154, 0.22), transparent 28%),
+    linear-gradient(180deg, #08080d 0%, #111018 48%, #07070b 100%);
+  color: var(--eb-text);
 }
 
-.App-header {
-  background-color: #282c34;
+a {
+  color: inherit;
+}
+
+.app-shell {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+}
+
+.app-main {
+  flex: 1;
+  padding: 32px 0 44px;
+}
+
+.glass-panel {
+  background: rgba(17, 17, 24, 0.86);
+  border: 1px solid var(--eb-border);
+  border-radius: 8px;
+  box-shadow: var(--eb-shadow);
+}
+
+.site-navbar {
+  background: rgba(7, 7, 11, 0.88);
+  border-bottom: 1px solid var(--eb-border);
+  backdrop-filter: blur(18px);
+}
+
+.brand-mark {
+  display: inline-flex;
   align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  gap: 10px;
+  color: var(--eb-text);
+  letter-spacing: 0;
 }
 
-.App-link {
-  color: #61dafb;
+.brand-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--eb-pink);
+  box-shadow: 0 0 18px rgba(255, 61, 154, 0.9);
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
+.site-navbar .nav-link {
+  color: rgba(248, 242, 247, 0.78);
+  font-weight: 600;
+  padding-left: 14px;
+  padding-right: 14px;
+}
+
+.site-navbar .nav-link:hover,
+.site-navbar .nav-link:focus {
+  color: var(--eb-pink-2);
+}
+
+.btn-pink {
+  background: linear-gradient(135deg, var(--eb-pink), var(--eb-deep-pink));
+  border: 0;
+  color: #fff;
+  font-weight: 700;
+  box-shadow: 0 10px 24px rgba(255, 61, 154, 0.28);
+}
+
+.btn-pink:hover,
+.btn-pink:focus {
+  background: linear-gradient(135deg, var(--eb-pink-2), var(--eb-pink));
+  color: #fff;
+}
+
+.btn-outline-pink {
+  border: 1px solid rgba(255, 61, 154, 0.72);
+  color: var(--eb-pink-2);
+  font-weight: 700;
+}
+
+.btn-outline-pink:hover,
+.btn-outline-pink:focus {
+  background: rgba(255, 61, 154, 0.14);
+  border-color: var(--eb-pink-2);
+  color: #fff;
+}
+
+.page-kicker {
+  color: var(--eb-pink-2);
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.page-title {
+  color: var(--eb-text);
+  font-size: clamp(2rem, 5vw, 4.8rem);
+  font-weight: 900;
+  line-height: 0.95;
+  letter-spacing: 0;
+}
+
+.page-subtitle {
+  color: var(--eb-muted);
+  font-size: 1.05rem;
+  max-width: 680px;
+}
+
+.event-hero {
+  padding: 46px 0 30px;
+}
+
+.event-grid {
+  row-gap: 18px;
+}
+
+.event-card {
+  height: 100%;
+  overflow: hidden;
+  background: linear-gradient(180deg, rgba(25, 25, 35, 0.98), rgba(12, 12, 18, 0.98));
+  border: 1px solid var(--eb-border);
+  border-radius: 8px;
+  color: var(--eb-text);
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.26);
+  transition: transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
+}
+
+.event-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(255, 61, 154, 0.48);
+  box-shadow: 0 22px 48px rgba(0, 0, 0, 0.34);
+}
+
+.event-card-img {
+  width: 100%;
+  aspect-ratio: 16 / 11;
+  object-fit: cover;
+  background: #14141d;
+}
+
+.event-card-placeholder {
+  display: grid;
+  place-items: center;
+  aspect-ratio: 16 / 11;
+  background: linear-gradient(135deg, #171720, #311127);
+  color: var(--eb-pink-2);
+  font-weight: 800;
+}
+
+.event-title {
+  min-height: 48px;
+  color: #fff;
+  font-size: 1.05rem;
+  font-weight: 800;
+  line-height: 1.25;
+}
+
+.event-meta {
+  color: var(--eb-muted);
+  font-size: 0.92rem;
+  margin-bottom: 8px;
+}
+
+.event-price {
+  color: var(--eb-pink-2);
+  font-size: 1rem;
+  font-weight: 800;
+}
+
+.event-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: rgba(255, 61, 154, 0.12);
+  color: #ffd2e8;
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.auth-wrap {
+  width: min(100%, 560px);
+  margin: 24px auto 0;
+  padding: 30px;
+}
+
+.auth-title {
+  color: #fff;
+  font-size: 2rem;
+  font-weight: 900;
+  margin-bottom: 6px;
+}
+
+.auth-copy {
+  color: var(--eb-muted);
+  margin-bottom: 24px;
+}
+
+.register-switch {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  padding: 6px;
+  background: rgba(255, 255, 255, 0.055);
+  border: 1px solid var(--eb-border);
+  border-radius: 8px;
+}
+
+.register-switch-btn {
+  min-height: 44px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--eb-muted);
+  font-weight: 800;
+}
+
+.register-switch-btn.active {
+  background: linear-gradient(135deg, var(--eb-pink), var(--eb-deep-pink));
+  color: #fff;
+  box-shadow: 0 10px 24px rgba(255, 61, 154, 0.22);
+}
+
+.organizer-fields {
+  margin: 18px 0 6px;
+  padding-top: 18px;
+  border-top: 1px solid var(--eb-border);
+}
+
+.form-label {
+  color: #f3e7f0;
+  font-weight: 700;
+}
+
+.form-control,
+.form-select {
+  background-color: rgba(255, 255, 255, 0.055);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  color: #fff;
+  border-radius: 8px;
+  min-height: 46px;
+}
+
+.form-control:focus,
+.form-select:focus {
+  background-color: rgba(255, 255, 255, 0.08);
+  border-color: var(--eb-pink);
+  box-shadow: 0 0 0 0.18rem rgba(255, 61, 154, 0.18);
+  color: #fff;
+}
+
+.form-control::placeholder {
+  color: rgba(248, 242, 247, 0.42);
+}
+
+.form-select option {
+  background: #161620;
+  color: #fff;
+}
+
+.alert {
+  border-radius: 8px;
+}
+
+.alert-dark-pink {
+  background: rgba(255, 61, 154, 0.12);
+  border: 1px solid rgba(255, 61, 154, 0.28);
+  color: #ffd2e8;
+}
+
+.site-footer {
+  border-top: 1px solid var(--eb-border);
+  background: rgba(7, 7, 11, 0.84);
+  color: var(--eb-muted);
+  padding: 18px 0;
+}
+
+.spinner-pink {
+  color: var(--eb-pink);
+}
+
+@media (max-width: 575.98px) {
+  .app-main {
+    padding-top: 20px;
   }
-  to {
-    transform: rotate(360deg);
+
+  .auth-wrap {
+    padding: 22px;
+  }
+
+  .event-hero {
+    padding-top: 30px;
   }
 }
