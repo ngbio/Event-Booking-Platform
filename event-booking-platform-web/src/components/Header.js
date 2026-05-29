@@ -1,15 +1,18 @@
-import { useState } from "react";
+import { useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import cookies from 'react-cookies'
+import { MyUserContext } from "../configs/Contexts";
 
 const Header = () => {
-    const [user, setUser] = useState(cookies.load('user'));
+    const [user, dispatch] = useContext(MyUserContext);
     const nav = useNavigate();
 
     const logout = () => {
         cookies.remove('token');
         cookies.remove('user');
-        setUser(null);
+        dispatch({
+            type: "LOGOUT"
+        });
         nav('/login');
     }
 
@@ -26,14 +29,14 @@ const Header = () => {
                 </button>
 
                 <div className="collapse navbar-collapse" id="mainNavbar">
-                    <ul className="navbar-nav me-auto mb-2 mb-lg-0">
+                    {/* <ul className="navbar-nav me-auto mb-2 mb-lg-0">
                         <li className="nav-item">
                             <Link className="nav-link" to="/">Trang chu</Link>
                         </li>
                         <li className="nav-item">
                             <Link className="nav-link" to="/events">Su kien</Link>
                         </li>
-                    </ul>
+                    </ul> */}
 
                     <ul className="navbar-nav ms-auto mb-2 mb-lg-0">
                         {user === undefined || user === null ? <>

@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { Alert, Button, Form } from "react-bootstrap";
 import MySpinner from "../../components/MySpinner";
 import Apis, { authApis, endpoints } from "../../configs/Apis";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import cookies from 'react-cookies'
+import { MyUserContext } from "../../configs/Contexts";
 
 const Login = () => {
     const userInfo = [{
@@ -19,6 +20,7 @@ const Login = () => {
     const [user, setUser] = useState({})
     const [err, setErr] = useState("");
     const [loading, setLoading] = useState(false);
+    const [, dispatch] = useContext(MyUserContext);
     const [q] = useSearchParams();
 
     const nav = useNavigate();
@@ -45,7 +47,12 @@ const Login = () => {
                 cookies.save('token', loginData.token);
 
                 let p = await authApis().get(endpoints['profile']);
-                cookies.save('user', p.data.data);
+                let profile = p.data.data;
+                cookies.save('user', profile);
+                dispatch({
+                    type: "LOGIN",
+                    payload: profile
+                });
 
                 let next = q.get('next')
                 if (next)

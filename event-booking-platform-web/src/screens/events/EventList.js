@@ -19,8 +19,8 @@ const Home = () => {
     }
 
     const formatPrice = (value) => {
-        if (value === null || value === undefined)
-            return "Mien phi";
+        if (value === null || value === undefined || Number(value) === 0)
+            return "Free";
 
         return Number(value).toLocaleString("vi-VN", {
             style: "currency",
@@ -105,7 +105,7 @@ const Home = () => {
             </Row>
 
             {page > 0 && <div className="text-center mt-4 mb-2">
-                <Button className="btn-outline-pink px-4" onClick={loadMore}>Xem them</Button>
+                <Button className="btn-soft-pink px-4" onClick={loadMore}>Xem them</Button>
             </div>}
 
             {loading && <MySpinner />}

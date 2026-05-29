@@ -7,11 +7,11 @@ import { useNavigate } from "react-router-dom";
 const Register = () => {
     const userInfo = [{
         field: "fullName",
-        label: "Ho va ten",
+        label: "Họ và tên",
         type: "text"
     }, {
         field: "phone",
-        label: "So dien thoai",
+        label: "Số điện thoại",
         type: "tel"
     }, {
         field: "email",
@@ -19,29 +19,25 @@ const Register = () => {
         type: "email"
     }, {
         field: "password",
-        label: "Mat khau",
+        label: "Mật khẩu",
         type: "password"
     }, {
         field: "confirm",
-        label: "Xac nhan mat khau",
+        label: "Xác nhận mật khẩu",
         type: "password"
     }];
 
     const organizerInfo = [{
         field: "organizationName",
-        label: "Ten to chuc",
+        label: "Tên tổ chức",
         type: "text"
     }, {
         field: "identityCard",
         label: "CCCD/CMND",
         type: "text"
     }, {
-        field: "businessLicense",
-        label: "Giay phep kinh doanh",
-        type: "text"
-    }, {
         field: "taxCode",
-        label: "Ma so thue",
+        label: "Mã số thuế",
         type: "text"
     }];
 
@@ -49,6 +45,7 @@ const Register = () => {
     const [attendee, setAttendee] = useState({});
     const [organizer, setOrganizer] = useState({});
     const [err, setErr] = useState("");
+    const [fieldErrors, setFieldErrors] = useState({});
     const [loading, setLoading] = useState(false);
     const attendeeAvatar = useRef();
     const organizerAvatar = useRef();
@@ -58,11 +55,13 @@ const Register = () => {
 
     const validate = () => {
         if (currentUser.password !== currentUser.confirm) {
-            setErr('Mat khau khong khop!');
+            setErr('Mật khẩu không khớp!');
+            setFieldErrors({confirm: 'Mat khau khong khop!'});
             return false;
         }
 
         setErr("");
+        setFieldErrors({});
         return true;
     }
 
@@ -93,7 +92,9 @@ const Register = () => {
                     nav('/login');
             } catch (ex) {
                 console.error(ex);
-                setErr(ex.response?.data?.message || "Dang ky that bai!");
+                const data = ex.response?.data;
+                setErr(data?.message || "Dang ky that bai!");
+                setFieldErrors(data?.errors || {});
             } finally {
                 setLoading(false);
             }
@@ -103,20 +104,26 @@ const Register = () => {
     return (
         <div className="auth-wrap glass-panel">
             <div className="page-kicker mb-2">Join the list</div>
-            <h1 className="auth-title">Dang ky</h1>
-            <p className="auth-copy">Tao tai khoan moi cho nguoi mua ve hoac nha to chuc.</p>
+            <h1 className="auth-title">Đăng ký</h1>
+            <p className="auth-copy">Tạo tài khoản mới cho người mua vé hoặc nhà tổ chức.</p>
 
-            {err && <Alert variant="danger">{err}</Alert>}
+            {err && <Alert variant="danger">
+                <div>{err}</div>
+                {Object.keys(fieldErrors).length > 0 && <ul className="mb-0 mt-2">
+                    {Object.entries(fieldErrors).map(([field, message]) => <li key={field}>{message}</li>)}
+                </ul>}
+            </Alert>}
 
-            <div className="register-switch mb-4" role="tablist" aria-label="Loai tai khoan">
+            <div className="register-switch mb-4" role="tablist" aria-label="Loại tài khoản">
                 <button
                     type="button"
                     className={`register-switch-btn ${role === "attendee" ? "active" : ""}`}
                     onClick={() => {
                         setRole("attendee");
                         setErr("");
+                        setFieldErrors({});
                     }}>
-                    Nguoi mua ve
+                    Người mua vé
                 </button>
                 <button
                     type="button"
@@ -124,45 +131,49 @@ const Register = () => {
                     onClick={() => {
                         setRole("organizer");
                         setErr("");
+                        setFieldErrors({});
                     }}>
-                    Nha to chuc
+                    Nhà tổ chức
                 </button>
             </div>
 
             {role === "attendee" ? <Form onSubmit={register}>
                 {userInfo.map(u => <Form.Group key={u.field} className="mb-3" controlId={`attendee-${u.field}`}>
                     <Form.Label>{u.label}</Form.Label>
-                    <Form.Control type={u.type} placeholder={u.label} value={attendee[u.field] || ""} onChange={e => setAttendee({...attendee, [u.field]: e.target.value})} required />
+                    <Form.Control type={u.type} placeholder={u.label} value={attendee[u.field] || ""} onChange={e => setAttendee({...attendee, [u.field]: e.target.value})} isInvalid={!!fieldErrors[u.field]} required />
+                    <Form.Control.Feedback type="invalid">{fieldErrors[u.field]}</Form.Control.Feedback>
                 </Form.Group>)}
 
                 <Form.Group className="mb-3" controlId="attendee-avatar">
-                    <Form.Label>Anh dai dien</Form.Label>
-                    <Form.Control ref={attendeeAvatar} type="file" accept="image/*" />
+                    <Form.Label>Ảnh đại diện</Form.Label>
+                    <Form.Control ref={attendeeAvatar} type="file" accept="image/*" required />
                 </Form.Group>
 
                 <Form.Group className="mb-3">
-                    {loading === true ? <MySpinner /> : <Button className="btn-pink w-100" type="submit">Dang ky nguoi mua ve</Button>}
+                    {loading === true ? <MySpinner /> : <Button className="btn-pink w-100" type="submit">Đăng ký người mua vé</Button>}
                 </Form.Group>
             </Form> : <Form onSubmit={register}>
                 {userInfo.map(u => <Form.Group key={u.field} className="mb-3" controlId={`organizer-${u.field}`}>
                     <Form.Label>{u.label}</Form.Label>
-                    <Form.Control type={u.type} placeholder={u.label} value={organizer[u.field] || ""} onChange={e => setOrganizer({...organizer, [u.field]: e.target.value})} required />
+                    <Form.Control type={u.type} placeholder={u.label} value={organizer[u.field] || ""} onChange={e => setOrganizer({...organizer, [u.field]: e.target.value})} isInvalid={!!fieldErrors[u.field]} required />
+                    <Form.Control.Feedback type="invalid">{fieldErrors[u.field]}</Form.Control.Feedback>
                 </Form.Group>)}
 
                 <div className="organizer-fields">
                     {organizerInfo.map(u => <Form.Group key={u.field} className="mb-3" controlId={`organizer-${u.field}`}>
                         <Form.Label>{u.label}</Form.Label>
-                        <Form.Control type={u.type} placeholder={u.label} value={organizer[u.field] || ""} onChange={e => setOrganizer({...organizer, [u.field]: e.target.value})} required />
+                        <Form.Control type={u.type} placeholder={u.label} value={organizer[u.field] || ""} onChange={e => setOrganizer({...organizer, [u.field]: e.target.value})} isInvalid={!!fieldErrors[u.field]} required />
+                        <Form.Control.Feedback type="invalid">{fieldErrors[u.field]}</Form.Control.Feedback>
                     </Form.Group>)}
                 </div>
 
                 <Form.Group className="mb-3" controlId="organizer-avatar">
-                    <Form.Label>Anh dai dien</Form.Label>
-                    <Form.Control ref={organizerAvatar} type="file" accept="image/*" />
+                    <Form.Label>Ảnh đại diện</Form.Label>
+                    <Form.Control ref={organizerAvatar} type="file" accept="image/*" required />
                 </Form.Group>
 
                 <Form.Group className="mb-3">
-                    {loading === true ? <MySpinner /> : <Button className="btn-pink w-100" type="submit">Dang ky nha to chuc</Button>}
+                    {loading === true ? <MySpinner /> : <Button className="btn-pink w-100" type="submit">Đăng ký nhà tổ chức</Button>}
                 </Form.Group>
             </Form>}
         </div>
