@@ -1,5 +1,6 @@
 package com.group3.controllers;
 
+import com.group3.dto.request.AttendeeRegisterRequest;
 import com.group3.dto.request.LoginRequest;
 import com.group3.dto.request.OrganizerRegisterRequest;
 import com.group3.dto.response.ApiResponse;
@@ -38,7 +39,7 @@ public class ApiAuthController {
     @PostMapping(path = "/register/attendee",
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> registerAttendee(@Valid @ModelAttribute OrganizerRegisterRequest request,
+    public ResponseEntity<?> registerAttendee(@Valid @ModelAttribute AttendeeRegisterRequest request,
             @RequestParam(value = "avatar", required = false) MultipartFile avatar) {
         UserResponse savedUser = userService.addUser(request, avatar);
         return new ResponseEntity<>(new ApiResponse<>(201, "Đăng ký thành công", savedUser), HttpStatus.CREATED);
