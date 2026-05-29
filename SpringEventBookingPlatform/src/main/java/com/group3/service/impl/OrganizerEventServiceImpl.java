@@ -53,6 +53,8 @@ public class OrganizerEventServiceImpl implements OrganizerEventService {
     private static final Integer DRAFT = 3;
     private static final Integer COMPLETED = 4;
     private static final Integer CANCELLED = 5;
+    private static final Integer ROLE_ADMIN = 1;
+    private static final Integer BOOKING_PAID = 2;
 
     private User validateAndGetOrganizer(Principal principal) {
         if (principal == null) {
@@ -65,6 +67,33 @@ public class OrganizerEventServiceImpl implements OrganizerEventService {
         }
         return user;
     }
+    
+    private void validateAdminOrEventOwner(Principal principal, Integer eventId) {
+    if (principal == null) {
+        throw new UnauthorizedException("Chưa đăng nhập hoặc token hết hạn");
+    }
+
+    User user = userRepo.findUserByEmail(principal.getName());
+    if (user == null || user.getRoleId() == null) {
+        throw new UnauthorizedException("Tài khoản không hợp lệ");
+    }
+
+    Event event = eventRepo.getEventById(eventId);
+    if (event == null) {
+        throw new ResourceNotFoundException("Không tìm thấy sự kiện");
+    }
+
+    int roleId = user.getRoleId().getId();
+    if (roleId == ROLE_ADMIN) {
+        return;
+    }
+    if (roleId == 2) {
+        if (event.getOrganizerId() != null && user.getId().equals(event.getOrganizerId().getUserId())) {
+            return;
+        }
+    }
+    throw new UnauthorizedException("Bạn không có quyền xem danh sách người mua vé của sự kiện này");
+}
 
     private Event validateEventOwnership(Integer eventId, User organizer) {
         Event event = eventRepo.getEventById(eventId);
@@ -108,8 +137,8 @@ public class OrganizerEventServiceImpl implements OrganizerEventService {
             throw new BusinessException("Lỗi logic: Thời gian kết thúc đang diễn ra trước thời gian bắt đầu!");
         }
         if (event.getCategoryCollection() == null || event.getCategoryCollection().isEmpty()) {
-        throw new BusinessException("Chọn ít nhất 1 thể loại cho sự kiện trước khi gửi duyệt!");
-    }
+            throw new BusinessException("Chọn ít nhất 1 thể loại cho sự kiện trước khi gửi duyệt!");
+        }
     }
 
     private void handleCategories(Event event, String categoryIdsStr) {
@@ -130,8 +159,6 @@ public class OrganizerEventServiceImpl implements OrganizerEventService {
                 // Bỏ qua nếu có ID rác không phải là số
             }
         }
-
-        // Nạp danh sách thể loại vào sự kiện
         event.setCategoryCollection(categories);
     }
 
@@ -155,8 +182,6 @@ public class OrganizerEventServiceImpl implements OrganizerEventService {
         handleCategories(event, request.getCategoryIds());
         event.setOrganizerId(getRequiredOrganizerProfile(organizer));
         event.setCreatedDate(new Date());
-
-        // LUÔN LUÔN tạo nháp để Frontend có thể gọi API nhiều lần lưu tạm
         event.setStatusId(statusEventRepo.getStatusEventById(DRAFT));
 
         handleMediaUpload(event, image, video);
@@ -236,20 +261,23 @@ public class OrganizerEventServiceImpl implements OrganizerEventService {
         eventRepo.updateEvent(existingEvent);
     }
 
-//    @Override
-//    @Transactional(readOnly = true)
-//    public List<BookingResponse> getEventBookings(Principal principal, Integer eventId, Map<String, String> params) {
-//        User organizer = validateAndGetOrganizer(principal);
-//        validateEventOwnership(eventId, organizer);
-//
-//        List<Booking> bookings = bookingRepo.getBookingsByEventId(eventId, params);
-//        return DTOMapper.toBookingResponseList(bookings);
-//    }
+    @Override
+    @Transactional(readOnly = true)
+    public List<BookingResponse> getEventBookings(Principal principal, Integer eventId, Map<String, String> params) {
+        validateAdminOrEventOwner(principal, eventId);
+        Map<String, String> filters = params != null ? new HashMap<>(params) : new HashMap<>();
+
+        if (!filters.containsKey("statusId")) {
+            filters.put("statusId", String.valueOf(BOOKING_PAID));
+        }
+        List<Booking> bookings = bookingRepo.getBookingsByEventId(eventId, filters);
+        return DTOMapper.toBookingResponseList(bookings);
+    }
 
     private Organizer getRequiredOrganizerProfile(User user) {
         Organizer organizer = user != null ? user.getOrganizer() : null;
         if (organizer == null) {
-            throw new BusinessException("Tai khoan organizer chua co profile organizer");
+            throw new BusinessException("Tài khoản organizer chưa có thông tin profile");
         }
         return organizer;
     }

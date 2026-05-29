@@ -74,12 +74,12 @@ public class StatsServiceImpl implements StatsService {
 
     private User validateAndGetOrganizer(Principal principal) {
         if (principal == null) {
-            throw new UnauthorizedException("Chua dang nhap hoac token het han");
+            throw new UnauthorizedException("Chưa đăng nhập hoặc token hết hạn");
         }
 
         User user = this.userRepo.findUserByEmail(principal.getName());
         if (user == null || user.getRoleId() == null || user.getRoleId().getId() != ROLE_ORGANIZER) {
-            throw new UnauthorizedException("Chi nha to chuc moi xem duoc thong ke");
+            throw new UnauthorizedException("Chỉ nhà tổ chức mới xem được thống kê");
         }
         return user;
     }
@@ -87,10 +87,10 @@ public class StatsServiceImpl implements StatsService {
     private Event validateEventOwnership(Integer eventId, User organizer) {
         Event event = this.eventRepo.getEventById(eventId);
         if (event == null) {
-            throw new ResourceNotFoundException("Khong tim thay su kien");
+            throw new ResourceNotFoundException("Không tìm thấy sự kiện");
         }
         if (event.getOrganizerId() == null || !organizer.getId().equals(event.getOrganizerId().getUserId())) {
-            throw new UnauthorizedException("Ban khong co quyen xem thong ke su kien nay");
+            throw new UnauthorizedException("Bạn không có quyền xem thống kê sự kiện này");
         }
         return event;
     }

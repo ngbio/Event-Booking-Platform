@@ -81,7 +81,6 @@ public class ApiAuthController {
         if (principal == null) {
             throw new UnauthorizedException("Chưa đăng nhập hoặc token hết hạn");
         }
-
         return ResponseEntity.ok(new ApiResponse<>(200, "Đăng xuất thành công"));
     }
 }

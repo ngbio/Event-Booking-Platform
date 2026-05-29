@@ -101,6 +101,17 @@ public class UserServiceImpl implements UserService {
             throw new BusinessException("Lỗi dữ liệu: Người mua vé không có các thông tin của Nhà tổ chức");
         }
     }
+    
+    private User validateAndGetCurrentUser(Principal principal) {
+    if (principal == null) {
+        throw new UnauthorizedException("Chưa đăng nhập hoặc token hết hạn");
+    }
+    User user = this.userRepo.findUserByEmail(principal.getName());
+    if (user == null) {
+        throw new ResourceNotFoundException("Không tìm thấy thông tin tài khoản người dùng!");
+    }
+    return user;
+}
 
     @Override
     public List<UserResponse> getUsers(Map<String, String> params) {
@@ -190,11 +201,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserResponse updateUser(Integer id, UserUpdateRequest request, MultipartFile avatar) {
-        User user = this.userRepo.findUserById(id);
-        if (user == null) {
-            throw new ResourceNotFoundException("Không tìm thấy người dùng với id = " + id);
-        }
+    public UserResponse updateProfile(Principal principal, UserUpdateRequest request, MultipartFile avatar) {
+        User user = validateAndGetCurrentUser(principal);
         if (user.getRoleId().getId() == ROLE_ATTENDEE) {
             if ((request.getIdentityCard() != null && !request.getIdentityCard().isEmpty())
                     || (request.getOrganizationName() != null && !request.getOrganizationName().isEmpty())
@@ -255,7 +263,7 @@ public class UserServiceImpl implements UserService {
                 throw new BusinessException("Cập nhật avatar thất bại!");
             }
         }
-        //Neu 4 truong co thay doi thi chuyen sang Pending
+        //Neu 3 truong co thay doi thi chuyen sang Pending
         if (isLegalDocumentChanged) {
             StatusUser pendingStatus = statusUserRepo.getStatusUserById(PENDING);
             user.setStatusId(pendingStatus);
@@ -294,13 +302,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void changePassword(Principal principal, ChangePasswordRequest request) {
-        if (principal == null) {
-            throw new UnauthorizedException("Chưa đăng nhập hoặc token hết hạn");
-        }
-        User user = userRepo.findUserByEmail(principal.getName());
-        if (user == null) {
-            throw new ResourceNotFoundException("Không tìm thấy thông tin tài khoản người dùng!");
-        }
+        User user = validateAndGetCurrentUser(principal);
         if (!request.getNewPassword().equals(request.getConfirmPassword())) {
             throw new BusinessException("Mật khẩu xác nhận không trùng khớp!");
         }
@@ -314,4 +316,11 @@ public class UserServiceImpl implements UserService {
             throw new BusinessException("Cập nhật thất bại, vui lòng thử lại sau!");
         }
     }
+    
+    @Override
+    public UserResponse getCurrentUserProfile(Principal principal){
+        User user = validateAndGetCurrentUser(principal);
+        return DTOMapper.toUserResponse(user);
+    }
+
 }

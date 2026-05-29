@@ -66,7 +66,7 @@ public class BookingRepositoryImpl implements BookingRepository {
     }
 
     @Override
-    public List<Booking> getBookingsByUser(Integer userId, Map<String, String> params) {
+    public List<Booking> getBookingsByUserId(Integer userId, Map<String, String> params) {
         Session session = this.factory.getObject().getCurrentSession();
         CriteriaBuilder b = session.getCriteriaBuilder();
         CriteriaQuery<Booking> q = b.createQuery(Booking.class);
@@ -86,7 +86,7 @@ public class BookingRepositoryImpl implements BookingRepository {
     }
 
     @Override
-    public List<Booking> getBookingsByEvent(Integer eventId, Map<String, String> params) {
+    public List<Booking> getBookingsByEventId(Integer eventId, Map<String, String> params) {
         Session session = this.factory.getObject().getCurrentSession();
         CriteriaBuilder b = session.getCriteriaBuilder();
         CriteriaQuery<Booking> q = b.createQuery(Booking.class);
@@ -132,7 +132,7 @@ public class BookingRepositoryImpl implements BookingRepository {
     }
 
     @Override
-    public long countBookingsByUser(Integer userId, Map<String, String> params) {
+    public long countBookingsByUserId(Integer userId, Map<String, String> params) {
         Session session = this.factory.getObject().getCurrentSession();
         CriteriaBuilder b = session.getCriteriaBuilder();
         CriteriaQuery<Long> q = b.createQuery(Long.class);
@@ -151,7 +151,7 @@ public class BookingRepositoryImpl implements BookingRepository {
     }
 
     @Override
-    public long countBookingsByEvent(Integer eventId, Map<String, String> params) {
+    public long countBookingsByEventId(Integer eventId, Map<String, String> params) {
         Session session = this.factory.getObject().getCurrentSession();
         CriteriaBuilder b = session.getCriteriaBuilder();
         CriteriaQuery<Long> q = b.createQuery(Long.class);

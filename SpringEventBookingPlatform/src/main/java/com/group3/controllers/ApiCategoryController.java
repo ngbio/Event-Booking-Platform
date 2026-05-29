@@ -23,7 +23,6 @@ public class ApiCategoryController {
     
     @GetMapping("/categories")
     public ResponseEntity<ApiResponse<List<CategoryResponse>>> list(){
-        //return new ResponseEntity<>(this.cateService.getCategories(),HttpStatus.OK);
         List<CategoryResponse> categories = this.cateService.getCategories();
         return ResponseEntity.ok(new ApiResponse<>(200, "Lấy thông tin danh lục thành công",categories));
     } 

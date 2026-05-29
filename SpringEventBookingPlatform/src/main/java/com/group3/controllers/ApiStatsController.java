@@ -24,7 +24,7 @@ public class ApiStatsController {
     @GetMapping("/overview")
     public ResponseEntity<ApiResponse<OrganizerStatsOverviewResponse>> getOrganizerOverview(Principal principal) {
         OrganizerStatsOverviewResponse stats = this.statsService.getOrganizerOverview(principal);
-        return ResponseEntity.ok(new ApiResponse<>(200, "Lay thong ke tong quan thanh cong", stats));
+        return ResponseEntity.ok(new ApiResponse<>(200, "Lấy thông kê tổng quan thành công", stats));
     }
 
     @GetMapping("/events/{id}")
@@ -32,6 +32,6 @@ public class ApiStatsController {
             Principal principal,
             @PathVariable("id") Integer id) {
         EventFinancialStatsResponse stats = this.statsService.getEventFinancialStats(principal, id);
-        return ResponseEntity.ok(new ApiResponse<>(200, "Lay bao cao tai chinh su kien thanh cong", stats));
+        return ResponseEntity.ok(new ApiResponse<>(200, "Lấy báo cáo tài chính sự kiện thành công", stats));
     }
 }
