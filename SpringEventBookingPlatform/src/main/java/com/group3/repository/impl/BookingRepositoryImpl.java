@@ -51,7 +51,8 @@ public class BookingRepositoryImpl implements BookingRepository {
         Session session = this.factory.getObject().getCurrentSession();
         String hql = "SELECT DISTINCT b FROM Booking b "
                 + "LEFT JOIN FETCH b.eventId "
-                + "LEFT JOIN FETCH b.userId "
+                + "LEFT JOIN FETCH b.attendeeId a "
+                + "LEFT JOIN FETCH a.user "
                 + "LEFT JOIN FETCH b.statusId "
                 + "WHERE b.id = :id";
 
@@ -74,7 +75,7 @@ public class BookingRepositoryImpl implements BookingRepository {
 
         List<Predicate> predicates = buildPredicates(b, root, params);
         if (userId != null) {
-            predicates.add(b.equal(root.get("userId").get("id"), userId));
+            predicates.add(b.equal(root.get("attendeeId").get("user").get("id"), userId));
         }
 
         applyWhereAndOrder(q, b, root, predicates);
@@ -114,7 +115,7 @@ public class BookingRepositoryImpl implements BookingRepository {
 
         List<Predicate> predicates = buildPredicates(b, root, params);
         if (organizerId != null) {
-            predicates.add(b.equal(root.get("eventId").get("organizerId").get("id"), organizerId));
+            predicates.add(b.equal(root.get("eventId").get("organizerId").get("user").get("id"), organizerId));
         }
 
         applyWhereAndOrder(q, b, root, predicates);
@@ -140,7 +141,7 @@ public class BookingRepositoryImpl implements BookingRepository {
 
         List<Predicate> predicates = buildPredicates(b, root, params);
         if (userId != null) {
-            predicates.add(b.equal(root.get("userId").get("id"), userId));
+            predicates.add(b.equal(root.get("attendeeId").get("user").get("id"), userId));
         }
         if (!predicates.isEmpty()) {
             q.where(predicates.toArray(Predicate[]::new));
@@ -177,7 +178,7 @@ public class BookingRepositoryImpl implements BookingRepository {
         Session session = this.factory.getObject().getCurrentSession();
         String hql = "SELECT COUNT(b.id) FROM Booking b "
                 + "WHERE b.eventId.id = :eventId "
-                + "AND b.userId.id = :userId "
+                + "AND b.attendeeId.user.id = :userId "
                 + "AND b.statusId.id = :statusId";
 
         Long count = session.createQuery(hql, Long.class)

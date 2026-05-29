@@ -70,9 +70,6 @@ public class Payment implements Serializable {
     @JoinColumn(name = "status_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
     private StatusPay statusId;
-    @JoinColumn(name = "user_id", referencedColumnName = "id")
-    @ManyToOne(optional = false)
-    private User userId;
 
     public Payment() {
     }
@@ -149,14 +146,6 @@ public class Payment implements Serializable {
 
     public void setStatusId(StatusPay statusId) {
         this.statusId = statusId;
-    }
-
-    public User getUserId() {
-        return userId;
-    }
-
-    public void setUserId(User userId) {
-        this.userId = userId;
     }
 
     @Override

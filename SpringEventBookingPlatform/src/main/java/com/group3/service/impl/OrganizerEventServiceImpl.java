@@ -23,6 +23,7 @@ import com.group3.exceptions.UnauthorizedException;
 import com.group3.pojo.Booking;
 import com.group3.pojo.Category;
 import com.group3.pojo.Event;
+import com.group3.pojo.Organizer;
 import com.group3.pojo.User;
 import com.group3.repository.BookingRepository;
 import com.group3.repository.EventRepository;
@@ -71,7 +72,7 @@ public class OrganizerEventServiceImpl implements OrganizerEventService {
             throw new ResourceNotFoundException("Không tìm thấy sự kiện");
         }
 
-        if (!organizer.getId().equals(event.getOrganizerId().getId())) {
+        if (event.getOrganizerId() == null || !organizer.getId().equals(event.getOrganizerId().getUserId())) {
             throw new UnauthorizedException("Bạn không có quyền thao tác trên sự kiện này");
         }
         return event;
@@ -152,7 +153,7 @@ public class OrganizerEventServiceImpl implements OrganizerEventService {
 
         Event event = DTOMapper.toEventEntity(request);
         handleCategories(event, request.getCategoryIds());
-        event.setOrganizerId(organizer);
+        event.setOrganizerId(getRequiredOrganizerProfile(organizer));
         event.setCreatedDate(new Date());
 
         // LUÔN LUÔN tạo nháp để Frontend có thể gọi API nhiều lần lưu tạm
@@ -244,4 +245,12 @@ public class OrganizerEventServiceImpl implements OrganizerEventService {
 //        List<Booking> bookings = bookingRepo.getBookingsByEventId(eventId, params);
 //        return DTOMapper.toBookingResponseList(bookings);
 //    }
+
+    private Organizer getRequiredOrganizerProfile(User user) {
+        Organizer organizer = user != null ? user.getOrganizer() : null;
+        if (organizer == null) {
+            throw new BusinessException("Tai khoan organizer chua co profile organizer");
+        }
+        return organizer;
+    }
 }

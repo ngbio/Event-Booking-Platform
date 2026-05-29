@@ -15,7 +15,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
@@ -39,9 +39,6 @@ import java.util.Date;
     @NamedQuery(name = "User.findByFullName", query = "SELECT u FROM User u WHERE u.fullName = :fullName"),
     @NamedQuery(name = "User.findByPhone", query = "SELECT u FROM User u WHERE u.phone = :phone"),
     @NamedQuery(name = "User.findByAvatar", query = "SELECT u FROM User u WHERE u.avatar = :avatar"),
-    @NamedQuery(name = "User.findByIdentityCard", query = "SELECT u FROM User u WHERE u.identityCard = :identityCard"),
-    @NamedQuery(name = "User.findByOrganizationName", query = "SELECT u FROM User u WHERE u.organizationName = :organizationName"),
-    @NamedQuery(name = "User.findByTaxCode", query = "SELECT u FROM User u WHERE u.taxCode = :taxCode"),
     @NamedQuery(name = "User.findByCreatedDate", query = "SELECT u FROM User u WHERE u.createdDate = :createdDate"),
     @NamedQuery(name = "User.findByUpdatedDate", query = "SELECT u FROM User u WHERE u.updatedDate = :updatedDate")})
 public class User implements Serializable {
@@ -75,27 +72,16 @@ public class User implements Serializable {
     @Size(max = 255)
     @Column(name = "avatar")
     private String avatar;
-    @Size(max = 255)
-    @Column(name = "identity_card")
-    private String identityCard;
-    @Size(max = 255)
-    @Column(name = "organization_name")
-    private String organizationName;
-    @Size(max = 20)
-    @Column(name = "tax_code")
-    private String taxCode;
     @Column(name = "created_date")
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdDate;
     @Column(name = "updated_date")
     @Temporal(TemporalType.TIMESTAMP)
     private Date updatedDate;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "userId")
-    private Collection<Booking> bookingCollection;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "userId")
-    private Collection<Payment> paymentCollection;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "organizerId")
-    private Collection<Event> eventCollection;
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "user")
+    private Organizer organizer;
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "user")
+    private Attendee attendee;
     @JoinColumn(name = "role_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
     private Role roleId;
@@ -165,30 +151,6 @@ public class User implements Serializable {
         this.avatar = avatar;
     }
 
-    public String getIdentityCard() {
-        return identityCard;
-    }
-
-    public void setIdentityCard(String identityCard) {
-        this.identityCard = identityCard;
-    }
-
-    public String getOrganizationName() {
-        return organizationName;
-    }
-
-    public void setOrganizationName(String organizationName) {
-        this.organizationName = organizationName;
-    }
-
-    public String getTaxCode() {
-        return taxCode;
-    }
-
-    public void setTaxCode(String taxCode) {
-        this.taxCode = taxCode;
-    }
-
     public Date getCreatedDate() {
         return createdDate;
     }
@@ -205,28 +167,26 @@ public class User implements Serializable {
         this.updatedDate = updatedDate;
     }
 
-    public Collection<Booking> getBookingCollection() {
-        return bookingCollection;
+    public Organizer getOrganizer() {
+        return organizer;
     }
 
-    public void setBookingCollection(Collection<Booking> bookingCollection) {
-        this.bookingCollection = bookingCollection;
+    public void setOrganizer(Organizer organizer) {
+        this.organizer = organizer;
+        if (organizer != null) {
+            organizer.setUser(this);
+        }
     }
 
-    public Collection<Payment> getPaymentCollection() {
-        return paymentCollection;
+    public Attendee getAttendee() {
+        return attendee;
     }
 
-    public void setPaymentCollection(Collection<Payment> paymentCollection) {
-        this.paymentCollection = paymentCollection;
-    }
-
-    public Collection<Event> getEventCollection() {
-        return eventCollection;
-    }
-
-    public void setEventCollection(Collection<Event> eventCollection) {
-        this.eventCollection = eventCollection;
+    public void setAttendee(Attendee attendee) {
+        this.attendee = attendee;
+        if (attendee != null) {
+            attendee.setUser(this);
+        }
     }
 
     public Role getRoleId() {

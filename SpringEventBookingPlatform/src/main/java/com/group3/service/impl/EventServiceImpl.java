@@ -6,6 +6,7 @@ import com.group3.dto.request.EventRequest;
 import com.group3.dto.response.EventResponse;
 import com.group3.pojo.Category;
 import com.group3.pojo.Event;
+import com.group3.pojo.Organizer;
 import com.group3.pojo.StatusEvent;
 import com.group3.pojo.User;
 import com.group3.repository.CategoryRepository;
@@ -75,7 +76,7 @@ public class EventServiceImpl implements EventService {
     public EventResponse createEvent(EventRequest request, MultipartFile image, MultipartFile video, User organizer) {
         Event event = DTOMapper.toEventEntity(request);
         //add Organizer
-        event.setOrganizerId(organizer);
+        event.setOrganizerId(getRequiredOrganizerProfile(organizer));
 
         //add date
         Date now = new Date();
@@ -265,6 +266,14 @@ public class EventServiceImpl implements EventService {
         refreshExpiredPublishedEvents();
         List<Event> events = this.eventRepo.getEventsByIds(EventIds);
         return DTOMapper.toEventResponseList(events);
+    }
+
+    private Organizer getRequiredOrganizerProfile(User user) {
+        Organizer organizer = user != null ? user.getOrganizer() : null;
+        if (organizer == null) {
+            throw new IllegalStateException("Tai khoan organizer chua co profile organizer");
+        }
+        return organizer;
     }
 }
 

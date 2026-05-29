@@ -26,11 +26,11 @@ public class PaymentMapper {
         
         if (payment.getBookingId() != null) {
             response.setBookingId(payment.getBookingId().getId());
-        }
-        
-        if (payment.getUserId() != null) {
-            response.setUserId(payment.getUserId().getId());
-            response.setUsername(payment.getUserId().getEmail());
+            if (payment.getBookingId().getAttendeeId() != null
+                    && payment.getBookingId().getAttendeeId().getUser() != null) {
+                response.setUserId(payment.getBookingId().getAttendeeId().getUser().getId());
+                response.setUsername(payment.getBookingId().getAttendeeId().getUser().getEmail());
+            }
         }
         
         if (payment.getStatusId() != null) {

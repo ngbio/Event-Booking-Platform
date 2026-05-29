@@ -5,6 +5,7 @@ import com.group3.dto.response.BookingResponse;
 import com.group3.exceptions.BusinessException;
 import com.group3.exceptions.ResourceNotFoundException;
 import com.group3.exceptions.UnauthorizedException;
+import com.group3.pojo.Attendee;
 import com.group3.pojo.Booking;
 import com.group3.pojo.Event;
 import com.group3.pojo.Payment;
@@ -110,7 +111,7 @@ public class BookingServiceImpl implements BookingService {
                 && user.getRoleId() != null
                 && user.getRoleId().getId() == ROLE_ORGANIZER
                 && event.getOrganizerId() != null
-                && event.getOrganizerId().getId().equals(user.getId());
+                && event.getOrganizerId().getUserId().equals(user.getId());
     }
 
     private void createTickets(Booking booking, int quantity) {
@@ -144,7 +145,7 @@ public class BookingServiceImpl implements BookingService {
         Date now = new Date();
         Booking booking = new Booking();
         booking.setEventId(event);
-        booking.setUserId(attendee);
+        booking.setAttendeeId(getRequiredAttendeeProfile(attendee));
         booking.setQuantity(request.getQuantity());
         booking.setUnitPrice(unitPrice);
         booking.setTotalPrice(totalPrice);
@@ -190,7 +191,9 @@ public class BookingServiceImpl implements BookingService {
         validateAttendee(attendee);
 
         Booking booking = getRequiredBooking(bookingId);
-        if (!booking.getUserId().getId().equals(attendee.getId())) {
+        if (booking.getAttendeeId() == null
+                || booking.getAttendeeId().getUser() == null
+                || !booking.getAttendeeId().getUser().getId().equals(attendee.getId())) {
             throw new UnauthorizedException("Chi chu booking moi duoc huy booking");
         }
         if (booking.getStatusId() == null || booking.getStatusId().getId() != BOOKING_PENDING) {
@@ -233,7 +236,9 @@ public class BookingServiceImpl implements BookingService {
         if (isAdmin(currentUser)) {
             return true;
         }
-        if (booking.getUserId() != null && booking.getUserId().getId().equals(currentUser.getId())) {
+        if (booking.getAttendeeId() != null
+                && booking.getAttendeeId().getUser() != null
+                && booking.getAttendeeId().getUser().getId().equals(currentUser.getId())) {
             return true;
         }
         return booking.getEventId() != null && isOrganizerOwner(booking.getEventId(), currentUser);
@@ -251,7 +256,6 @@ public class BookingServiceImpl implements BookingService {
     private void createPendingPayment(Booking booking, User attendee, BigDecimal totalPrice, String paymentMethod, Date now) {
         Payment payment = new Payment();
         payment.setBookingId(booking);
-        payment.setUserId(attendee);
         payment.setStatusId(getStatusPay(PAYMENT_PENDING));
         payment.setAmount(totalPrice);
         payment.setMethod(normalizePaymentMethod(paymentMethod));
@@ -271,6 +275,17 @@ public class BookingServiceImpl implements BookingService {
 
     private StatusBooking getStatusBooking(int id) {
         return getCurrentSession().get(StatusBooking.class, id);
+    }
+
+    private Attendee getRequiredAttendeeProfile(User user) {
+        Attendee attendee = user != null ? user.getAttendee() : null;
+        if (attendee == null && user != null && user.getId() != null) {
+            attendee = getCurrentSession().get(Attendee.class, user.getId());
+        }
+        if (attendee == null) {
+            throw new BusinessException("Tai khoan attendee chua co profile attendee");
+        }
+        return attendee;
     }
 
     private StatusPay getStatusPay(int id) {

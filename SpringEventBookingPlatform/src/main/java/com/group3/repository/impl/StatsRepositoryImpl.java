@@ -24,7 +24,7 @@ public class StatsRepositoryImpl implements StatsRepository {
                 + "COALESCE(SUM(b.totalPrice), 0) "
                 + "FROM Event e "
                 + "LEFT JOIN Booking b ON b.eventId.id = e.id AND b.statusId.id = :paidStatus "
-                + "WHERE e.organizerId.id = :organizerId";
+                + "WHERE e.organizerId.user.id = :organizerId";
 
         return getCurrentSession().createQuery(hql, Object[].class)
                 .setParameter("paidStatus", BOOKING_PAID)

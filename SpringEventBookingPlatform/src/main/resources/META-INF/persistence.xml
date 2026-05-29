@@ -7,6 +7,8 @@
     <class>com.group3.pojo.Category</class>
     <class>com.group3.pojo.Payment</class>
     <class>com.group3.pojo.User</class>
+    <class>com.group3.pojo.Organizer</class>
+    <class>com.group3.pojo.Attendee</class>
     <class>com.group3.pojo.Role</class>
     <class>com.group3.pojo.StatusPay</class>
     <class>com.group3.pojo.StatusEvent</class>

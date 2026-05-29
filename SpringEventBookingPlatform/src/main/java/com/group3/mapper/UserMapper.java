@@ -26,9 +26,11 @@ public class UserMapper {
         response.setAvatar(user.getAvatar());
         response.setCreatedDate(user.getCreatedDate());
         response.setUpdatedDate(user.getUpdatedDate());
-        response.setIdentityCard(user.getIdentityCard());
-        response.setOrganizationName(user.getOrganizationName());
-        response.setTaxCode(user.getTaxCode());
+        if (user.getOrganizer() != null) {
+            response.setIdentityCard(user.getOrganizer().getIdentityCard());
+            response.setOrganizationName(user.getOrganizer().getOrganizationName());
+            response.setTaxCode(user.getOrganizer().getTaxCode());
+        }
 
         if (user.getRoleId() != null) {
             response.setRoleId(user.getRoleId().getId());
@@ -66,10 +68,6 @@ public class UserMapper {
         user.setEmail(request.getEmail());
         user.setPhone(request.getPhone());
 
-        user.setIdentityCard(request.getIdentityCard());
-        user.setOrganizationName(request.getOrganizationName());
-        user.setTaxCode(request.getTaxCode());
-
         return user;
     }
 
@@ -85,18 +83,6 @@ public class UserMapper {
 
         if (request.getPhone() != null) {
             user.setPhone(request.getPhone());
-        }
-
-        if (request.getIdentityCard() != null) {
-            user.setIdentityCard(request.getIdentityCard());
-        }
-
-        if (request.getOrganizationName() != null) {
-            user.setOrganizationName(request.getOrganizationName());
-        }
-
-        if (request.getTaxCode() != null) {
-            user.setTaxCode(request.getTaxCode());
         }
 
         return user;

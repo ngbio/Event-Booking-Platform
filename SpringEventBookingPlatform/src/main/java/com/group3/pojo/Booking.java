@@ -72,9 +72,9 @@ public class Booking implements Serializable {
     @JoinColumn(name = "status_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
     private StatusBooking statusId;
-    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    @JoinColumn(name = "attendee_id", referencedColumnName = "user_id")
     @ManyToOne(optional = false)
-    private User userId;
+    private Attendee attendeeId;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "bookingId")
     private Collection<TicketDetail> ticketDetailCollection;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "bookingId")
@@ -158,12 +158,12 @@ public class Booking implements Serializable {
         this.statusId = statusId;
     }
 
-    public User getUserId() {
-        return userId;
+    public Attendee getAttendeeId() {
+        return attendeeId;
     }
 
-    public void setUserId(User userId) {
-        this.userId = userId;
+    public void setAttendeeId(Attendee attendeeId) {
+        this.attendeeId = attendeeId;
     }
 
     public Collection<TicketDetail> getTicketDetailCollection() {

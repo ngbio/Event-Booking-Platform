@@ -89,7 +89,7 @@ public class StatsServiceImpl implements StatsService {
         if (event == null) {
             throw new ResourceNotFoundException("Khong tim thay su kien");
         }
-        if (event.getOrganizerId() == null || !organizer.getId().equals(event.getOrganizerId().getId())) {
+        if (event.getOrganizerId() == null || !organizer.getId().equals(event.getOrganizerId().getUserId())) {
             throw new UnauthorizedException("Ban khong co quyen xem thong ke su kien nay");
         }
         return event;

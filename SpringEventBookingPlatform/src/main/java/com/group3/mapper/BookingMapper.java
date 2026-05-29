@@ -29,9 +29,9 @@ public class BookingMapper {
             response.setEventTitle(booking.getEventId().getTitle());
         }
         
-        if (booking.getUserId() != null) {
-            response.setUserId(booking.getUserId().getId());
-            response.setEmail(booking.getUserId().getEmail());
+        if (booking.getAttendeeId() != null && booking.getAttendeeId().getUser() != null) {
+            response.setUserId(booking.getAttendeeId().getUser().getId());
+            response.setEmail(booking.getAttendeeId().getUser().getEmail());
         }
         
         if (booking.getStatusId() != null) {
