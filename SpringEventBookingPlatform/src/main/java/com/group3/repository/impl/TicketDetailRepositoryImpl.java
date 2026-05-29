@@ -53,8 +53,10 @@ public class TicketDetailRepositoryImpl implements TicketDetailRepository {
         String hql = "SELECT DISTINCT t FROM TicketDetail t "
                 + "LEFT JOIN FETCH t.bookingId b "
                 + "LEFT JOIN FETCH b.eventId e "
-                + "LEFT JOIN FETCH e.organizerId "
-                + "LEFT JOIN FETCH b.userId "
+                + "LEFT JOIN FETCH e.organizerId o "
+                + "LEFT JOIN FETCH o.user "
+                + "LEFT JOIN FETCH b.attendeeId a "
+                + "LEFT JOIN FETCH a.user "
                 + "LEFT JOIN FETCH t.statusId "
                 + "WHERE t.id = :id";
 
@@ -76,8 +78,10 @@ public class TicketDetailRepositoryImpl implements TicketDetailRepository {
         String hql = "SELECT DISTINCT t FROM TicketDetail t "
                 + "LEFT JOIN FETCH t.bookingId b "
                 + "LEFT JOIN FETCH b.eventId e "
-                + "LEFT JOIN FETCH e.organizerId "
-                + "LEFT JOIN FETCH b.userId "
+                + "LEFT JOIN FETCH e.organizerId o "
+                + "LEFT JOIN FETCH o.user "
+                + "LEFT JOIN FETCH b.attendeeId a "
+                + "LEFT JOIN FETCH a.user "
                 + "LEFT JOIN FETCH t.statusId "
                 + "WHERE t.qrCode = :qrCode";
 
@@ -99,7 +103,8 @@ public class TicketDetailRepositoryImpl implements TicketDetailRepository {
         String hql = "SELECT DISTINCT t FROM TicketDetail t "
                 + "LEFT JOIN FETCH t.bookingId b "
                 + "LEFT JOIN FETCH b.eventId "
-                + "LEFT JOIN FETCH b.userId "
+                + "LEFT JOIN FETCH b.attendeeId a "
+                + "LEFT JOIN FETCH a.user "
                 + "LEFT JOIN FETCH t.statusId "
                 + "WHERE b.id = :bookingId "
                 + "ORDER BY t.id DESC";
@@ -119,7 +124,7 @@ public class TicketDetailRepositoryImpl implements TicketDetailRepository {
 
         List<Predicate> predicates = buildPredicates(b, root, params);
         if (userId != null) {
-            predicates.add(b.equal(root.get("bookingId").get("userId").get("id"), userId));
+            predicates.add(b.equal(root.get("bookingId").get("attendeeId").get("user").get("id"), userId));
         }
 
         if (!predicates.isEmpty()) {
@@ -151,7 +156,7 @@ public class TicketDetailRepositoryImpl implements TicketDetailRepository {
                 || ticket.getBookingId() == null
                 || ticket.getBookingId().getEventId() == null
                 || ticket.getBookingId().getEventId().getOrganizerId() == null
-                || !organizerId.equals(ticket.getBookingId().getEventId().getOrganizerId().getId())) {
+                || !organizerId.equals(ticket.getBookingId().getEventId().getOrganizerId().getUserId())) {
             return false;
         }
 

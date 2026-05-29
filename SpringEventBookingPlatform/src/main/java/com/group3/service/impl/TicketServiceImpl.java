@@ -58,7 +58,8 @@ public class TicketServiceImpl implements TicketService {
 
     private boolean isTicketOwner(TicketDetail ticket, User attendee) {
         return ticket.getBookingId() != null
-                && ticket.getBookingId().getUserId() != null
-                && ticket.getBookingId().getUserId().getId().equals(attendee.getId());
+                && ticket.getBookingId().getAttendeeId() != null
+                && ticket.getBookingId().getAttendeeId().getUser() != null
+                && ticket.getBookingId().getAttendeeId().getUser().getId().equals(attendee.getId());
     }
 }

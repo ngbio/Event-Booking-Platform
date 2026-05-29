@@ -16,6 +16,8 @@ import com.group3.exceptions.BusinessException;
 import com.group3.exceptions.DuplicateResourceException;
 import com.group3.exceptions.ResourceNotFoundException;
 import com.group3.exceptions.UnauthorizedException;
+import com.group3.pojo.Attendee;
+import com.group3.pojo.Organizer;
 import com.group3.pojo.Role;
 import com.group3.pojo.StatusUser;
 import com.group3.repository.UserRepository;
@@ -168,6 +170,12 @@ public class UserServiceImpl implements UserService {
         StatusUser statusUser = statusUserRepo.getStatusUserById(statusId);
         user.setStatusId(statusUser);
 
+        if (roleId == ROLE_ORGANIZER) {
+            user.setOrganizer(new Organizer(user, request.getIdentityCard(), request.getOrganizationName(), request.getTaxCode()));
+        } else if (roleId == ROLE_ATTENDEE) {
+            user.setAttendee(new Attendee(user));
+        }
+
         if (avatar != null && !avatar.isEmpty()) {
             try {
                 Map res = this.cloudinary.uploader().upload(avatar.getBytes(),
@@ -209,17 +217,33 @@ public class UserServiceImpl implements UserService {
         boolean isLegalDocumentChanged = false;
 
         if (user.getRoleId() != null && user.getRoleId().getId() == ROLE_ORGANIZER) {
-            if (request.getIdentityCard() != null && !request.getIdentityCard().equals(user.getIdentityCard())) {
+            Organizer organizer = user.getOrganizer();
+            if (organizer == null) {
+                organizer = new Organizer(user, request.getIdentityCard(), request.getOrganizationName(), request.getTaxCode());
+                user.setOrganizer(organizer);
                 isLegalDocumentChanged = true;
             }
-            if (request.getOrganizationName() != null && !request.getOrganizationName().equals(user.getOrganizationName())) {
+            if (request.getIdentityCard() != null && !request.getIdentityCard().equals(organizer.getIdentityCard())) {
                 isLegalDocumentChanged = true;
             }
-            if (request.getTaxCode() != null && !request.getTaxCode().equals(user.getTaxCode())) {
+            if (request.getOrganizationName() != null && !request.getOrganizationName().equals(organizer.getOrganizationName())) {
+                isLegalDocumentChanged = true;
+            }
+            if (request.getTaxCode() != null && !request.getTaxCode().equals(organizer.getTaxCode())) {
                 isLegalDocumentChanged = true;
             }
         }
         user = DTOMapper.toUserEntity(request, user);
+        if (user.getRoleId() != null && user.getRoleId().getId() == ROLE_ORGANIZER) {
+            Organizer organizer = user.getOrganizer();
+            if (organizer == null) {
+                organizer = new Organizer();
+                user.setOrganizer(organizer);
+            }
+            organizer.setIdentityCard(request.getIdentityCard());
+            organizer.setOrganizationName(request.getOrganizationName());
+            organizer.setTaxCode(request.getTaxCode());
+        }
 
         if (avatar != null && !avatar.isEmpty()) {
             validateAvatar(avatar);

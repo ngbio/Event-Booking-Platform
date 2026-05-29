@@ -57,7 +57,7 @@ public class EventRepositoryImpl implements EventRepository {
                 predicates.add(b.greaterThanOrEqualTo(root.get("endTime"), new Date()));
             }
             if (organizerId != null && !organizerId.isBlank()) {
-                predicates.add(b.equal(root.get("organizerId").get("id"), Integer.parseInt(organizerId)));
+                predicates.add(b.equal(root.get("organizerId").get("user").get("id"), Integer.parseInt(organizerId)));
             }
             if (categoryId != null && !categoryId.isBlank()) {
                 Join<Event, Category> categoryJoin = root.join("categoryCollection", JoinType.INNER);
@@ -127,7 +127,8 @@ public class EventRepositoryImpl implements EventRepository {
 
         String hql = "SELECT DISTINCT e FROM Event e "
                 + "LEFT JOIN FETCH e.categoryCollection "
-                + "LEFT JOIN FETCH e.organizerId "
+                + "LEFT JOIN FETCH e.organizerId o "
+                + "LEFT JOIN FETCH o.user "
                 + "WHERE e.id = :id";
 
         try {
@@ -232,7 +233,7 @@ public class EventRepositoryImpl implements EventRepository {
                 predicates.add(b.greaterThanOrEqualTo(root.get("endTime"), new java.util.Date()));
             }
             if (organizerId != null && !organizerId.isBlank()) {
-                predicates.add(b.equal(root.get("organizerId").get("id"), Integer.parseInt(organizerId)));
+                predicates.add(b.equal(root.get("organizerId").get("user").get("id"), Integer.parseInt(organizerId)));
             }
             if (categoryId != null && !categoryId.isBlank()) {
                 Join<Event, Category> categoryJoin = root.join("categoryCollection", JoinType.INNER);

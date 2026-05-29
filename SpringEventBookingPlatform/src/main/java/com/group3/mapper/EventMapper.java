@@ -48,8 +48,12 @@ public class EventMapper {
             response.setStatusName(event.getStatusId().getName());
         }
         if (event.getOrganizerId() != null) {
-            response.setOrganizerId(event.getOrganizerId().getId());
-            response.setOrganizerName(event.getOrganizerId().getFullName());
+            response.setOrganizerId(event.getOrganizerId().getUserId());
+            if (event.getOrganizerId().getUser() != null) {
+                response.setOrganizerName(event.getOrganizerId().getUser().getFullName());
+            } else {
+                response.setOrganizerName(event.getOrganizerId().getOrganizationName());
+            }
         }
 
         if (event.getCategoryCollection() != null && !event.getCategoryCollection().isEmpty()) {

@@ -126,9 +126,9 @@ public class Event implements Serializable {
     @JoinColumn(name = "status_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
     private StatusEvent statusId;
-    @JoinColumn(name = "organizer_id", referencedColumnName = "id")
+    @JoinColumn(name = "organizer_id", referencedColumnName = "user_id")
     @ManyToOne(optional = false)
-    private User organizerId;
+    private Organizer organizerId;
 
     public Event() {
     }
@@ -307,11 +307,11 @@ public class Event implements Serializable {
         this.statusId = statusId;
     }
 
-    public User getOrganizerId() {
+    public Organizer getOrganizerId() {
         return organizerId;
     }
 
-    public void setOrganizerId(User organizerId) {
+    public void setOrganizerId(Organizer organizerId) {
         this.organizerId = organizerId;
     }
 
