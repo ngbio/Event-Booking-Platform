@@ -24,8 +24,6 @@ public class UserMapper {
         response.setFullName(user.getFullName());
         response.setPhone(user.getPhone());
         response.setAvatar(user.getAvatar());
-        response.setCreatedDate(user.getCreatedDate());
-        response.setUpdatedDate(user.getUpdatedDate());
         if (user.getOrganizer() != null) {
             response.setIdentityCard(user.getOrganizer().getIdentityCard());
             response.setOrganizationName(user.getOrganizer().getOrganizationName());

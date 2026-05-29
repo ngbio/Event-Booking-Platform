@@ -90,14 +90,15 @@ public class SpringSecurityConfigs {
                 ).permitAll()
                 .requestMatchers(
                         "/admin/login",
-                        "/api/users/login",
-                        "/api/users/register/**"
+                        "/api/auth/login",
+                        "/api/auth/register/**",
+                        "/api/auth/**"
                 ).permitAll()
-                .requestMatchers("/api/events/organizer/**").authenticated()
+                .requestMatchers("/api/secure/**").authenticated()
                 .requestMatchers(HttpMethod.GET, "/api/events/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/categories").permitAll()
                 .requestMatchers("/admin/**").hasRole("ADMIN")
                 // Khu vực này sẽ do JwtFilter bảo vệ
-                .requestMatchers("/api/users/logout").authenticated()
                 .requestMatchers("/api/users/secure/**").authenticated()
                 .anyRequest().authenticated()
                 )
@@ -131,7 +132,7 @@ public class SpringSecurityConfigs {
 
         CorsConfiguration config = new CorsConfiguration();
 
-        config.setAllowedOrigins(List.of("http://localhost:3000/"));
+        config.setAllowedOrigins(List.of("http://localhost:3000"));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("Authorization", "Content-Type"));
         config.setExposedHeaders(List.of("Authorization"));
