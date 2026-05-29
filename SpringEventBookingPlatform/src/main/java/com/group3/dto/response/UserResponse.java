@@ -1,5 +1,11 @@
 package com.group3.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import java.util.Date;
+
+@JsonInclude(JsonInclude.Include.NON_NULL)
+
 public class UserResponse {
 
     private Integer id;
@@ -7,6 +13,9 @@ public class UserResponse {
     private String fullName;
     private String phone;
     private String avatar;
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private Date birthDate;
+    private String gender;
     private String identityCard;
     private String organizationName;
     private String taxCode;
@@ -20,12 +29,14 @@ public class UserResponse {
     public UserResponse() {
     }
 
-    public UserResponse(Integer id, String email, String fullName, String phone, String avatar, String identityCard,String organizationName, String taxCode, Integer roleId, String roleName, Integer statusId, String statusName) {
+    public UserResponse(Integer id, String email, String fullName, String phone, String avatar, Date birthDate, String gender, String identityCard, String organizationName, String taxCode, Integer roleId, String roleName, Integer statusId, String statusName) {
         this.id = id;
         this.email = email;
         this.fullName = fullName;
         this.phone = phone;
         this.avatar = avatar;
+        this.birthDate = birthDate;
+        this.gender = gender;
         this.identityCard = identityCard;
         this.organizationName = organizationName;
         this.taxCode = taxCode;
@@ -34,8 +45,6 @@ public class UserResponse {
         this.statusId = statusId;
         this.statusName = statusName;
     }
-
-    
 
     public Integer getId() {
         return id;
@@ -131,6 +140,22 @@ public class UserResponse {
 
     public void setStatusName(String statusName) {
         this.statusName = statusName;
+    }
+
+    public Date getBirthDate() {
+        return birthDate;
+    }
+
+    public void setBirthDate(Date birthDate) {
+        this.birthDate = birthDate;
+    }
+
+    public String getGender() {
+        return gender;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
     }
     
     

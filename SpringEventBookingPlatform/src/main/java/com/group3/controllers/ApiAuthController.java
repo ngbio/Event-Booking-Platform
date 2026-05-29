@@ -1,7 +1,7 @@
 package com.group3.controllers;
 
 import com.group3.dto.request.LoginRequest;
-import com.group3.dto.request.RegisterRequest;
+import com.group3.dto.request.OrganizerRegisterRequest;
 import com.group3.dto.response.ApiResponse;
 import com.group3.dto.response.LoginResponse;
 import com.group3.dto.response.UserResponse;
@@ -35,24 +35,21 @@ public class ApiAuthController {
     @Autowired
     private UserService userService;
 
-    private static final Integer ROLE_ATTENDEE = 3;
-    private static final Integer ROLE_ORGANIZER = 2;
-
     @PostMapping(path = "/register/attendee",
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> registerAttendee(@Valid @ModelAttribute RegisterRequest request,
+    public ResponseEntity<?> registerAttendee(@Valid @ModelAttribute OrganizerRegisterRequest request,
             @RequestParam(value = "avatar", required = false) MultipartFile avatar) {
-        UserResponse savedUser = userService.addUser(request, avatar, ROLE_ATTENDEE);
+        UserResponse savedUser = userService.addUser(request, avatar);
         return new ResponseEntity<>(new ApiResponse<>(201, "Đăng ký thành công", savedUser), HttpStatus.CREATED);
     }
 
     @PostMapping(path = "/register/organizer",
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> registerOrganizer(@Valid @ModelAttribute RegisterRequest request,
+    public ResponseEntity<?> registerOrganizer(@Valid @ModelAttribute OrganizerRegisterRequest request,
             @RequestParam(value = "avatar", required = false) MultipartFile avatar) {
-        UserResponse savedUser = userService.addUser(request, avatar, ROLE_ORGANIZER);
+        UserResponse savedUser = userService.addUser(request, avatar);
         return new ResponseEntity<>(new ApiResponse<>(201, "Đăng ký thành công", savedUser), HttpStatus.CREATED);
     }
 

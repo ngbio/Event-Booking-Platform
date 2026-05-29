@@ -6,8 +6,9 @@ package com.group3.service.impl;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
+import com.group3.dto.request.AttendeeRegisterRequest;
 import com.group3.dto.request.LoginRequest;
-import com.group3.dto.request.RegisterRequest;
+import com.group3.dto.request.OrganizerRegisterRequest;
 import com.group3.dto.request.UserUpdateRequest;
 import com.group3.dto.request.ChangePasswordRequest;
 import com.group3.pojo.User;
@@ -63,8 +64,8 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private StatusUserRepository statusUserRepo;
 
-    private static final Integer ROLE_ATTENDEE = 3;
-    private static final Integer ROLE_ORGANIZER = 2;
+    private static final int ROLE_ATTENDEE = 3;
+    private static final int ROLE_ORGANIZER = 2;
     private static final Integer PENDING= 1;
     private static final Integer ACTIVE= 2;
     private static final Integer REJECTED= 3;
@@ -76,29 +77,6 @@ public class UserServiceImpl implements UserService {
         //Kiem tra dung luong avatar
         if (avatar.getSize() > 2 * 1024 * 1024) {
             throw new BusinessException("Avatar tối đa 2MB!");
-        }
-    }
-
-    private void validateOrganizerInfo(RegisterRequest request) {
-        if (request.getIdentityCard() == null || request.getIdentityCard().isEmpty()) {
-            throw new BusinessException("Người tổ chức bắt buộc phải cung cấp CCCD");
-        }
-        if (request.getOrganizationName() == null || request.getOrganizationName().isEmpty()) {
-            throw new BusinessException("Bắt buộc phải cung cấp Tên tổ chức/doanh nghiệp");
-        }
-        if (request.getTaxCode() == null || request.getTaxCode().isEmpty()) {
-            throw new BusinessException("Bắt buộc phải cung cấp Mã số thuế của doanh nghiệp");
-        }
-    }
-
-    private void validateAttendeeInfo(RegisterRequest request) {
-        boolean hasOrganizerData
-                = (request.getIdentityCard() != null && !request.getIdentityCard().isEmpty())
-                || (request.getOrganizationName() != null && !request.getOrganizationName().isEmpty())
-                || (request.getTaxCode() != null && !request.getTaxCode().isEmpty());
-
-        if (hasOrganizerData) {
-            throw new BusinessException("Lỗi dữ liệu: Người mua vé không có các thông tin của Nhà tổ chức");
         }
     }
     
@@ -157,14 +135,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserResponse addUser(RegisterRequest request, MultipartFile avatar, int roleId) {
+    public UserResponse addUser(OrganizerRegisterRequest request, MultipartFile avatar) {
         if (this.userRepo.existEmail(request.getEmail())) {
             throw new DuplicateResourceException("Email này đã có người đăng ký!");
-        }
-        if (roleId == ROLE_ATTENDEE) {
-            validateAttendeeInfo(request);
-        } else if (roleId == ROLE_ORGANIZER) {
-            validateOrganizerInfo(request);
         }
         validateAvatar(avatar);
 
@@ -174,18 +147,49 @@ public class UserServiceImpl implements UserService {
         user.setCreatedDate(now);
         user.setUpdatedDate(now);
 
-        Role userRole = roleRepo.findById(roleId);
+        Role userRole = roleRepo.findById(ROLE_ORGANIZER);
         user.setRoleId(userRole);
 
-        int statusId = roleId == ROLE_ORGANIZER ? PENDING : ACTIVE;
+        int statusId = PENDING;
         StatusUser statusUser = statusUserRepo.getStatusUserById(statusId);
         user.setStatusId(statusUser);
 
-        if (roleId == ROLE_ORGANIZER) {
-            user.setOrganizer(new Organizer(user, request.getIdentityCard(), request.getOrganizationName(), request.getTaxCode()));
-        } else if (roleId == ROLE_ATTENDEE) {
-            user.setAttendee(new Attendee(user));
+        user.setOrganizer(new Organizer(user, request.getIdentityCard(), request.getOrganizationName(), request.getTaxCode()));
+        
+        if (avatar != null && !avatar.isEmpty()) {
+            try {
+                Map res = this.cloudinary.uploader().upload(avatar.getBytes(),
+                        ObjectUtils.asMap("resource_type", "auto"));
+                user.setAvatar(res.get("secure_url").toString());
+            } catch (IOException ex) {
+                throw new BusinessException("Cập nhật avatar thất bại!");
+            }
         }
+
+        return DTOMapper.toUserResponse(this.userRepo.addUser(user));
+    }
+    
+    @Override
+    public UserResponse addUser(AttendeeRegisterRequest request, MultipartFile avatar) {
+        if (this.userRepo.existEmail(request.getEmail())) {
+            throw new DuplicateResourceException("Email này đã có người đăng ký!");
+        }
+        validateAvatar(avatar);
+
+        User user = DTOMapper.toUserEntity(request);
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
+        Date now = new Date();
+        user.setCreatedDate(now);
+        user.setUpdatedDate(now);
+
+        Role userRole = roleRepo.findById(ROLE_ATTENDEE);
+        user.setRoleId(userRole);
+
+        int statusId = ACTIVE;
+        StatusUser statusUser = statusUserRepo.getStatusUserById(statusId);
+        user.setStatusId(statusUser);
+
+        user.setAttendee(new Attendee(user));
 
         if (avatar != null && !avatar.isEmpty()) {
             try {
@@ -209,6 +213,10 @@ public class UserServiceImpl implements UserService {
                     || (request.getTaxCode() != null && !request.getTaxCode().isEmpty())) {
                 throw new BusinessException("Lỗi dữ liệu: Người mua vé không có các thông tin của Nhà tổ chức");
             }
+            if (request.getBirthDate()==null)
+                throw new BusinessException("Ngày sinh không được để trống");
+            if (request.getGender()==null||request.getGender().isEmpty())
+                throw new BusinessException("Giới tính không được để trống");
         } else if (user.getRoleId().getId() == ROLE_ORGANIZER) {
             if (request.getIdentityCard() == null || request.getIdentityCard().isEmpty()) {
                 throw new BusinessException("Người tổ chức bắt buộc phải cung cấp CCCD");
@@ -242,16 +250,6 @@ public class UserServiceImpl implements UserService {
             }
         }
         user = DTOMapper.toUserEntity(request, user);
-        if (user.getRoleId() != null && user.getRoleId().getId() == ROLE_ORGANIZER) {
-            Organizer organizer = user.getOrganizer();
-            if (organizer == null) {
-                organizer = new Organizer();
-                user.setOrganizer(organizer);
-            }
-            organizer.setIdentityCard(request.getIdentityCard());
-            organizer.setOrganizationName(request.getOrganizationName());
-            organizer.setTaxCode(request.getTaxCode());
-        }
 
         if (avatar != null && !avatar.isEmpty()) {
             validateAvatar(avatar);

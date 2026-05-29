@@ -13,7 +13,7 @@ import jakarta.validation.constraints.Size;
  *
  * @author THUAN
  */
-public class RegisterRequest {
+public class OrganizerRegisterRequest {
 
     @NotBlank(message = "Email không được để trống")
     @Email(message = "Email không hợp lệ")
@@ -34,12 +34,15 @@ public class RegisterRequest {
     private String phone;
 
     //Cho nha to chuc
+    @NotBlank(message = "Người tổ chức bắt buộc phải cung cấp CCCD")
     @Pattern(regexp = "^(\\d{12})$", message = "CCCD phải có đúng 12 chữ số")
     private String identityCard;
 
+    @NotBlank(message = "Bắt buộc phải cung cấp Tên tổ chức/doanh nghiệp")
     @Size(max = 100, message = "Tên tổ chức/doanh nghiệp không được vượt quá 100 ký tự")
     private String organizationName;
 
+    @NotBlank(message = "Bắt buộc phải cung cấp Mã số thuế của doanh nghiệp")
     @Pattern(regexp = "^\\d{10}(\\-\\d{3})?$", message = "Mã số thuế phải là 10 chữ số, hoặc 13 chữ số có gạch nối")
     private String taxCode;
 
@@ -48,7 +51,7 @@ public class RegisterRequest {
     }
 
     public void setEmail(String email) {
-        this.email = email.trim();
+        this.email = email;
     }
 
     public String getPassword() {
@@ -64,7 +67,7 @@ public class RegisterRequest {
     }
 
     public void setFullName(String fullName) {
-        this.fullName = fullName.trim();
+        this.fullName = fullName;
     }
 
     public String getPhone() {
@@ -72,7 +75,7 @@ public class RegisterRequest {
     }
 
     public void setPhone(String phone) {
-        this.phone = phone.trim();
+        this.phone = phone;
     }
 
     public String getIdentityCard() {
@@ -80,7 +83,7 @@ public class RegisterRequest {
     }
 
     public void setIdentityCard(String identityCard) {
-        this.identityCard = (identityCard != null) ? identityCard.trim() : null;
+        this.identityCard = identityCard;
     }
 
     public String getOrganizationName() {
@@ -88,7 +91,7 @@ public class RegisterRequest {
     }
 
     public void setOrganizationName(String organizationName) {
-        this.organizationName = (organizationName!=null)?organizationName.trim():null;
+        this.organizationName = organizationName;
     }
 
     public String getTaxCode() {
@@ -96,7 +99,7 @@ public class RegisterRequest {
     }
 
     public void setTaxCode(String taxCode) {
-        this.taxCode = (taxCode!=null)?taxCode.trim():null;
+        this.taxCode = taxCode;
     }
 
 }

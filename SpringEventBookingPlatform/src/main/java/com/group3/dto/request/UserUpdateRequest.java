@@ -4,8 +4,10 @@
  */
 package com.group3.dto.request;
 
+import jakarta.validation.constraints.Past;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
+import java.util.Date;
 
 /**
  *
@@ -17,8 +19,6 @@ public class UserUpdateRequest {
     @Pattern(regexp = "^0[35789]\\d{8}$", message = "Số điện thoại không hợp lệ")
     private String phone;
 
-    
-    //Nha to chuc
     @Pattern(regexp = "^(\\d{12})$", message = "CCCD phải có đúng 12 chữ số")
     private String identityCard;
 
@@ -27,6 +27,12 @@ public class UserUpdateRequest {
 
     @Pattern(regexp = "^\\d{10}(\\-\\d{3})?$", message = "Mã số thuế phải là 10 chữ số, hoặc 13 chữ số có gạch nối")
     private String taxCode;
+    
+    @Pattern(regexp = "^(male|female)$", message = "Giới tính không hợp lệ (chỉ nhận male, female)")
+    @Past(message = "Ngày sinh phải là một ngày trong quá khứ")
+    private Date birthDate;
+    
+    private String gender;
 
     public String getFullName() {
         return fullName;
@@ -66,6 +72,22 @@ public class UserUpdateRequest {
 
     public void setTaxCode(String taxCode) {
         this.taxCode = (taxCode!=null)?taxCode.trim():null;
+    }
+
+    public Date getBirthDate() {
+        return birthDate;
+    }
+
+    public void setBirthDate(Date birthDate) {
+        this.birthDate = birthDate;
+    }
+
+    public String getGender() {
+        return gender;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
     }
     
     
