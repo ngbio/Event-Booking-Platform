@@ -25,16 +25,10 @@ public class UserResponse {
     private Integer statusId;
     private String statusName;
 
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Ho_Chi_Minh")
-    private Date createdDate;
-
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Ho_Chi_Minh")
-    private Date updatedDate;
-
     public UserResponse() {
     }
 
-    public UserResponse(Integer id, String email, String fullName, String phone, String avatar, Date birthDate, String gender, String identityCard, String organizationName, String taxCode, Integer roleId, String roleName, Integer statusId, String statusName, Date createdDate, Date updatedDate) {
+    public UserResponse(Integer id, String email, String fullName, String phone, String avatar, Date birthDate, String gender, String identityCard, String organizationName, String taxCode, Integer roleId, String roleName, Integer statusId, String statusName) {
         this.id = id;
         this.email = email;
         this.fullName = fullName;
@@ -49,8 +43,6 @@ public class UserResponse {
         this.roleName = roleName;
         this.statusId = statusId;
         this.statusName = statusName;
-        this.createdDate = createdDate;
-        this.updatedDate = updatedDate;
     }
 
     public Integer getId() {
@@ -107,22 +99,6 @@ public class UserResponse {
 
     public void setRoleName(String roleName) {
         this.roleName = roleName;
-    }
-
-    public Date getCreatedDate() {
-        return createdDate;
-    }
-
-    public void setCreatedDate(Date createdDate) {
-        this.createdDate = createdDate;
-    }
-
-    public Date getUpdatedDate() {
-        return updatedDate;
-    }
-
-    public void setUpdatedDate(Date updatedDate) {
-        this.updatedDate = updatedDate;
     }
 
     public String getIdentityCard() {
