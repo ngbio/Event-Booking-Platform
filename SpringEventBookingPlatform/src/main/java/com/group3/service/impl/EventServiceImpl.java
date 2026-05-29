@@ -4,6 +4,7 @@ import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
 import com.group3.dto.request.EventRequest;
 import com.group3.dto.response.EventResponse;
+import com.group3.exceptions.ResourceNotFoundException;
 import com.group3.pojo.Category;
 import com.group3.pojo.Event;
 import com.group3.pojo.Organizer;
@@ -19,6 +20,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
@@ -56,10 +58,21 @@ public class EventServiceImpl implements EventService {
     private void refreshExpiredPublishedEvents() {
         this.eventRepo.updateExpiredPublishedEvents(PUBLISHED, COMPLETED, new Date());
     }
+    
+    private Event validateAndGetPublicEvent(Integer eventId) {
+        Event event = eventRepo.getEventById(eventId);
+        if (event == null || !Integer.valueOf(PUBLISHED).equals(event.getStatusId())) {
+            throw new ResourceNotFoundException("Không tìm thấy sự kiện hoặc sự kiện chưa mở bán");
+        }
+    return event;
+}
 
     @Override
     @Transactional
     public List<EventResponse> getEvents(Map<String, String> params) {
+        Map<String, String> filters = new HashMap<>(params);
+        filters.put("statusId", String.valueOf(PUBLISHED));
+        filters.put("activeOnly", "true");
         refreshExpiredPublishedEvents();
         List<Event> events = this.eventRepo.getEvents(params);
         return DTOMapper.toEventResponseList(events);
@@ -67,9 +80,10 @@ public class EventServiceImpl implements EventService {
 
     @Override
     @Transactional
-    public EventResponse getEventById(Integer id) {
+    public EventResponse getEventById(Integer eventId) {
+        Event event = validateAndGetPublicEvent(eventId);
         refreshExpiredPublishedEvents();
-        return DTOMapper.toEventResponse(this.eventRepo.getEventById(id));
+        return DTOMapper.toEventResponse(event);
     }
 
     @Override

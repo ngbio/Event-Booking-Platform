@@ -29,59 +29,38 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/secure/bookings")
 @CrossOrigin
 public class ApiBookingController {
-
     @Autowired
     private BookingService bookingService;
-
-    @Autowired
-    private UserService userService;
 
     @GetMapping
     public ResponseEntity<ApiResponse<List<BookingResponse>>> getMyBookings(
             Principal principal,
             @RequestParam Map<String, String> params) {
-        User attendee = getCurrentUser(principal);
-        List<BookingResponse> bookings = this.bookingService.getMyBookings(attendee, params);
-        return ResponseEntity.ok(new ApiResponse<>(200, "Lay lich su dat ve thanh cong", bookings));
+        List<BookingResponse> bookings = this.bookingService.getMyBookings(principal, params);
+        return ResponseEntity.ok(new ApiResponse<>(200, "Lấy lịch sử đặt vé thành cống", bookings));
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<BookingResponse>> getBookingDetail(
             Principal principal,
             @PathVariable("id") Integer id) {
-        User currentUser = getCurrentUser(principal);
-        BookingResponse booking = this.bookingService.getBookingDetail(id, currentUser);
-        return ResponseEntity.ok(new ApiResponse<>(200, "Lay chi tiet booking thanh cong", booking));
+        BookingResponse booking = this.bookingService.getBookingDetail(id, principal);
+        return ResponseEntity.ok(new ApiResponse<>(200, "Lấy chi tiết booking thành công", booking));
     }
 
     @PatchMapping("/{id}/cancel")
     public ResponseEntity<ApiResponse<Boolean>> cancelBooking(
             Principal principal,
             @PathVariable("id") Integer id) {
-        User attendee = getCurrentUser(principal);
-        boolean cancelled = this.bookingService.cancelBooking(id, attendee);
-        return ResponseEntity.ok(new ApiResponse<>(200, "Huy don dat ve thanh cong", cancelled));
+        boolean cancelled = this.bookingService.cancelBooking(id, principal);
+        return ResponseEntity.ok(new ApiResponse<>(200, "Hủy đơn đặt vé thành công", cancelled));
     }
 
     @PostMapping
     public ResponseEntity<ApiResponse<BookingResponse>> createBooking(
             Principal principal,
             @Valid @RequestBody BookingRequest request) {
-        User attendee = getCurrentUser(principal);
-        BookingResponse booking = this.bookingService.createBooking(request, attendee);
-        return new ResponseEntity<>(new ApiResponse<>(201, "Tao don dat ve thanh cong, vui long thanh toan trong 10 phut", booking), HttpStatus.CREATED);
-    }
-
-    private User getCurrentUser(Principal principal) {
-        if (principal == null) {
-            throw new UnauthorizedException("Chua dang nhap hoac token het han");
-        }
-
-        User user = this.userService.getUserEntityByEmail(principal.getName());
-        if (user == null) {
-            throw new ResourceNotFoundException("Khong tim thay nguoi dung");
-        }
-
-        return user;
+        BookingResponse booking = this.bookingService.createBooking(request, principal);
+        return new ResponseEntity<>(new ApiResponse<>(201, "Tạo đơn đặt vé thành công, vui lòng thanh toán trong 10 phút", booking), HttpStatus.CREATED);
     }
 }

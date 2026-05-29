@@ -17,9 +17,11 @@ import com.group3.pojo.User;
 import com.group3.repository.BookingRepository;
 import com.group3.repository.EventRepository;
 import com.group3.repository.TicketDetailRepository;
+import com.group3.repository.UserRepository;
 import com.group3.service.BookingService;
 import com.group3.utils.DTOMapper;
 import java.math.BigDecimal;
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -62,43 +64,46 @@ public class BookingServiceImpl implements BookingService {
 
     @Autowired
     private LocalSessionFactoryBean factory;
+    
+    @Autowired
+    private UserRepository userRepo;
 
     private void validateAttendee(User attendee) {
         if (attendee == null || attendee.getRoleId() == null || attendee.getStatusId() == null) {
-            throw new UnauthorizedException("Nguoi dung khong hop le");
+            throw new UnauthorizedException("Người dùng không hợp lệ");
         }
         if (attendee.getRoleId().getId() != ROLE_ATTENDEE || attendee.getStatusId().getId() != USER_ACTIVE) {
-            throw new UnauthorizedException("Chi attendee ACTIVE moi duoc dat ve");
+            throw new UnauthorizedException("Chỉ tài khoản active của attendee mới đặt được vé");
         }
     }
 
     private void validateBookableEvent(Event event) {
         if (event == null) {
-            throw new ResourceNotFoundException("Khong tim thay su kien");
+            throw new ResourceNotFoundException("Không tìm thấy sự kiện");
         }
         if (event.getStatusId() == null) {
-            throw new BusinessException("Trang thai su kien khong hop le");
+            throw new BusinessException("Trạng thái sự kiện không hợp lệ");
         }
 
         int statusId = event.getStatusId().getId();
         Date now = new Date();
 
         if (statusId == EVENT_CANCELLED || event.getEndTime().before(now)) {
-            throw new BusinessException("Su kien da ket thuc hoac da bi huy");
+            throw new BusinessException("Sự kiện đã kết thúc hoặc đã bị hủy");
         }
         if (statusId != EVENT_PUBLISHED) {
-            throw new BusinessException("Su kien chua duoc mo ban");
+            throw new BusinessException("Sự kiện chưa được mở bán");
         }
     }
 
     private void validateQuantity(int quantity, Event event) {
         if (quantity <= 0) {
-            throw new BusinessException("So luong ve phai lon hon 0");
+            throw new BusinessException("Số lượng vé phải lớn hơn 0");
         }
 
         int availableTickets = event.getTotalTickets() - event.getSoldTickets();
         if (quantity > availableTickets) {
-            throw new BusinessException("So luong ve vuot qua so ve con lai");
+            throw new BusinessException("Số lượng vé vượt qua số vé còn lại");
         }
     }
 
@@ -129,9 +134,21 @@ public class BookingServiceImpl implements BookingService {
         }
         tickets.forEach(this.ticketDetailRepo::addTicket);
     }
+    
+    private User validateAndGetAttendee(Principal principal) {
+        if (principal == null) {
+            throw new UnauthorizedException("Chưa đăng nhập hoặc token hết hạn");
+        }
+        User user = userRepo.findUserByEmail(principal.getName());
+        if (user == null) {
+            throw new ResourceNotFoundException("Không tìm thấy người dùng");
+        }
+        return user;
+    }
 
     @Override
-    public BookingResponse createBooking(BookingRequest request, User attendee) {
+    public BookingResponse createBooking(BookingRequest request, Principal principal) {
+        User attendee = validateAndGetAttendee(principal);
         validateAttendee(attendee);
 
         Event event = this.eventRepo.getEventById(request.getEventId());
@@ -172,32 +189,35 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public List<BookingResponse> getMyBookings(User attendee, Map<String, String> params) {
+    public List<BookingResponse> getMyBookings(Principal principal, Map<String, String> params) {
+        User attendee = validateAndGetAttendee(principal);
         validateAttendee(attendee);
-        return DTOMapper.toBookingResponseList(this.bookingRepo.getBookingsByUser(attendee.getId(), params));
+        return DTOMapper.toBookingResponseList(this.bookingRepo.getBookingsByUserId(attendee.getId(), params));
     }
 
     @Override
-    public BookingResponse getBookingDetail(Integer bookingId, User currentUser) {
+    public BookingResponse getBookingDetail(Integer bookingId, Principal principal) {
+        User currentUser = validateAndGetAttendee(principal);
         Booking booking = getRequiredBooking(bookingId);
         if (!canViewBooking(booking, currentUser)) {
-            throw new UnauthorizedException("Ban khong co quyen xem booking nay");
+            throw new UnauthorizedException("Bạn không có quyền xem chi tiết đơn mua vé này");
         }
         return DTOMapper.toBookingResponse(booking);
     }
 
     @Override
-    public boolean cancelBooking(Integer bookingId, User attendee) {
+    public boolean cancelBooking(Integer bookingId, Principal principal) {
+        User attendee = validateAndGetAttendee(principal);
         validateAttendee(attendee);
 
         Booking booking = getRequiredBooking(bookingId);
         if (booking.getAttendeeId() == null
                 || booking.getAttendeeId().getUser() == null
                 || !booking.getAttendeeId().getUser().getId().equals(attendee.getId())) {
-            throw new UnauthorizedException("Chi chu booking moi duoc huy booking");
+            throw new UnauthorizedException("Chỉ người đặt vé mới được hủy mua vé");
         }
         if (booking.getStatusId() == null || booking.getStatusId().getId() != BOOKING_PENDING) {
-            throw new BusinessException("Chi booking dang cho thanh toan moi duoc huy");
+            throw new BusinessException("Chỉ đơn đặt vé đang trạng thái chờ thanh toán mới được hủy");
         }
 
         booking.setStatusId(getStatusBooking(BOOKING_CANCELLED));
@@ -206,25 +226,10 @@ public class BookingServiceImpl implements BookingService {
         return true;
     }
 
-    @Override
-    public List<BookingResponse> getEventBookings(Integer eventId, User organizer, Map<String, String> params) {
-        Event event = this.eventRepo.getEventById(eventId);
-        if (event == null) {
-            throw new ResourceNotFoundException("Khong tim thay su kien");
-        }
-        if (!isAdmin(organizer) && !isOrganizerOwner(event, organizer)) {
-            throw new UnauthorizedException("Ban khong co quyen xem danh sach booking cua su kien nay");
-        }
-
-        Map<String, String> paidParams = params != null ? new HashMap<>(params) : new HashMap<>();
-        paidParams.put("statusId", String.valueOf(BOOKING_PAID));
-        return DTOMapper.toBookingResponseList(this.bookingRepo.getBookingsByEvent(eventId, paidParams));
-    }
-
     private Booking getRequiredBooking(Integer bookingId) {
         Booking booking = this.bookingRepo.getBookingById(bookingId);
         if (booking == null) {
-            throw new ResourceNotFoundException("Khong tim thay booking");
+            throw new ResourceNotFoundException("Không tìm thấy đơn đặt vé");
         }
         return booking;
     }
@@ -283,7 +288,7 @@ public class BookingServiceImpl implements BookingService {
             attendee = getCurrentSession().get(Attendee.class, user.getId());
         }
         if (attendee == null) {
-            throw new BusinessException("Tai khoan attendee chua co profile attendee");
+            throw new BusinessException("Tài khoản attendee chưa có thông tin profile");
         }
         return attendee;
     }

@@ -33,7 +33,9 @@ public interface UserService extends UserDetailsService {
 
     UserResponse authenticate(LoginRequest request);
     
-    UserResponse updateUser(Integer id, UserUpdateRequest request,MultipartFile avatar);
+    UserResponse updateProfile(Principal principal, UserUpdateRequest request, MultipartFile avatar);
     
     void changePassword(Principal principal, ChangePasswordRequest request);
+    
+    UserResponse getCurrentUserProfile(Principal principal);
 }

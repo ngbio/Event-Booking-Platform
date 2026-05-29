@@ -7,11 +7,11 @@ import java.util.Map;
 public interface BookingRepository {
     Booking addBooking(Booking booking);
     Booking getBookingById(Integer id);
-    List<Booking> getBookingsByUser(Integer userId, Map<String, String> params);
-    List<Booking> getBookingsByEvent(Integer eventId, Map<String, String> params);
+    List<Booking> getBookingsByUserId(Integer userId, Map<String, String> params);
+    List<Booking> getBookingsByEventId(Integer eventId, Map<String, String> params);
     List<Booking> getBookingsByOrganizer(Integer organizerId, Map<String, String> params);
     Booking updateBooking(Booking booking);
-    long countBookingsByUser(Integer userId, Map<String, String> params);
-    long countBookingsByEvent(Integer eventId, Map<String, String> params);
+    long countBookingsByUserId(Integer userId, Map<String, String> params);
+    long countBookingsByEventId(Integer eventId, Map<String, String> params);
     boolean existsPaidBooking(Integer eventId, Integer userId);
 }

@@ -21,5 +21,5 @@ public interface OrganizerEventService {
 
     void changeOrganizerEventStatus(Principal principal, Integer eventId, Integer statusId);
 
-//    List<BookingResponse> getEventBookings(Principal principal, Integer eventId, Map<String, String> params);
+    List<BookingResponse> getEventBookings(Principal principal, Integer eventId, Map<String, String> params);
 }

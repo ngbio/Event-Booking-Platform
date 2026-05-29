@@ -5,9 +5,10 @@ import java.util.Map;
 
 import com.group3.dto.response.TicketResponse;
 import com.group3.pojo.User;
+import java.security.Principal;
 
 public interface TicketService {
-    List<TicketResponse> getMyTickets(User attendee, Map<String, String> params);
-    TicketResponse getTicketDetail(Integer ticketId, User attendee);
+    List<TicketResponse> getMyTickets(Principal principal, Map<String, String> params);
+    TicketResponse getTicketDetail(Integer ticketId, Principal principal);
     
 }

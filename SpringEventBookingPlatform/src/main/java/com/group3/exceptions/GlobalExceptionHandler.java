@@ -1,10 +1,7 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.group3.exceptions;
 
 import com.group3.dto.response.ApiResponse;
+import jakarta.validation.ConstraintViolationException;
 import java.util.HashMap;
 import java.util.Map;
 import org.springframework.http.ResponseEntity;
@@ -13,11 +10,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindException;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.servlet.NoHandlerFoundException;
 
-/**
- *
- * @author thanh
- */
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
@@ -52,7 +46,7 @@ public class GlobalExceptionHandler {
     }
 
     // Sai url -> 404
-    @ExceptionHandler(org.springframework.web.servlet.NoHandlerFoundException.class)
+    @ExceptionHandler(NoHandlerFoundException.class)
     public ResponseEntity<ApiResponse<Object>> handleNoHandlerFound(org.springframework.web.servlet.NoHandlerFoundException ex) {
         ApiResponse<Object> response = new ApiResponse<>(404, "Không tìm thấy đường dẫn API: " + ex.getRequestURL(), null);
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
@@ -84,5 +78,13 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiResponse<Object>> handleGlobalException(Exception ex) {
         ApiResponse<Object> response = new ApiResponse<>(500, "Lỗi hệ thống: " + ex.getMessage(), null);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+    }
+    // Loi @Size @NotBlank @NotNull
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<ApiResponse<Object>> handleConstraintViolation(ConstraintViolationException ex) {
+        String errorMessage = ex.getConstraintViolations().iterator().next().getMessage();
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(new ApiResponse<>(400, errorMessage, null));
     }
 }

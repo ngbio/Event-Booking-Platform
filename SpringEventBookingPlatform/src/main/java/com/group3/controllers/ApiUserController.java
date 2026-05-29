@@ -37,16 +37,7 @@ public class ApiUserController {
 
     @GetMapping("/secure/profile")
     public ResponseEntity<?> getProfile(Principal principal) {
-        if (principal == null) {
-            throw new UnauthorizedException("Chưa đăng nhập hoặc token hết hạn");
-        }
-
-        UserResponse user = userService.getUserByEmail(principal.getName());
-
-        if (user == null) {
-            throw new ResourceNotFoundException("Không tìm thấy người dùng");
-        }
-
+        UserResponse user = this.userService.getCurrentUserProfile(principal);
         return ResponseEntity.ok(new ApiResponse<>(200, "Lấy thông tin người dùng thành công", user));
     }
 
@@ -56,15 +47,7 @@ public class ApiUserController {
     public ResponseEntity<?> updateProfile(Principal principal,
             @Valid @ModelAttribute UserUpdateRequest request,
             @RequestParam(value = "avatar", required = false) MultipartFile avatar) {
-        if (principal == null) {
-            throw new UnauthorizedException("Chưa đăng nhập hoặc token hết hạn");
-        }
-        UserResponse user = userService.getUserByEmail(principal.getName());
-
-        if (user == null) {
-            throw new ResourceNotFoundException("Không tìm thấy người dùng");
-        }
-        UserResponse updateUser = userService.updateUser(user.getId(), request, avatar);
+        UserResponse updateUser = userService.updateProfile(principal, request, avatar);
         return ResponseEntity.ok(new ApiResponse<>(200, "Cập nhật thông tin thành công", updateUser));
     }
 
