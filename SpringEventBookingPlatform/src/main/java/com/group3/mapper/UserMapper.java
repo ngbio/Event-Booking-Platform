@@ -26,6 +26,10 @@ public class UserMapper {
         response.setFullName(user.getFullName());
         response.setPhone(user.getPhone());
         response.setAvatar(user.getAvatar());
+        if (user.getAttendee() != null) {
+            response.setBirthDate(user.getAttendee().getBirthDate());
+            response.setGender(user.getAttendee().getGender());
+        }
         if (user.getOrganizer() != null) {
             response.setIdentityCard(user.getOrganizer().getIdentityCard());
             response.setOrganizationName(user.getOrganizer().getOrganizationName());

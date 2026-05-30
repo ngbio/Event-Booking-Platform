@@ -144,6 +144,22 @@ const Register = () => {
                     <Form.Control.Feedback type="invalid">{fieldErrors[u.field]}</Form.Control.Feedback>
                 </Form.Group>)}
 
+                <Form.Group className="mb-3" controlId="attendee-birthDate">
+                    <Form.Label>Ngày sinh</Form.Label>
+                    <Form.Control type="date" value={attendee.birthDate || ""} onChange={e => setAttendee({...attendee, birthDate: e.target.value})} isInvalid={!!fieldErrors.birthDate} required />
+                    <Form.Control.Feedback type="invalid">{fieldErrors.birthDate}</Form.Control.Feedback>
+                </Form.Group>
+
+                <Form.Group className="mb-3" controlId="attendee-gender">
+                    <Form.Label>Giới tính</Form.Label>
+                    <Form.Select value={attendee.gender || ""} onChange={e => setAttendee({...attendee, gender: e.target.value})} isInvalid={!!fieldErrors.gender} required>
+                        <option value="">Chọn giới tính</option>
+                        <option value="male">Nam</option>
+                        <option value="female">Nữ</option>
+                    </Form.Select>
+                    <Form.Control.Feedback type="invalid">{fieldErrors.gender}</Form.Control.Feedback>
+                </Form.Group>
+
                 <Form.Group className="mb-3" controlId="attendee-avatar">
                     <Form.Label>Ảnh đại diện</Form.Label>
                     <Form.Control ref={attendeeAvatar} type="file" accept="image/*" required />

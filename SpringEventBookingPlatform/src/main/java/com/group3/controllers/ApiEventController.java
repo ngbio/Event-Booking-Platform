@@ -4,6 +4,7 @@ import com.group3.dto.response.ApiResponse;
 import com.group3.dto.response.EventResponse;
 import com.group3.service.EventService;
 import jakarta.validation.constraints.Size;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +34,10 @@ public class ApiEventController {
 
     @GetMapping
     public ResponseEntity<ApiResponse<List<EventResponse>>> listPublicEvents(@RequestParam Map<String, String> params) {
-        List<EventResponse> events = eventService.getEvents(params);
+        Map<String, String> filters = new HashMap<>(params);
+        filters.put("statusId", "2");
+        filters.put("activeOnly", "true");
+        List<EventResponse> events = eventService.getEvents(filters);
         return ResponseEntity.ok(new ApiResponse<>(200, "Lấy danh sách sự kiện thành công", events));
     }
 

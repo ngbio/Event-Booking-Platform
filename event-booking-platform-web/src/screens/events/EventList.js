@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import MySpinner from "../../components/MySpinner";
 import Apis, { endpoints } from "../../configs/Apis";
 import { Alert, Button, Card, Col, Row } from "react-bootstrap";
@@ -8,8 +8,12 @@ const Home = () => {
     const [events, setEvents] = useState([]);
     const [loading, setLoading] = useState(false);
     const [page, setPage] = useState(1);
+    const [hasMore, setHasMore] = useState(true);
     const [q] = useSearchParams();
+    const lastQueryRef = useRef("");
+    const loadedRequestsRef = useRef(new Set());
     const nav = useNavigate();
+    const queryString = q.toString();
 
     const formatDate = (value) => {
         if (!value)
@@ -28,50 +32,65 @@ const Home = () => {
         });
     }
 
-    const loadEvents = async () => {
+    const loadEvents = useCallback(async (pageToLoad) => {
+        const requestKey = `${queryString}|${pageToLoad}`;
+        if (loadedRequestsRef.current.has(requestKey))
+            return;
+
+        loadedRequestsRef.current.add(requestKey);
+
         try {
             setLoading(true);
 
-            let url = `${endpoints['events']}?page=${page}`;
+            const params = new URLSearchParams(queryString);
+            params.set("page", pageToLoad);
 
-            const cateId = q.get("cateId");
-            if (cateId) {
-                url = `${url}&categoryId=${cateId}`;
+            if (params.has("cateId")) {
+                params.set("categoryId", params.get("cateId"));
+                params.delete("cateId");
             }
 
-            const kw = q.get("kw");
-            if (kw) {
-                url = `${url}&kw=${kw}`;
-            }
-
-            let res = await Apis.get(url);
+            let res = await Apis.get(`${endpoints['events']}?${params.toString()}`);
             let data = res.data.data || [];
 
-            if (data.length === 0)
-                setPage(0);
-            if (page === 1)
+            setHasMore(data.length > 0);
+            if (pageToLoad === 1)
                 setEvents(data);
             else
-                setEvents([...events, ...data]);
+                setEvents(currentEvents => {
+                    const existingIds = new Set(currentEvents.map(e => e.id));
+                    const newEvents = data.filter(e => !existingIds.has(e.id));
+                    return [...currentEvents, ...newEvents];
+                });
         } catch (ex) {
             console.error(ex);
+            loadedRequestsRef.current.delete(requestKey);
         } finally {
             setLoading(false);
         }
-    }
+    }, [queryString]);
 
     useEffect(() => {
-        loadEvents();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [q, page]);
+        const isNewQuery = lastQueryRef.current !== queryString;
 
-    useEffect(() => {
-        setPage(1);
-        setEvents([]);
-    }, [q]);
+        if (isNewQuery) {
+            lastQueryRef.current = queryString;
+            loadedRequestsRef.current.clear();
+            setEvents([]);
+            setHasMore(true);
+
+            if (page !== 1) {
+                setPage(1);
+                return;
+            }
+        }
+
+        loadEvents(page);
+    }, [queryString, page, loadEvents]);
 
     const loadMore = () => {
-        setPage(page + 1);
+        if (!loading && hasMore)
+            setPage(currentPage => currentPage + 1);
     }
 
     return (
@@ -104,8 +123,8 @@ const Home = () => {
                 </Col>)}
             </Row>
 
-            {page > 0 && <div className="text-center mt-4 mb-2">
-                <Button className="btn-soft-pink px-4" onClick={loadMore}>Xem them</Button>
+            {hasMore && <div className="text-center mt-4 mb-2">
+                <Button className="btn-soft-pink px-4" onClick={loadMore} disabled={loading}>Xem them</Button>
             </div>}
 
             {loading && <MySpinner />}
