@@ -57,7 +57,7 @@ public class EventRepositoryImpl implements EventRepository {
                 predicates.add(b.greaterThanOrEqualTo(root.get("endTime"), new Date()));
             }
             if (organizerId != null && !organizerId.isBlank()) {
-                predicates.add(b.equal(root.get("organizerId").get("user").get("id"), Integer.parseInt(organizerId)));
+                predicates.add(b.equal(root.get("organizerId").get("userId"), Integer.parseInt(organizerId)));
             }
             if (categoryId != null && !categoryId.isBlank()) {
                 Join<Event, Category> categoryJoin = root.join("categoryCollection", JoinType.INNER);
@@ -233,7 +233,7 @@ public class EventRepositoryImpl implements EventRepository {
                 predicates.add(b.greaterThanOrEqualTo(root.get("endTime"), new java.util.Date()));
             }
             if (organizerId != null && !organizerId.isBlank()) {
-                predicates.add(b.equal(root.get("organizerId").get("user").get("id"), Integer.parseInt(organizerId)));
+                predicates.add(b.equal(root.get("organizerId").get("userId"), Integer.parseInt(organizerId)));
             }
             if (categoryId != null && !categoryId.isBlank()) {
                 Join<Event, Category> categoryJoin = root.join("categoryCollection", JoinType.INNER);
