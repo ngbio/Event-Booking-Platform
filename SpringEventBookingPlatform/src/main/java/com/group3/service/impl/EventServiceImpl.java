@@ -20,7 +20,6 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
@@ -61,7 +60,8 @@ public class EventServiceImpl implements EventService {
     
     private Event validateAndGetPublicEvent(Integer eventId) {
         Event event = eventRepo.getEventById(eventId);
-        if (event == null || !Integer.valueOf(PUBLISHED).equals(event.getStatusId())) {
+        Integer statusId = event != null && event.getStatusId() != null ? event.getStatusId().getId() : null;
+        if (event == null || !PUBLISHED.equals(statusId)) {
             throw new ResourceNotFoundException("Không tìm thấy sự kiện hoặc sự kiện chưa mở bán");
         }
     return event;
@@ -70,9 +70,6 @@ public class EventServiceImpl implements EventService {
     @Override
     @Transactional
     public List<EventResponse> getEvents(Map<String, String> params) {
-        Map<String, String> filters = new HashMap<>(params);
-        filters.put("statusId", String.valueOf(PUBLISHED));
-        filters.put("activeOnly", "true");
         refreshExpiredPublishedEvents();
         List<Event> events = this.eventRepo.getEvents(params);
         return DTOMapper.toEventResponseList(events);
@@ -81,8 +78,8 @@ public class EventServiceImpl implements EventService {
     @Override
     @Transactional
     public EventResponse getEventById(Integer eventId) {
-        Event event = validateAndGetPublicEvent(eventId);
         refreshExpiredPublishedEvents();
+        Event event = validateAndGetPublicEvent(eventId);
         return DTOMapper.toEventResponse(event);
     }
 
@@ -215,14 +212,14 @@ public class EventServiceImpl implements EventService {
                 event.setListingFee(BigDecimal.valueOf(calculatedFee));
                 event.setIsPaidFee(false); //Thanh toan lai phi chenh lech
 
-                StatusEvent statusDraft = this.statusEventRepo.getStatusEventById(1);
+                StatusEvent statusDraft = this.statusEventRepo.getStatusEventById(DRAFT);
                 event.setStatusId(statusDraft);
             } else {
                 // Su kien mien thi => Khong tinh phi va day ve PENDING_REVIEW
                 event.setListingFee(BigDecimal.ZERO);
                 event.setIsPaidFee(true);
 
-                StatusEvent statusPending = this.statusEventRepo.getStatusEventById(2);
+                StatusEvent statusPending = this.statusEventRepo.getStatusEventById(PENDING_REVIEW);
                 event.setStatusId(statusPending);
             }
         }

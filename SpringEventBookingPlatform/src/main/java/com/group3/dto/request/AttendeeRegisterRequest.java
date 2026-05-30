@@ -11,6 +11,7 @@ import jakarta.validation.constraints.Past;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import java.util.Date;
+import org.springframework.format.annotation.DateTimeFormat;
 
 /**
  *
@@ -35,12 +36,13 @@ public class AttendeeRegisterRequest {
     @Pattern(regexp = "^0[35789]\\d{8}$", message = "Số điện thoại không hợp lệ")
     private String phone;
     
-    @Pattern(regexp = "^(male|female)$", message = "Giới tính không hợp lệ (chỉ nhận male, female)")
     @Past(message = "Ngày sinh phải là một ngày trong quá khứ")
     @NotNull(message = "Ngày sinh không được để trống")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date birthDate;
     
     @NotBlank(message = "Giới tính không được trống")
+    @Pattern(regexp = "^(male|female)$", message = "Giới tính không hợp lệ (chỉ nhận male, female)")
     private String gender;
 
     public String getEmail() {

@@ -27,6 +27,8 @@ public class EventController {
     private EventService eventService;
     @Autowired
     private StatusEventService statusEventService;
+    private static final int STATUS_PUBLISHED = 2;
+    private static final int STATUS_CANCELLED = 5;
 
     @GetMapping
     public String listEvents(Model model, @RequestParam Map<String, String> params) {
@@ -64,7 +66,7 @@ public class EventController {
     @PostMapping("/approve")
     public String approveEvent(@RequestParam("id") Integer id, RedirectAttributes redirectAttributes) {
         try {
-            boolean isChanged = this.statusEventService.changeStatusEvent(id, 3);
+            boolean isChanged = this.statusEventService.changeStatusEvent(id, STATUS_PUBLISHED);
             if (isChanged) {
                 redirectAttributes.addFlashAttribute("successMsg", "Đã duyệt và mở bán sự kiện thành công!");
             } else {
@@ -79,7 +81,7 @@ public class EventController {
     @PostMapping("/cancel")
     public String cancelEvent(@RequestParam("id") int id, RedirectAttributes redirectAttributes) {
         try {
-            boolean isChanged = this.statusEventService.changeStatusEvent(id, 4);
+            boolean isChanged = this.statusEventService.changeStatusEvent(id, STATUS_CANCELLED);
             if (isChanged) {
                 redirectAttributes.addFlashAttribute("successMsg", "Đã hủy thành công!");
             } else {
