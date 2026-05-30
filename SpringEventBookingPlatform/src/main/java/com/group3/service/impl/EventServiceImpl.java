@@ -15,6 +15,7 @@ import com.group3.repository.EventRepository;
 import com.group3.repository.StatusEventRepository;
 import com.group3.service.EventService;
 import com.group3.utils.DTOMapper;
+import com.group3.utils.MediaFileValidator;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -85,6 +86,8 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public EventResponse createEvent(EventRequest request, MultipartFile image, MultipartFile video, User organizer) {
+        MediaFileValidator.validateEventMedia(image, video);
+
         Event event = DTOMapper.toEventEntity(request);
         //add Organizer
         event.setOrganizerId(getRequiredOrganizerProfile(organizer));
@@ -153,6 +156,8 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public EventResponse updateEvent(Integer id, EventRequest request, MultipartFile image, MultipartFile video) {
+        MediaFileValidator.validateEventMedia(image, video);
+
         Event event = this.eventRepo.getEventById(id);
         if (event == null) {
             return null;

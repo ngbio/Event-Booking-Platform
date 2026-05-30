@@ -15,7 +15,7 @@ const EventDetail = () => {
 
     const formatDate = (value) => {
         if (!value)
-            return "Dang cap nhat";
+            return "Đang cập nhật";
 
         return new Date(value.replace(" ", "T")).toLocaleString("vi-VN");
     }

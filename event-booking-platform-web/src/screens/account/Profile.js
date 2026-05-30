@@ -18,10 +18,19 @@ const Profile = () => {
 
     const isOrganizer = profile?.roleId === 2;
 
+    const toInputDate = (value) => {
+        if (!value)
+            return "";
+
+        return value.replace(" ", "T").slice(0, 10);
+    }
+
     const fillForm = (data) => {
         setForm({
             fullName: data.fullName || "",
             phone: data.phone || "",
+            birthDate: toInputDate(data.birthDate),
+            gender: data.gender || "",
             organizationName: data.organizationName || "",
             identityCard: data.identityCard || "",
             taxCode: data.taxCode || ""
@@ -71,6 +80,9 @@ const Profile = () => {
             data.append("organizationName", form.organizationName || "");
             data.append("identityCard", form.identityCard || "");
             data.append("taxCode", form.taxCode || "");
+        } else {
+            data.append("birthDate", form.birthDate || "");
+            data.append("gender", form.gender || "");
         }
 
         if (avatarRef.current?.files?.length > 0)
@@ -173,6 +185,27 @@ const Profile = () => {
                                 <Form.Label>Anh dai dien</Form.Label>
                                 <Form.Control ref={avatarRef} type="file" accept="image/*" />
                             </Form.Group>
+
+                            {!isOrganizer && <Row>
+                                <Col md={6}>
+                                    <Form.Group className="mb-3" controlId="profile-birthDate">
+                                        <Form.Label>Ngay sinh</Form.Label>
+                                        <Form.Control type="date" value={form.birthDate || ""} onChange={e => updateForm("birthDate", e.target.value)} isInvalid={!!fieldErrors.birthDate} required />
+                                        <Form.Control.Feedback type="invalid">{fieldErrors.birthDate}</Form.Control.Feedback>
+                                    </Form.Group>
+                                </Col>
+                                <Col md={6}>
+                                    <Form.Group className="mb-3" controlId="profile-gender">
+                                        <Form.Label>Gioi tinh</Form.Label>
+                                        <Form.Select value={form.gender || ""} onChange={e => updateForm("gender", e.target.value)} isInvalid={!!fieldErrors.gender} required>
+                                            <option value="">Chon gioi tinh</option>
+                                            <option value="male">Nam</option>
+                                            <option value="female">Nu</option>
+                                        </Form.Select>
+                                        <Form.Control.Feedback type="invalid">{fieldErrors.gender}</Form.Control.Feedback>
+                                    </Form.Group>
+                                </Col>
+                            </Row>}
 
                             {isOrganizer && <div className="organizer-fields">
                                 <Row>

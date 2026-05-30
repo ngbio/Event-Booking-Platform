@@ -8,6 +8,7 @@ import jakarta.validation.constraints.Past;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import java.util.Date;
+import org.springframework.format.annotation.DateTimeFormat;
 
 /**
  *
@@ -28,10 +29,11 @@ public class UserUpdateRequest {
     @Pattern(regexp = "^\\d{10}(\\-\\d{3})?$", message = "Mã số thuế phải là 10 chữ số, hoặc 13 chữ số có gạch nối")
     private String taxCode;
     
-    @Pattern(regexp = "^(male|female)$", message = "Giới tính không hợp lệ (chỉ nhận male, female)")
     @Past(message = "Ngày sinh phải là một ngày trong quá khứ")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date birthDate;
     
+    @Pattern(regexp = "^(male|female)$", message = "Giới tính không hợp lệ (chỉ nhận male, female)")
     private String gender;
 
     public String getFullName() {
@@ -87,7 +89,7 @@ public class UserUpdateRequest {
     }
 
     public void setGender(String gender) {
-        this.gender = gender;
+        this.gender = gender != null ? gender.trim() : null;
     }
     
     

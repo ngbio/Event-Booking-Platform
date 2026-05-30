@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindException;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
+import org.springframework.web.multipart.MultipartException;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
 @RestControllerAdvice
@@ -70,6 +72,13 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(BusinessException.class)
     public ResponseEntity<ApiResponse<Object>> handleBusiness(BusinessException ex) {
         ApiResponse<Object> response = new ApiResponse<>(400, ex.getMessage(), null);
+        return ResponseEntity.badRequest().body(response);
+    }
+
+    // File upload vuot qua gioi han multipart
+    @ExceptionHandler({MaxUploadSizeExceededException.class, MultipartException.class})
+    public ResponseEntity<ApiResponse<Object>> handleMultipartException(Exception ex) {
+        ApiResponse<Object> response = new ApiResponse<>(400, "File upload toi da 20MB moi file va 40MB moi request.", null);
         return ResponseEntity.badRequest().body(response);
     }
 
