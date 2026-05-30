@@ -1,7 +1,8 @@
 import axios from "axios";
 import cookies from 'react-cookies'
-
-const BASE_URL = process.env.REACT_APP_API_BASE_URL || "https://event-booking-backend-rubp.onrender.com/api/";
+//http://localhost:8081/SpringEventBookingPlatform/api/
+//https://event-booking-backend-rubp.onrender.com/api/
+const BASE_URL = process.env.REACT_APP_API_BASE_URL || "http://localhost:8081/SpringEventBookingPlatform/api/";
 
 export const endpoints = {
     // Auth

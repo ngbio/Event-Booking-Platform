@@ -31,11 +31,12 @@ public class ApiEventController {
 /// /compare (GET: So sánh các sự kiện)
     @Autowired
     private EventService eventService;
+    private static final String PUBLISHED_STATUS_ID = "2";
 
     @GetMapping
     public ResponseEntity<ApiResponse<List<EventResponse>>> listPublicEvents(@RequestParam Map<String, String> params) {
         Map<String, String> filters = new HashMap<>(params);
-        filters.put("statusId", "2");
+        filters.put("statusId", PUBLISHED_STATUS_ID);
         filters.put("activeOnly", "true");
         List<EventResponse> events = eventService.getEvents(filters);
         return ResponseEntity.ok(new ApiResponse<>(200, "Lấy danh sách sự kiện thành công", events));
