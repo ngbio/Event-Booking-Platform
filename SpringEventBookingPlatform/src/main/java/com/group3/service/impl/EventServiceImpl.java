@@ -50,23 +50,31 @@ public class EventServiceImpl implements EventService {
     @Value("${event.feePerTicket}")
     private double feePerTicket;
 
-    private static final Integer PUBLISHED=2;
-    private static final Integer PENDING_REVIEW=1;
-    private static final Integer DRAFT=3;
-    private static final Integer COMPLETED=4;
+    private static final Integer PUBLISHED = 2;
+    private static final Integer PENDING_REVIEW = 1;
+    private static final Integer DRAFT = 3;
+    private static final Integer COMPLETED = 4;
 
     private void refreshExpiredPublishedEvents() {
         this.eventRepo.updateExpiredPublishedEvents(PUBLISHED, COMPLETED, new Date());
     }
-    
+
     private Event validateAndGetPublicEvent(Integer eventId) {
         Event event = eventRepo.getEventById(eventId);
         Integer statusId = event != null && event.getStatusId() != null ? event.getStatusId().getId() : null;
         if (event == null || !PUBLISHED.equals(statusId)) {
             throw new ResourceNotFoundException("Không tìm thấy sự kiện hoặc sự kiện chưa mở bán");
         }
-    return event;
-}
+        return event;
+    }
+
+    private Organizer getRequiredOrganizerProfile(User user) {
+        Organizer organizer = user != null ? user.getOrganizer() : null;
+        if (organizer == null) {
+            throw new IllegalStateException("Tai khoan organizer chua co profile organizer");
+        }
+        return organizer;
+    }
 
     @Override
     @Transactional
@@ -124,7 +132,7 @@ public class EventServiceImpl implements EventService {
             String[] categoryIds = request.getCategoryIds().split(",");
             Collection<Category> categories = new ArrayList<>();
             for (String catId : categoryIds) {
-                Category cate = this.cateRepo.getCateById(Integer.parseInt(catId.trim()));
+                Category cate = this.cateRepo.getCateById(Integer.valueOf(catId.trim()));
                 if (cate != null) {
                     categories.add(cate);
                 }
@@ -204,7 +212,7 @@ public class EventServiceImpl implements EventService {
                 String[] categoryIds = request.getCategoryIds().split(",");
                 Collection<Category> categories = new ArrayList<>();
                 for (String catId : categoryIds) {
-                    Category cate = this.cateRepo.getCateById(Integer.parseInt(catId.trim()));
+                    Category cate = this.cateRepo.getCateById(Integer.valueOf(catId.trim()));
                     if (cate != null) {
                         categories.add(cate);
                     }
@@ -232,8 +240,8 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public boolean deleteEvent(Integer id) {
-        return this.eventRepo.deleteEvent(id);
+    public boolean deleteEvent(Integer eventId) {
+        return this.eventRepo.deleteEvent(eventId);
     }
 
     @Override
@@ -271,25 +279,34 @@ public class EventServiceImpl implements EventService {
 
         return false;
     }
-    
+
     @Override
-    public Long countEvents(Map<String, String> params){
+    public Long countEvents(Map<String, String> params) {
         return this.eventRepo.countEvents(params);
     }
-    
-    @Override 
-    public List<EventResponse> getEventsByIds(List<Integer> EventIds){
+
+    @Override
+    public List<EventResponse> getEventsByIds(List<Integer> EventIds) {
         refreshExpiredPublishedEvents();
         List<Event> events = this.eventRepo.getEventsByIds(EventIds);
         return DTOMapper.toEventResponseList(events);
     }
 
-    private Organizer getRequiredOrganizerProfile(User user) {
-        Organizer organizer = user != null ? user.getOrganizer() : null;
-        if (organizer == null) {
-            throw new IllegalStateException("Tai khoan organizer chua co profile organizer");
-        }
-        return organizer;
+    @Override
+    public EventResponse getEventByIdForAdmin(Integer eventId) {
+        Event event = this.eventRepo.getEventById(eventId);
+        if (eventId == null) 
+            throw new ResourceNotFoundException("Không tìm thấy sự kiện hoặc sự kiện không tồn tại");
+        return DTOMapper.toEventResponse(event);
+    }
+    
+    @Override
+    public List<EventResponse> getEventsForRefund() {
+        return DTOMapper.toEventResponseList(this.eventRepo.getEventsForRefund());
+    }
+
+    @Override
+    public List<EventResponse> getEventsForSettlement() {
+        return DTOMapper.toEventResponseList(this.eventRepo.getEventsForSettlement());
     }
 }
-

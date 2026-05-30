@@ -1,15 +1,19 @@
 package com.group3.repository.impl;
 
+import com.group3.pojo.Booking;
 import com.group3.pojo.Category;
 import com.group3.pojo.Event;
 import com.group3.pojo.StatusEvent;
 import com.group3.repository.EventRepository;
+import jakarta.persistence.NoResultException;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Fetch;
 import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
+import jakarta.persistence.criteria.Subquery;
 import java.util.List;
 import java.util.Map;
 import org.hibernate.Session;
@@ -83,7 +87,7 @@ public class EventRepositoryImpl implements EventRepository {
         if (!predicates.isEmpty()) {
             q.where(predicates.toArray(Predicate[]::new));
         }
-        
+
         q.orderBy(
                 b.asc(root.get("statusId").get("id")),//Xep su kien can duyet len truoc
                 b.desc(root.get("id"))
@@ -135,7 +139,7 @@ public class EventRepositoryImpl implements EventRepository {
             Query<Event> q = session.createQuery(hql, Event.class);
             q.setParameter("id", id);
             return q.getSingleResult();
-        } catch (jakarta.persistence.NoResultException e) {
+        } catch (NoResultException e) {
             return null;
         }
     }
@@ -263,12 +267,12 @@ public class EventRepositoryImpl implements EventRepository {
         Query query = session.createQuery(q);
         return (long) query.getSingleResult();
     }
-    
+
     @Override
-    public List<Event>getEventsByIds(List<Integer> EventIds){
+    public List<Event> getEventsByIds(List<Integer> EventIds) {
         Session session = this.factory.getObject().getCurrentSession();
-        Query<Event> q = session.createQuery("FROM Event e WHERE e.id IN :ids",Event.class);
-        q.setParameter("ids",EventIds);
+        Query<Event> q = session.createQuery("FROM Event e WHERE e.id IN :ids", Event.class);
+        q.setParameter("ids", EventIds);
         return q.getResultList();
     }
 
@@ -294,5 +298,29 @@ public class EventRepositoryImpl implements EventRepository {
         q.setParameter("publishedStatusId", publishedStatusId);
         q.setParameter("now", now);
         return q.executeUpdate();
+    }
+
+    @Override
+    public List<Event> getEventsForRefund() {
+        Session session = this.factory.getObject().getCurrentSession();
+        String hql = "SELECT DISTINCT e FROM Event e "
+                + "LEFT JOIN FETCH e.categoryCollection "
+                + "LEFT JOIN FETCH e.organizerId "
+                + "JOIN e.bookingCollection b "
+                + "WHERE e.statusId.id = 5 AND b.statusId.id = 3";
+
+        return session.createQuery(hql, Event.class).getResultList();
+    }
+
+    @Override
+    public List<Event> getEventsForSettlement() {
+        Session session = this.factory.getObject().getCurrentSession();
+        String hql = "SELECT DISTINCT e FROM Event e "
+                + "LEFT JOIN FETCH e.categoryCollection "
+                + "LEFT JOIN FETCH e.organizerId "
+                + "JOIN e.bookingCollection b "
+                + "WHERE e.statusId.id = 4 AND b.statusId.id = 2";
+
+        return session.createQuery(hql, Event.class).getResultList();
     }
 }

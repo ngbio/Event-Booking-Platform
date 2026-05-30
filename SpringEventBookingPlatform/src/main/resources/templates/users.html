@@ -1,7 +1,7 @@
 <!doctype html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <title>Quản lý Người dùng</title>
+    <head>
+        <title>Quản lý Người dùng</title>
     <th:block th:replace="base :: css"></th:block>
 </head>
 <body>
@@ -13,7 +13,7 @@
 
             <div class="w-75">
                 <form th:action="@{/admin/users}" method="GET" class="d-flex gap-2 justify-content-end">
-                    
+
                     <select name="statusId" class="form-select" style="width: 180px;">
                         <option value="">-- Tất cả trạng thái --</option>
                         <option value="1" th:selected="${param.statusId != null and param.statusId[0] == '1'}">Chờ Duyệt</option>
@@ -25,7 +25,7 @@
                         <option value="">-- Tất cả vai trò --</option>
                         <option value="1" th:selected="${selectedRole == '1'}">Quản trị viên</option>
                         <option value="2" th:selected="${selectedRole == '2'}">Nhà tổ chức</option>
-                        <option value="3" th:selected="${selectedRole == '3'}">Người dùng (Khách)</option>
+                        <option value="3" th:selected="${selectedRole == '3'}">Người dùng</option>
                     </select>
 
                     <input type="text" name="kw" class="form-control" 
@@ -81,13 +81,13 @@
                             </button>
                             <ul class="dropdown-menu dropdown-menu-end shadow">
                                 <li>
-                                    <a class="dropdown-item py-2" th:href="@{/admin/users/detail(id=${u.id})}">Xem chi tiết</a>
+                                    <a class="dropdown-item py-2" th:href="@{/admin/users/{id}(id=${u.id})}">Xem chi tiết</a>
                                 </li>
-                                
+
                                 <li th:if="${u.roleId != 1}"><hr class="dropdown-divider"></li>
 
                                 <li th:if="${u.statusId == 1}">
-                                    <form th:action="@{/admin/users/update-status}" method="post">
+                                    <form th:action="@{/admin/users/status}" method="post">
                                         <input type="hidden" name="id" th:value="${u.id}"/>
                                         <input type="hidden" name="statusId" value="2"/>
                                         <button type="submit" class="dropdown-item text-success py-2 fw-bold" onclick="return confirm('Xác nhận kích hoạt tài khoản này?')">
@@ -95,9 +95,14 @@
                                         </button>
                                     </form>
                                 </li>
+                                <li th:if="${u.roleId == 2}">
+                                    <a class="dropdown-item text-primary" th:href="@{/admin/users/{id}/events(id=${u.id})}">
+                                        <i class="bi bi-calendar-event"></i> Quản lý sự kiện
+                                    </a>
+                                </li>
 
                                 <li th:if="${u.statusId == 2 and u.roleId != 1}">
-                                    <form th:action="@{/admin/users/update-status}" method="post">
+                                    <form th:action="@{/admin/users/status}" method="post">
                                         <input type="hidden" name="id" th:value="${u.id}"/>
                                         <input type="hidden" name="statusId" value="3"/>
                                         <button type="submit" class="dropdown-item text-danger py-2" onclick="return confirm('Bạn có chắc chắn muốn KHÓA tài khoản này không?')">
@@ -107,7 +112,7 @@
                                 </li>
 
                                 <li th:if="${u.statusId == 3}">
-                                    <form th:action="@{/admin/users/update-status}" method="post">
+                                    <form th:action="@{/admin/users/status}" method="post">
                                         <input type="hidden" name="id" th:value="${u.id}"/>
                                         <input type="hidden" name="statusId" value="2"/>
                                         <button type="submit" class="dropdown-item text-primary py-2 fw-bold" onclick="return confirm('Xác nhận mở khóa lại cho tài khoản này?')">
@@ -125,13 +130,19 @@
         <nav th:if="${totalPages > 1}" class="mt-4">
             <ul class="pagination justify-content-center">
                 <li class="page-item" th:classappend="${currentPage == 1} ? 'disabled'">
-                    <a class="page-link" th:href="@{/admin/users(page=${currentPage - 1}, kw=${param.kw}, roleId=${param.roleId}, statusId=${param.statusId})}">Trước</a>
+                    <a class="page-link" 
+                       th:href="@{/admin/users(page=${currentPage - 1}, kw=${kw}, roleId=${roleId}, statusId=${statusId})}">Trước</a>
                 </li>
+
                 <li class="page-item" th:each="i : ${#numbers.sequence(1, totalPages)}" th:classappend="${currentPage == i} ? 'active'">
-                    <a class="page-link" th:href="@{/admin/users(page=${i}, kw=${param.kw}, roleId=${param.roleId}, statusId=${param.statusId})}" th:text="${i}">1</a>
+                    <a class="page-link" 
+                       th:href="@{/admin/users(page=${i}, kw=${kw}, roleId=${roleId}, statusId=${statusId})}" 
+                       th:text="${i}">1</a>
                 </li>
+
                 <li class="page-item" th:classappend="${currentPage == totalPages} ? 'disabled'">
-                    <a class="page-link" th:href="@{/admin/users(page=${currentPage + 1}, kw=${param.kw}, roleId=${param.roleId}, statusId=${param.statusId})}">Sau</a>
+                    <a class="page-link" 
+                       th:href="@{/admin/users(page=${currentPage + 1}, kw=${kw}, roleId=${roleId}, statusId=${statusId})}">Sau</a>
                 </li>
             </ul>
         </nav>

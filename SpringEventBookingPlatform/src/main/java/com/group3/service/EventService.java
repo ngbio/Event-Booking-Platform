@@ -11,13 +11,13 @@ public interface EventService {
 
     List<EventResponse> getEvents(Map<String, String> params);
 
-    EventResponse getEventById(Integer id);
+    EventResponse getEventById(Integer eventId);
 
     EventResponse createEvent(EventRequest request, MultipartFile image, MultipartFile video, User organizer);
 
     EventResponse updateEvent(Integer id, EventRequest request, MultipartFile image, MultipartFile video);
 
-    boolean deleteEvent(Integer id);
+    boolean deleteEvent(Integer eventId);
 
     int getAvailableTickets(Integer eventId);
 
@@ -26,4 +26,10 @@ public interface EventService {
     Long countEvents(Map<String, String> params);
 
     List<EventResponse> getEventsByIds(List<Integer> EventIds);
+    
+    EventResponse getEventByIdForAdmin(Integer evenId);
+    
+    List<EventResponse> getEventsForRefund();
+    
+    List<EventResponse> getEventsForSettlement();
 }

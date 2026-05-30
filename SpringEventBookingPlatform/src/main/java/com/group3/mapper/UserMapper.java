@@ -26,6 +26,8 @@ public class UserMapper {
         response.setFullName(user.getFullName());
         response.setPhone(user.getPhone());
         response.setAvatar(user.getAvatar());
+        response.setCreatedDate(user.getCreatedDate());
+        response.setUpdatedDate(user.getUpdatedDate());
         if (user.getAttendee() != null) {
             response.setBirthDate(user.getAttendee().getBirthDate());
             response.setGender(user.getAttendee().getGender());
@@ -45,7 +47,6 @@ public class UserMapper {
             response.setStatusId(user.getStatusId().getId());
             response.setStatusName(user.getStatusId().getName());
         }
-
         return response;
     }
 
