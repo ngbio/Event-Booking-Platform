@@ -31,6 +31,7 @@ import com.group3.repository.StatusEventRepository;
 import com.group3.repository.UserRepository;
 import com.group3.service.OrganizerEventService;
 import com.group3.utils.DTOMapper;
+import com.group3.utils.MediaFileValidator;
 import java.util.ArrayList;
 
 @Service
@@ -108,17 +109,24 @@ public class OrganizerEventServiceImpl implements OrganizerEventService {
     }
 
     private void handleMediaUpload(Event event, MultipartFile image, MultipartFile video) {
-        try {
-            if (image != null && !image.isEmpty()) {
+        MediaFileValidator.validateEventMedia(image, video);
+
+        if (image != null && !image.isEmpty()) {
+            try {
                 Map res = this.cloudinary.uploader().upload(image.getBytes(), ObjectUtils.asMap("resource_type", "auto"));
                 event.setImageUrl(res.get("secure_url").toString());
+            } catch (IOException ex) {
+                throw new BusinessException("Loi upload anh, vui long thu lai!");
             }
-            if (video != null && !video.isEmpty()) {
+        }
+
+        if (video != null && !video.isEmpty()) {
+            try {
                 Map res = this.cloudinary.uploader().upload(video.getBytes(), ObjectUtils.asMap("resource_type", "video"));
                 event.setVideoUrl(res.get("secure_url").toString());
+            } catch (IOException ex) {
+                throw new BusinessException("Loi upload video, vui long kiem tra file MP4 va dung luong toi da 20MB.");
             }
-        } catch (IOException ex) {
-            throw new BusinessException("Lỗi upload file media, vui lòng thử lại!");
         }
     }
 
