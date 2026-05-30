@@ -25,11 +25,12 @@ public class UserResponse {
 
     private Integer statusId;
     private String statusName;
-
+    private Date createdDate;
+    private Date updatedDate;
     public UserResponse() {
     }
 
-    public UserResponse(Integer id, String email, String fullName, String phone, String avatar, Date birthDate, String gender, String identityCard, String organizationName, String taxCode, Integer roleId, String roleName, Integer statusId, String statusName) {
+    public UserResponse(Integer id, String email, String fullName, String phone, String avatar, Date birthDate, String gender, String identityCard, String organizationName, String taxCode, Integer roleId, String roleName, Integer statusId, String statusName, Date createdDate, Date updatedDate) {
         this.id = id;
         this.email = email;
         this.fullName = fullName;
@@ -44,7 +45,11 @@ public class UserResponse {
         this.roleName = roleName;
         this.statusId = statusId;
         this.statusName = statusName;
+        this.createdDate = createdDate;
+        this.updatedDate = updatedDate;
     }
+
+    
 
     public Integer getId() {
         return id;
@@ -157,7 +162,21 @@ public class UserResponse {
     public void setGender(String gender) {
         this.gender = gender;
     }
-    
-    
+
+    public Date getCreatedDate() {
+        return createdDate;
+    }
+
+    public void setCreatedDate(Date createdDate) {
+        this.createdDate = createdDate;
+    }
+
+    public Date getUpdatedDate() {
+        return updatedDate;
+    }
+
+    public void setUpdatedDate(Date updatedDate) {
+        this.updatedDate = updatedDate;
+    }
 
 }

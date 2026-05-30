@@ -28,9 +28,7 @@ public class StatusEventRepositoryImpl implements StatusEventRepository {
     @Override
     public StatusEvent getStatusEventById(Integer id) {
         Session session = this.factory.getObject().getCurrentSession();
-        Query<StatusEvent> q = session.createNamedQuery("StatusEvent.findById", StatusEvent.class);
-        q.setParameter("id", id);
-        return q.uniqueResult();
+        return session.get(StatusEvent.class, id);
     }
 
     @Override

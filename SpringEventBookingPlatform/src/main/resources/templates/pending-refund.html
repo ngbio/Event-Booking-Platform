@@ -1,0 +1,65 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <title>Quản lý Hoàn tiền</title>
+    <th:block th:replace="base :: css"></th:block>
+</head>
+<body>
+    <div th:replace="base :: header"></div>
+
+    <section class="container mt-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2>Xử lý hoàn tiền</h2>
+        </div>
+
+        <div th:if="${errMsg != null}" class="alert alert-danger alert-dismissible fade show shadow-sm">
+            <strong>Lỗi!</strong> <span th:text="${errMsg}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        <div th:if="${successMsg != null}" class="alert alert-success alert-dismissible fade show shadow-sm">
+            <strong>Thành công!</strong> <span th:text="${successMsg}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+
+        <div th:if="${events == null or #lists.isEmpty(events)}" class="alert alert-info text-center mt-4 shadow-sm p-5 border">
+            <i class="bi bi-check-circle text-success" style="font-size: 1rem;"></i>
+            <p class="text-muted mb-0">Hiện tại không có sự kiện nào bị hủy cần phải hoàn tiền.</p>
+        </div>
+
+        <table class="table table-hover table-bordered align-middle bg-white shadow-sm mt-3">
+            <thead class="table-dark text-center">
+                <tr>
+                    <th>Tên sự kiện</th>
+                    <th>Ngày bắt đầu</th>
+                    <th>Số lượng vé</th>
+                    <th>Số tiền hoàn trả</th>
+                    <th>Trạng thái</th>
+                    <th>Hành động</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="e : ${events}">
+                    <td class="fw-bold">
+                        <a th:href="@{/admin/finance/events/{id}/bookings(id=${e.id})}" th:text="${e.title}" class="text-decoration-none text-danger"></a>
+                    </td>
+                    <td class="text-center" th:text="${#dates.format(e.startTime, 'dd/MM/yyyy HH:mm')}"></td>
+                    <td class="text-center fw-bold" th:text="${e.soldTickets}"></td>
+                    <td class="text-center fw-bold" th:text="${e.soldTickets*e.price}"></td>
+                    
+                    <td class="text-center">
+                        <span class="badge bg-warning text-dark">Chờ hoàn tiền</span>
+                    </td>
+                    <td class="text-center">
+                        <form th:action="@{/admin/finance/approve-refund}" method="post" class="m-0">
+                            <input type="hidden" name="id" th:value="${e.id}"/>
+                            <button type="submit" class="btn btn-sm btn-danger fw-bold">Duyệt Hoàn Tiền</button>
+                        </form>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+
+    <div th:replace="base :: footer"></div>
+</body>
+</html>

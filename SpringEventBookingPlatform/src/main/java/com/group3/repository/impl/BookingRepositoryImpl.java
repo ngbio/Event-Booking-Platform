@@ -2,6 +2,7 @@ package com.group3.repository.impl;
 
 import com.group3.pojo.Booking;
 import com.group3.repository.BookingRepository;
+import com.group3.repository.StatusBookingRepository;
 import jakarta.persistence.NoResultException;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
@@ -34,6 +35,9 @@ public class BookingRepositoryImpl implements BookingRepository {
 
     @Autowired
     private LocalSessionFactoryBean factory;
+    
+    @Autowired
+    private StatusBookingRepository statusBookingRepo;
 
     @Override
     public Booking addBooking(Booking booking) {
@@ -275,5 +279,25 @@ public class BookingRepositoryImpl implements BookingRepository {
         } catch (ParseException ex) {
             return null;
         }
+    }
+
+    
+    @Override
+    public int updateStatusByEventId(Integer eventId, Integer oldStatusId, Integer newStatusId) {
+        if (eventId == null || oldStatusId == null || newStatusId == null) {
+            return 0;
+        }
+        Session session = this.factory.getObject().getCurrentSession();
+
+        String hql = "UPDATE Booking b SET b.statusId.id = :newStatusId " +
+                     "WHERE b.eventId.id = :eventId AND b.statusId.id = :oldStatusId";
+
+        org.hibernate.query.MutationQuery query = session.createMutationQuery(hql);
+        
+        query.setParameter("eventId", eventId);
+        query.setParameter("oldStatusId", oldStatusId);
+        query.setParameter("newStatusId", newStatusId);
+
+        return query.executeUpdate(); 
     }
 }

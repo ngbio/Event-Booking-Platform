@@ -15,5 +15,7 @@ public interface BookingService {
     BookingResponse getBookingDetail(Integer bookingId, Principal principal);
 
     boolean cancelBooking(Integer bookingId, Principal principal);
-
+    
+    int updateStatusByEventId(Integer eventId, Integer oldStatusId, Integer newStatusId);
+    List<BookingResponse> getBookingsByEventId(Integer eventId, Map<String, String> params);
 }

@@ -1,7 +1,7 @@
 <!doctype html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <title>Quản lý Sự kiện</title>
+    <head>
+        <title>Quản lý Sự kiện</title>
     <th:block th:replace="base :: css"></th:block>
 </head>
 <body>
@@ -9,11 +9,17 @@
 
     <section class="container mt-4">
         <div class="d-flex justify-content-between align-items-center mb-4">
-            <h2>Quản lý Sự kiện</h2>
+            <h2 th:if="${fullName != null}" class="mb-4">
+                Danh sách sự kiện của: <span class="text-primary" th:text="${fullName}">Tên nhà tổ chức</span>
+            </h2>
+
+            <h2 th:if="${fullName == null}" class="mb-4">
+                Quản lý Sự kiện
+            </h2>
 
             <div class="w-75">
-                <form th:action="@{/admin/events}" method="GET" class="d-flex gap-2 justify-content-end">
-                    
+                <form th:action="@{''}" method="GET" class="d-flex gap-2 justify-content-end">
+
                     <select name="statusId" class="form-select" style="width: 180px;">
                         <option value="">-- Tất cả trạng thái --</option>
                         <option value="1" th:selected="${param.statusId != null and param.statusId[0] == '1'}">Chờ Duyệt</option>
@@ -28,17 +34,13 @@
                         <option value="category" th:selected="${searchBy == 'category'}">Tìm theo danh mục</option>
                     </select>
 
-                    <input type="text" name="kw" class="form-control" 
-                           placeholder="Nhập từ khóa..." 
-                           th:value="${param.kw}" autocomplete="off" style="width: 220px;">
-
                     <button type="submit" class="btn btn-outline-secondary text-nowrap">Tìm</button>
-                    
+
                     <a th:if="${(param.kw != null and param.kw[0] != '') or (param.statusId != null and param.statusId[0] != '') or (param.searchBy != null and param.searchBy[0] != 'title')}" 
-                       th:href="@{/admin/events}" class="btn btn-danger text-nowrap">Xóa lọc</a>
+                       th:href="@{''(organizerId=${param.organizerId})}" class="btn btn-danger text-nowrap">Xóa lọc</a>
 
                     <a th:href="@{/admin/events(statusId=1)}" class="btn btn-warning text-dark text-nowrap fw-bold">
-                         Cần duyệt
+                        Cần duyệt
                     </a>
                 </form>
             </div>
@@ -91,7 +93,7 @@
 
                             <ul class="dropdown-menu dropdown-menu-end shadow">
                                 <li>
-                                    <a class="dropdown-item py-2" th:href="@{/admin/events/detail(id=${e.id})}">Xem chi tiết</a>
+                                    <a class="dropdown-item py-2" th:href="@{/admin/events/{id}(id=${e.id})}">Xem chi tiết</a>
                                 </li>
 
                                 <li th:if="${e.statusId == 1 or e.statusId == 2 or e.soldTickets == 0}"><hr class="dropdown-divider"></li>
@@ -132,13 +134,19 @@
         <nav th:if="${totalPages > 1}" aria-label="Page navigation" class="mt-4">
             <ul class="pagination justify-content-center">
                 <li class="page-item" th:classappend="${currentPage == 1} ? 'disabled'">
-                    <a class="page-link" th:href="@{/admin/events(page=${currentPage - 1}, kw=${param.kw}, searchBy=${searchBy}, statusId=${param.statusId})}">Trước</a>
+                    <a class="page-link" 
+                       th:href="@{''(page=${currentPage - 1}, kw=${param.kw}, searchBy=${param.searchBy}, statusId=${param.statusId}, organizerId=${param.organizerId})}">Trước</a>
                 </li>
+
                 <li class="page-item" th:each="i : ${#numbers.sequence(1, totalPages)}" th:classappend="${currentPage == i} ? 'active'">
-                    <a class="page-link" th:href="@{/admin/events(page=${i}, kw=${param.kw}, searchBy=${searchBy}, statusId=${param.statusId})}" th:text="${i}">1</a>
+                    <a class="page-link" 
+                       th:href="@{''(page=${i}, kw=${param.kw}, searchBy=${param.searchBy}, statusId=${param.statusId}, organizerId=${param.organizerId})}" 
+                       th:text="${i}">1</a>
                 </li>
+
                 <li class="page-item" th:classappend="${currentPage == totalPages} ? 'disabled'">
-                    <a class="page-link" th:href="@{/admin/events(page=${currentPage + 1}, kw=${param.kw}, searchBy=${searchBy}, statusId=${param.statusId})}">Sau</a>
+                    <a class="page-link" 
+                       th:href="@{''(page=${currentPage + 1}, kw=${param.kw}, searchBy=${param.searchBy}, statusId=${param.statusId}, organizerId=${param.organizerId})}">Sau</a>
                 </li>
             </ul>
         </nav>
