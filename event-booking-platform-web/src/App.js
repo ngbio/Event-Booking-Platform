@@ -13,6 +13,8 @@ import BookingList from "./screens/bookings/BookingList";
 import BookingDetail from "./screens/bookings/BookingDetail";
 import TicketList from "./screens/tickets/TicketList";
 import TicketDetail from "./screens/tickets/TicketDetail";
+import ChatList from "./screens/chats/ChatList";
+import ChatRoom from "./screens/chats/ChatRoom";
 import OrganizerEventList from "./screens/organizer/events/OrganizerEventList";
 import OrganizerEventDetail from "./screens/organizer/events/OrganizerEventDetail";
 import OrganizerEventForm from "./screens/organizer/events/OrganizerEventForm";
@@ -48,6 +50,8 @@ const App = () => {
                 <Route path="/bookings/:bookingId" element={<BookingDetail />} />
                 <Route path="/tickets" element={<TicketList />} />
                 <Route path="/tickets/:ticketId" element={<TicketDetail />} />
+                <Route path="/chats" element={<ChatList />} />
+                <Route path="/chats/:chatId" element={<ChatRoom />} />
                 <Route path="/organizer/events" element={<OrganizerEventList />} />
                 <Route path="/organizer/events/new" element={<OrganizerEventForm />} />
                 <Route path="/organizer/events/:eventId" element={<OrganizerEventDetail />} />

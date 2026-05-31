@@ -74,6 +74,26 @@ const EventDetail = () => {
         }
     }
 
+    const openOrganizerChat = () => {
+        if (!user) {
+            nav(`/login?next=/events/${event.id}`);
+            return;
+        }
+
+        const attendeeId = user.roleId === 3 ? user.id : "attendee";
+        const chatId = `event_${event.id}_attendee_${attendeeId}_organizer_${event.organizerId}`;
+        nav(`/chats/${chatId}`, {
+            state: {
+                eventId: event.id,
+                eventTitle: event.title,
+                attendeeId: user.roleId === 3 ? user.id : null,
+                attendeeName: user.fullName || user.email,
+                organizerId: event.organizerId,
+                organizerName: event.organizerName
+            }
+        });
+    }
+
     const renderBookingAction = () => {
         if (event.availableTickets <= 0)
             return <Button className="btn-pink w-100 mt-4" disabled>Hết vé</Button>;
@@ -159,6 +179,9 @@ const EventDetail = () => {
                         </div>
 
                         {renderBookingAction()}
+                        <Button className="btn-outline-pink w-100 mt-3" onClick={openOrganizerChat}>
+                            Chat với nhà tổ chức
+                        </Button>
                     </div>
                 </Col>
             </Row>
