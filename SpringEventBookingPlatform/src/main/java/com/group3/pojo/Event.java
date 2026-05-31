@@ -48,7 +48,7 @@ import java.util.Date;
     @NamedQuery(name = "Event.findByPrice", query = "SELECT e FROM Event e WHERE e.price = :price"),
     @NamedQuery(name = "Event.findBySoldTickets", query = "SELECT e FROM Event e WHERE e.soldTickets = :soldTickets"),
     @NamedQuery(name = "Event.findByListingFee", query = "SELECT e FROM Event e WHERE e.listingFee = :listingFee"),
-    @NamedQuery(name = "Event.findByIsPaidFee", query = "SELECT e FROM Event e WHERE e.isPaidFee = :isPaidFee"),
+    @NamedQuery(name = "Event.findByIsSettlement", query = "SELECT e FROM Event e WHERE e.isSettlement = :isSettlement"),
     @NamedQuery(name = "Event.findBySettlementCode", query = "SELECT e FROM Event e WHERE e.settlementCode = :settlementCode"),
     @NamedQuery(name = "Event.findByCreatedDate", query = "SELECT e FROM Event e WHERE e.createdDate = :createdDate"),
     @NamedQuery(name = "Event.findByUpdatedDate", query = "SELECT e FROM Event e WHERE e.updatedDate = :updatedDate")})
@@ -103,8 +103,8 @@ public class Event implements Serializable {
     private int soldTickets;
     @Column(name = "listing_fee")
     private BigDecimal listingFee;
-    @Column(name = "is_paid_fee")
-    private Boolean isPaidFee;
+    @Column(name = "is_settlement")
+    private Boolean isSettlement;
     @Size(max = 100)
     @Column(name = "settlement_code")
     private String settlementCode;
@@ -121,8 +121,6 @@ public class Event implements Serializable {
     private Collection<Category> categoryCollection;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "eventId")
     private Collection<Booking> bookingCollection;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "eventId")
-    private Collection<EventFee> eventFeeCollection;
     @JoinColumn(name = "status_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
     private StatusEvent statusId;
@@ -243,14 +241,16 @@ public class Event implements Serializable {
         this.listingFee = listingFee;
     }
 
-    public Boolean getIsPaidFee() {
-        return isPaidFee;
+    public Boolean getIsSettlement() {
+        return isSettlement;
     }
 
-    public void setIsPaidFee(Boolean isPaidFee) {
-        this.isPaidFee = isPaidFee;
+    public void setIsSettlement(Boolean isSettlement) {
+        this.isSettlement = isSettlement;
     }
-
+    
+    
+    
     public String getSettlementCode() {
         return settlementCode;
     }
@@ -289,14 +289,6 @@ public class Event implements Serializable {
 
     public void setBookingCollection(Collection<Booking> bookingCollection) {
         this.bookingCollection = bookingCollection;
-    }
-
-    public Collection<EventFee> getEventFeeCollection() {
-        return eventFeeCollection;
-    }
-
-    public void setEventFeeCollection(Collection<EventFee> eventFeeCollection) {
-        this.eventFeeCollection = eventFeeCollection;
     }
 
     public StatusEvent getStatusId() {

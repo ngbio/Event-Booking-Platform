@@ -1,10 +1,9 @@
 package com.group3.controllers;
 
 import com.group3.dto.response.EventResponse;
-import com.group3.pojo.Event;
 import com.group3.service.BookingService;
 import com.group3.service.EventService;
-import java.util.List;
+import java.util.HashMap;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -60,11 +59,24 @@ public class FinanceController {
     }
 
     @PostMapping("/process-settlement")
-    public String processSettlement(@RequestParam("id") Integer eventId, RedirectAttributes redirectAttributes) {
+    public String processSettlement(@RequestParam("id") Integer eventId, 
+                                    @RequestParam("settlementCode") String settlementCode, 
+                                    RedirectAttributes redirectAttributes) {
         try {
-            redirectAttributes.addFlashAttribute("successMsg", "Đã phê duyệt và chuyển tiền quyết toán thành công sang tài khoản Nhà tổ chức!");
+            if (settlementCode == null || settlementCode.trim().isEmpty()) {
+                redirectAttributes.addFlashAttribute("errMsg", "Lỗi: Vui lòng nhập mã giao dịch ngân hàng!");
+                return "redirect:/admin/finance/settlements";
+            }
+
+            boolean isSuccess = eventService.processSettlement(eventId, settlementCode);
+            
+            if (isSuccess) {
+                redirectAttributes.addFlashAttribute("successMsg", "Thành công! Đã quyết toán với mã giao dịch: " + settlementCode);
+            } else {
+                redirectAttributes.addFlashAttribute("errMsg", "Thất bại: Không tìm thấy sự kiện hoặc sự kiện không hợp lệ.");
+            }
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("errMsg", "Thao tác xử lý quyết toán dòng tiền thất bại.");
+            redirectAttributes.addFlashAttribute("errMsg", "Hệ thống gặp lỗi trong quá trình xử lý quyết toán.");
         }
         return "redirect:/admin/finance/settlements";
     }
@@ -73,15 +85,14 @@ public class FinanceController {
     public String viewEventBookings(@PathVariable("eventId") Integer eventId,
             @RequestParam Map<String, String> params,
             Model model) {
-        EventResponse event = eventService.getEventById(eventId);
+        EventResponse event = eventService.getEventByIdForAdmin(eventId);
         if (event == null) {
             return "redirect:/admin/finance/pending-refund";
         }
-
         model.addAttribute("event", event);
         model.addAttribute("bookings", bookingService.getBookingsByEventId(eventId, params));
         model.addAttribute("activePage", "finance");
-        return "finance-event-bookings";
+        return "bookings";
     }
 
 }

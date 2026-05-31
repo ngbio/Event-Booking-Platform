@@ -81,7 +81,7 @@ public class BookingRepositoryImpl implements BookingRepository {
         if (userId != null) {
             predicates.add(b.equal(root.get("attendeeId").get("user").get("id"), userId));
         }
-
+        
         applyWhereAndOrder(q, b, root, predicates);
 
         Query<Booking> query = session.createQuery(q);
@@ -201,13 +201,27 @@ public class BookingRepositoryImpl implements BookingRepository {
             return predicates;
         }
 
+        String kw = params.get("kw"); 
         String statusId = params.get("statusId");
         String eventId = params.get("eventId");
         Date fromDate = parseDate(params.get("fromDate"), false);
         Date toDate = parseDate(params.get("toDate"), true);
-
+        if (kw != null && !kw.trim().isEmpty()) {
+            String keyword = "%" + kw.trim().toLowerCase() + "%";
+            Predicate matchEmail = b.like(b.lower(root.get("attendeeId").get("user").get("email")), keyword);
+            predicates.add(b.or(matchEmail));
+        }
         if (statusId != null && !statusId.isBlank()) {
-            predicates.add(b.equal(root.get("statusId").get("id"), Integer.parseInt(statusId)));
+            if (statusId.contains(",")) {
+                String[] ids = statusId.split(",");
+                List<Integer> listIds = new ArrayList<>();
+                for (String id : ids) {
+                    listIds.add(Integer.parseInt(id.trim()));
+                }
+                predicates.add(root.get("statusId").get("id").in(listIds));
+            } else {
+                predicates.add(b.equal(root.get("statusId").get("id"), Integer.parseInt(statusId)));
+            }
         }
         if (eventId != null && !eventId.isBlank()) {
             predicates.add(b.equal(root.get("eventId").get("id"), Integer.parseInt(eventId)));
@@ -226,7 +240,7 @@ public class BookingRepositoryImpl implements BookingRepository {
         if (!predicates.isEmpty()) {
             q.where(predicates.toArray(Predicate[]::new));
         }
-        q.orderBy(b.desc(root.get("id")));
+        q.orderBy(b.asc(root.get("createdDate")));
     }
 
     private void applyPagination(Query<Booking> query, Map<String, String> params) {
@@ -300,4 +314,5 @@ public class BookingRepositoryImpl implements BookingRepository {
 
         return query.executeUpdate(); 
     }
+
 }

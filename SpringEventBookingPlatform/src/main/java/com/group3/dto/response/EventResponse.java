@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 public class EventResponse {
+
     private Integer id;
     private String title;
     private String description;
@@ -20,27 +21,27 @@ public class EventResponse {
     private String categoryName;
     private int soldTickets;
     private BigDecimal listingFee;
-    private Boolean isPaidFee;
+    private boolean isSettlement;
     private String settlementCode;
     private Integer statusId;
     private String statusName;
-    
+
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Ho_Chi_Minh")
     private Date startTime;
-    
+
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Ho_Chi_Minh")
     private Date endTime;
-    
+
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Ho_Chi_Minh")
     private Date createdDate;
-    
+
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Ho_Chi_Minh")
     private Date updatedDate;
 
     public EventResponse() {
     }
 
-    public EventResponse(Integer id, String title, String description, String imageUrl, String videoUrl, Integer organizerId, String organizerName, String location, int totalTickets, int availableTickets, BigDecimal price, Integer categoryId, String categoryName, int soldTickets, BigDecimal listingFee, Boolean isPaidFee, String settlementCode, Integer statusId, String statusName, Date startTime, Date endTime, Date createdDate, Date updatedDate) {
+    public EventResponse(Integer id, String title, String description, String imageUrl, String videoUrl, Integer organizerId, String organizerName, String location, int totalTickets, int availableTickets, BigDecimal price, Integer categoryId, String categoryName, int soldTickets, BigDecimal listingFee, boolean isSettlement, String settlementCode, Integer statusId, String statusName, Date startTime, Date endTime, Date createdDate, Date updatedDate) {
         this.id = id;
         this.title = title;
         this.description = description;
@@ -56,7 +57,7 @@ public class EventResponse {
         this.categoryName = categoryName;
         this.soldTickets = soldTickets;
         this.listingFee = listingFee;
-        this.isPaidFee = isPaidFee;
+        this.isSettlement = isSettlement;
         this.settlementCode = settlementCode;
         this.statusId = statusId;
         this.statusName = statusName;
@@ -65,8 +66,6 @@ public class EventResponse {
         this.createdDate = createdDate;
         this.updatedDate = updatedDate;
     }
-
-    
 
     public Integer getId() {
         return id;
@@ -220,12 +219,12 @@ public class EventResponse {
         this.listingFee = listingFee;
     }
 
-    public Boolean getIsPaidFee() {
-        return isPaidFee;
+    public boolean isIsSettlement() {
+        return isSettlement;
     }
 
-    public void setIsPaidFee(Boolean isPaidFee) {
-        this.isPaidFee = isPaidFee;
+    public void setIsSettlement(boolean isSettlement) {
+        this.isSettlement = isSettlement;
     }
 
     public String getSettlementCode() {
@@ -235,8 +234,8 @@ public class EventResponse {
     public void setSettlementCode(String settlementCode) {
         this.settlementCode = settlementCode;
     }
-    
-       public Integer getStatusId() {
+
+    public Integer getStatusId() {
         return statusId;
     }
 

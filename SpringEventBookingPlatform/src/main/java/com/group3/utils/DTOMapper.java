@@ -13,21 +13,20 @@ import com.group3.pojo.Role;
 import com.group3.pojo.User;
 import com.group3.dto.response.BookingResponse;
 import com.group3.dto.response.CategoryResponse;
-import com.group3.dto.response.EventFeeResponse;
+import com.group3.dto.response.EventRefundResponse;
 import com.group3.dto.response.EventResponse;
+import com.group3.dto.response.EventSettlementResponse;
 import com.group3.dto.response.PaymentResponse;
 import com.group3.dto.response.RoleResponse;
 import com.group3.dto.response.TicketResponse;
 import com.group3.dto.response.UserResponse;
 import com.group3.mapper.BookingMapper;
 import com.group3.mapper.CategoryMapper;
-import com.group3.mapper.EventFeeMapper;
 import com.group3.mapper.EventMapper;
 import com.group3.mapper.PaymentMapper;
 import com.group3.mapper.RoleMapper;
 import com.group3.mapper.TicketMapper;
 import com.group3.mapper.UserMapper;
-import com.group3.pojo.EventFee;
 import com.group3.pojo.TicketDetail;
 import java.util.List;
 
@@ -48,7 +47,7 @@ public class DTOMapper {
     public static RoleResponse toRoleResponse(Role role) {
         return RoleMapper.toResponse(role);
     }
- 
+
     public static BookingResponse toBookingResponse(Booking booking) {
         return BookingMapper.toResponse(booking);
     }
@@ -88,35 +87,43 @@ public class DTOMapper {
     public static List<RoleResponse> toRoleResponseList(List<Role> roles) {
         return RoleMapper.toResponseList(roles);
     }
-    
-    public static Event toEventEntity(EventRequest request){
+
+    public static Event toEventEntity(EventRequest request) {
         return EventMapper.toEntity(request);
     }
-    
-    public static Event toEventEntity(EventRequest request, Event existingEvent){
+
+    public static Event toEventEntity(EventRequest request, Event existingEvent) {
         return EventMapper.toEntity(request, existingEvent);
     }
-    
-    public static User toUserEntity(OrganizerRegisterRequest request){
+
+    public static User toUserEntity(OrganizerRegisterRequest request) {
         return UserMapper.toEntity(request);
     }
-    public static User toUserEntity(AttendeeRegisterRequest request){
+
+    public static User toUserEntity(AttendeeRegisterRequest request) {
         return UserMapper.toEntity(request);
     }
-    
-    public static User toUserEntity(UserUpdateRequest request, User user){
+
+    public static User toUserEntity(UserUpdateRequest request, User user) {
         return UserMapper.toEntity(request, user);
     }
-    
-    public static Category toCategoryEntity(CategoryRequest request){
+
+    public static Category toCategoryEntity(CategoryRequest request) {
         return CategoryMapper.toEntity(request);
     }
-    
-    public static EventFeeResponse toEventFeeResponse(EventFee fee){
-        return EventFeeMapper.toResponse(fee);
+
+    public static EventRefundResponse toEventRefundResponse(Event event) {
+        return EventMapper.toEventRefundResponse(event);
+    }
+
+    public static List<EventRefundResponse> toEventRefundResponseList(List<Event> events) {
+        return EventMapper.toEventRefundResponseList(events);
     }
     
-    public static List<EventFeeResponse> toEventFeeResponseList(List<EventFee> fees){
-        return EventFeeMapper.toResponseList(fees);
+    public static EventSettlementResponse toEventSettlementResponse(Event event){
+        return EventMapper.toEventSettlementResponse(event);
+    }  
+    public static List<EventSettlementResponse> toEventSettlementResponseList(List<Event> events) {
+        return EventMapper.toEventSettlementResponseList(events);
     }
 }

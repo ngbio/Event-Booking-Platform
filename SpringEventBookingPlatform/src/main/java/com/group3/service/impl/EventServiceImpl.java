@@ -3,7 +3,9 @@ package com.group3.service.impl;
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
 import com.group3.dto.request.EventRequest;
+import com.group3.dto.response.EventRefundResponse;
 import com.group3.dto.response.EventResponse;
+import com.group3.dto.response.EventSettlementResponse;
 import com.group3.exceptions.ResourceNotFoundException;
 import com.group3.pojo.Category;
 import com.group3.pojo.Event;
@@ -26,8 +28,8 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -47,13 +49,14 @@ public class EventServiceImpl implements EventService {
 
     @Autowired
     private StatusEventRepository statusEventRepo;
-    @Value("${event.feePerTicket}")
-    private double feePerTicket;
 
-    private static final Integer PUBLISHED = 2;
-    private static final Integer PENDING_REVIEW = 1;
-    private static final Integer DRAFT = 3;
-    private static final Integer COMPLETED = 4;
+    @Autowired
+    private Environment env;
+
+    private static final int PUBLISHED = 2;
+    private static final int PENDING_REVIEW = 1;
+    private static final int DRAFT = 3;
+    private static final int COMPLETED = 4;
 
     private void refreshExpiredPublishedEvents() {
         this.eventRepo.updateExpiredPublishedEvents(PUBLISHED, COMPLETED, new Date());
@@ -62,7 +65,7 @@ public class EventServiceImpl implements EventService {
     private Event validateAndGetPublicEvent(Integer eventId) {
         Event event = eventRepo.getEventById(eventId);
         Integer statusId = event != null && event.getStatusId() != null ? event.getStatusId().getId() : null;
-        if (event == null || !PUBLISHED.equals(statusId)) {
+        if (event == null || PUBLISHED!=statusId) {
             throw new ResourceNotFoundException("Không tìm thấy sự kiện hoặc sự kiện chưa mở bán");
         }
         return event;
@@ -139,26 +142,15 @@ public class EventServiceImpl implements EventService {
             }
             event.setCategoryCollection(categories);
         }
-        if (event.getPrice().compareTo(BigDecimal.ZERO) > 0) {
-            // Sự kiện CÓ BÁN VÉ -> Thu phí 2,000 VND / vé (Hải có thể thay đổi số này)
-            double calculatedFee = event.getTotalTickets() * feePerTicket;
-            event.setListingFee(BigDecimal.valueOf(calculatedFee));
-            event.setIsPaidFee(false); // Chưa đóng tiền
 
-            // Gán trạng thái 3: DRAFT (Lưu nháp chờ thanh toán phí)
-            StatusEvent statusDraft = this.statusEventRepo.getStatusEventById(DRAFT);
-            event.setStatusId(statusDraft);
-        } else {
-            // Sự kiện MIỄN PHÍ -> Không thu phí sàn
-            event.setListingFee(BigDecimal.ZERO);
-            event.setIsPaidFee(true); // Coi như đã hoàn tất nghĩa vụ phí
-
-            // Gán trạng thái 2: PENDING_REVIEW (Đẩy thẳng cho Admin chờ duyệt nội dung)
-            StatusEvent statusPending = this.statusEventRepo.getStatusEventById(PENDING_REVIEW);
-            event.setStatusId(statusPending);
-        }
         event.setSoldTickets(0);
+        event.setListingFee(BigDecimal.ZERO);
+        event.setIsSettlement(false);
         event.setSettlementCode(null);
+
+        StatusEvent statusPending = this.statusEventRepo.getStatusEventById(PENDING_REVIEW);
+        event.setStatusId(statusPending);
+
         return DTOMapper.toEventResponse(this.eventRepo.addEvent(event));
     }
 
@@ -182,10 +174,8 @@ public class EventServiceImpl implements EventService {
             event.setPrice(request.getPrice());
             event.setTotalTickets(request.getTotalTickets());
 
-            //update date
             event.setUpdatedDate(new Date());
 
-            // Upload image if provided
             if (image != null && !image.isEmpty()) {
                 try {
                     Map res = this.cloudinary.uploader().upload(image.getBytes(),
@@ -196,7 +186,6 @@ public class EventServiceImpl implements EventService {
                 }
             }
 
-            // Upload video if provided
             if (video != null && !video.isEmpty()) {
                 try {
                     Map res = this.cloudinary.uploader().upload(video.getBytes(),
@@ -206,8 +195,6 @@ public class EventServiceImpl implements EventService {
                     Logger.getLogger(EventServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
-
-            // Update categories if provided
             if (request.getCategoryIds() != null) {
                 String[] categoryIds = request.getCategoryIds().split(",");
                 Collection<Category> categories = new ArrayList<>();
@@ -219,22 +206,16 @@ public class EventServiceImpl implements EventService {
                 }
                 event.setCategoryCollection(categories);
             }
-            if (event.getPrice().compareTo(BigDecimal.ZERO) > 0) {
-                //Su kien co ban ve => Tinh lai phi & chuyen ve DRAFT
-                double calculatedFee = event.getTotalTickets() * feePerTicket;
-                event.setListingFee(BigDecimal.valueOf(calculatedFee));
-                event.setIsPaidFee(false); //Thanh toan lai phi chenh lech
-
-                StatusEvent statusDraft = this.statusEventRepo.getStatusEventById(DRAFT);
-                event.setStatusId(statusDraft);
+            if (event.getPrice().compareTo(BigDecimal.ZERO) > 0 && event.getSoldTickets() > 0) {
+                BigDecimal totalRev = event.getPrice().multiply(BigDecimal.valueOf(event.getSoldTickets()));
+                Double fee = env.getProperty("event.fee", Double.class);
+                BigDecimal calculatedFee = totalRev.multiply(BigDecimal.valueOf(fee));
+                event.setListingFee(calculatedFee);
             } else {
-                // Su kien mien thi => Khong tinh phi va day ve PENDING_REVIEW
                 event.setListingFee(BigDecimal.ZERO);
-                event.setIsPaidFee(true);
-
-                StatusEvent statusPending = this.statusEventRepo.getStatusEventById(PENDING_REVIEW);
-                event.setStatusId(statusPending);
             }
+            StatusEvent statusPending = this.statusEventRepo.getStatusEventById(PENDING_REVIEW);
+            event.setStatusId(statusPending);
         }
         return DTOMapper.toEventResponse(this.eventRepo.updateEvent(event));
     }
@@ -251,7 +232,7 @@ public class EventServiceImpl implements EventService {
         if (event == null) {
             return 0;
         }
-        if (event.getStatusId() == null || !PUBLISHED.equals(event.getStatusId().getId())) {
+        if (event.getStatusId() == null || PUBLISHED!=event.getStatusId().getId()) {
             return 0;
         }
         return event.getTotalTickets() - event.getSoldTickets();
@@ -263,16 +244,18 @@ public class EventServiceImpl implements EventService {
         if (event == null) {
             return false;
         }
-
         int availableTickets = event.getTotalTickets() - event.getSoldTickets();
-
-        // Kiem tra co du ve de ban khong
         if (availableTickets >= quantityBooked) {
-            //Cap nhat lai so ve da ban
             int newSoldAmount = event.getSoldTickets() + quantityBooked;
             event.setSoldTickets(newSoldAmount);
-
-            // Luu su kien de cap nhat kho ve
+            if (event.getPrice() != null && event.getPrice().compareTo(BigDecimal.ZERO) > 0) {
+                BigDecimal totalRevenue = event.getPrice().multiply(BigDecimal.valueOf(newSoldAmount));
+                Double fee = env.getProperty("event.fee", Double.class);
+                BigDecimal updatedListingFee = totalRevenue.multiply(BigDecimal.valueOf(fee));
+                event.setListingFee(updatedListingFee);
+            } else {
+                event.setListingFee(BigDecimal.ZERO);
+            }
             this.eventRepo.updateEvent(event);
             return true;
         }
@@ -295,18 +278,33 @@ public class EventServiceImpl implements EventService {
     @Override
     public EventResponse getEventByIdForAdmin(Integer eventId) {
         Event event = this.eventRepo.getEventById(eventId);
-        if (eventId == null) 
-            throw new ResourceNotFoundException("Không tìm thấy sự kiện hoặc sự kiện không tồn tại");
+        if (event == null) {
+            throw new ResourceNotFoundException("Không tìm thấy sự kiện");
+        }
         return DTOMapper.toEventResponse(event);
-    }
-    
-    @Override
-    public List<EventResponse> getEventsForRefund() {
-        return DTOMapper.toEventResponseList(this.eventRepo.getEventsForRefund());
     }
 
     @Override
-    public List<EventResponse> getEventsForSettlement() {
-        return DTOMapper.toEventResponseList(this.eventRepo.getEventsForSettlement());
+    public List<EventRefundResponse> getEventsForRefund() {
+        return DTOMapper.toEventRefundResponseList(this.eventRepo.getEventsForRefund());
+    }
+
+    @Override
+    public List<EventSettlementResponse> getEventsForSettlement() {
+        return DTOMapper.toEventSettlementResponseList(this.eventRepo.getEventsForSettlement());
+    }
+    
+    @Override
+    @Transactional
+    public boolean processSettlement(Integer eventId, String settlementCode) {
+        Event event = this.eventRepo.getEventById(eventId);
+        if (event == null || event.getStatusId() == null || event.getStatusId().getId() != 4) {
+            return false;
+        }
+        event.setIsSettlement(true);
+        event.setSettlementCode(settlementCode);
+        this.eventRepo.updateEvent(event);
+        
+        return true;
     }
 }

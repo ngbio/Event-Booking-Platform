@@ -32,16 +32,10 @@ public class LoginResponse {
     public String getEmail() { return email; }
     public void setEmail(String email) { this.email = email; }
 
-    /**
-     * @return the role
-     */
     public String getRole() {
         return role;
     }
 
-    /**
-     * @param role the role to set
-     */
     public void setRole(String role) {
         this.role = role;
     }

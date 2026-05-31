@@ -12,6 +12,11 @@ import com.group3.repository.UserRepository;
 import com.group3.service.StatsService;
 import java.math.BigDecimal;
 import java.security.Principal;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -110,5 +115,46 @@ public class StatsServiceImpl implements StatsService {
             return (BigDecimal) value;
         }
         return BigDecimal.valueOf(((Number) value).doubleValue());
+    }
+
+    @Override
+    public Map<String, Object> getDashboardStats() {
+        Map<String, Object> stats = new HashMap<>();
+
+        // 1. Thống kê thẻ tổng quan
+        stats.put("totalRevenue", statsRepo.getTotalRevenue());
+        stats.put("totalFees", statsRepo.getTotalFees());
+        stats.put("totalTicketsSold", statsRepo.getTotalTicketsSold());
+        stats.put("activeEventsCount", statsRepo.getActiveEventsCount());
+
+        // 2. Xử lý biểu đồ doanh thu năm nay (Khởi tạo mảng 12 tháng bằng 0)
+        int currentYear = LocalDate.now().getYear();
+        List<Object[]> monthlyData = statsRepo.getRevenueByMonth(currentYear);
+        List<BigDecimal> revenueMonthList = new ArrayList<>();
+        for (int i = 0; i < 12; i++) {
+            revenueMonthList.add(BigDecimal.ZERO);
+        }
+
+        // Đổ data từ DB vào đúng vị trí tháng (tháng 1 index là 0)
+        for (Object[] row : monthlyData) {
+            int month = (Integer) row[0];
+            BigDecimal revenue = (BigDecimal) row[1];
+            revenueMonthList.set(month - 1, revenue);
+        }
+        stats.put("revenueMonthList", revenueMonthList);
+
+        // 3. Xử lý biểu đồ danh mục
+        List<Object[]> categoryData = statsRepo.getTicketsByCategory();
+        List<String> categoryNames = new ArrayList<>();
+        List<Long> categoryCounts = new ArrayList<>();
+
+        for (Object[] row : categoryData) {
+            categoryNames.add((String) row[0]); // Tên danh mục
+            categoryCounts.add((Long) row[1]);  // Số vé
+        }
+        stats.put("categoryNames", categoryNames);
+        stats.put("categoryCounts", categoryCounts);
+
+        return stats;
     }
 }
