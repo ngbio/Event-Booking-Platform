@@ -8,6 +8,7 @@ const MenuIcon = ({ type }) => {
         ticket: <path d="M4 8V5a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v3a2 2 0 0 0 0 4v3a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-3a2 2 0 0 0 0-4Zm8-3v14" />,
         booking: <path d="M7 3h8l4 4v14H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Zm7 1v4h4M8 12h8M8 16h8M8 20h5" />,
         event: <path d="M7 3v4M17 3v4M4 9h16M6 5h12a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2Zm3 8h3v3H9z" />,
+        stats: <path d="M4 19h16M7 16V9M12 16V5M17 16v-4" />,
         password: <path d="M7 11V8a5 5 0 0 1 10 0v3M6 11h12v9H6zM12 15v2" />,
         logout: <path d="M10 5H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h4M14 8l4 4-4 4M18 12H9" />
     };
@@ -122,10 +123,16 @@ const Header = () => {
                                             <span>Đơn đặt chỗ</span>
                                         </Link>
                                     </>}
-                                    {user.roleId === 2 && <Link className="profile-dropdown-item" to="/organizer/events" onClick={closeProfileMenu}>
-                                        <span className="profile-dropdown-icon"><MenuIcon type="event" /></span>
-                                        <span>Sự kiện của tôi</span>
-                                    </Link>}
+                                    {user.roleId === 2 && <>
+                                        <Link className="profile-dropdown-item" to="/organizer/events" onClick={closeProfileMenu}>
+                                            <span className="profile-dropdown-icon"><MenuIcon type="event" /></span>
+                                            <span>Sự kiện của tôi</span>
+                                        </Link>
+                                        <Link className="profile-dropdown-item" to="/organizer/stats" onClick={closeProfileMenu}>
+                                            <span className="profile-dropdown-icon"><MenuIcon type="stats" /></span>
+                                            <span>Báo cáo doanh thu</span>
+                                        </Link>
+                                    </>}
                                     <Link className="profile-dropdown-item" to="/profile/password" onClick={closeProfileMenu}>
                                         <span className="profile-dropdown-icon"><MenuIcon type="password" /></span>
                                         <span>Đổi mật khẩu</span>

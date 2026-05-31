@@ -11,9 +11,13 @@ import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Fetch;
 import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.JoinType;
+import jakarta.persistence.criteria.Order;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import jakarta.persistence.criteria.Subquery;
+import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Map;
 import org.hibernate.Session;
@@ -54,6 +58,12 @@ public class EventRepositoryImpl implements EventRepository {
             String organizerId = params.get("organizerId");
             String categoryId = params.get("categoryId");
             String activeOnly = params.get("activeOnly");
+            String location = params.get("location");
+            BigDecimal minPrice = parseBigDecimal(params.get("minPrice"));
+            BigDecimal maxPrice = parseBigDecimal(params.get("maxPrice"));
+            Date fromDate = parseDate(params.get("fromDate"), false);
+            Date toDate = parseDate(params.get("toDate"), true);
+            
             if (statusId != null && !statusId.isBlank()) {
                 predicates.add(b.equal(root.get("statusId").get("id"), Integer.parseInt(statusId)));
             }
@@ -67,19 +77,37 @@ public class EventRepositoryImpl implements EventRepository {
                 Join<Event, Category> categoryJoin = root.join("categoryCollection", JoinType.INNER);
                 predicates.add(b.equal(categoryJoin.get("id"), Integer.parseInt(categoryId)));
             }
+            if (location != null && !location.isBlank()) {
+                predicates.add(b.like(b.lower(root.get("location")), "%" + location.trim().toLowerCase() + "%"));
+            }
+            if (minPrice != null) {
+                predicates.add(b.greaterThanOrEqualTo(root.get("price"), minPrice));
+            }
+            if (maxPrice != null) {
+                predicates.add(b.lessThanOrEqualTo(root.get("price"), maxPrice));
+            }
+            if (fromDate != null) {
+                predicates.add(b.greaterThanOrEqualTo(root.get("startTime"), fromDate));
+            }
+            if (toDate != null) {
+                predicates.add(b.lessThanOrEqualTo(root.get("startTime"), toDate));
+            }
             if (kw != null && !kw.isBlank()) {
-                String t = kw.trim();
+                String t = kw.trim().toLowerCase();
 
                 if (searchBy == null || searchBy.isEmpty()) {
-                    Predicate byTitle = b.like(root.get("title"), "%" + t + "%");
+                    Predicate byTitle = b.like(b.lower(root.get("title")), "%" + t + "%");
+                    Predicate byLocation = b.like(b.lower(root.get("location")), "%" + t + "%");
                     Join<Event, Category> categoryJoin = root.join("categoryCollection", JoinType.LEFT);
-                    Predicate byCategoryName = b.like(categoryJoin.get("name"), "%" + t + "%");
-                    predicates.add(b.or(byTitle, byCategoryName));
+                    Predicate byCategoryName = b.like(b.lower(categoryJoin.get("name")), "%" + t + "%");
+                    predicates.add(b.or(byTitle, byCategoryName, byLocation));
                 } else if ("title".equals(searchBy)) {
-                    predicates.add(b.like(root.get("title"), "%" + t + "%"));
+                    predicates.add(b.like(b.lower(root.get("title")), "%" + t + "%"));
                 } else if ("category".equals(searchBy)) {
                     Join<Event, Category> categoryJoin = root.join("categoryCollection", JoinType.INNER);
-                    predicates.add(b.like(categoryJoin.get("name"), "%" + t + "%"));
+                    predicates.add(b.like(b.lower(categoryJoin.get("name")), "%" + t + "%"));
+                } else if ("location".equals(searchBy)) {
+                    predicates.add(b.like(b.lower(root.get("location")), "%" + t + "%"));
                 }
             }
         }
@@ -87,11 +115,9 @@ public class EventRepositoryImpl implements EventRepository {
         if (!predicates.isEmpty()) {
             q.where(predicates.toArray(Predicate[]::new));
         }
-
-        q.orderBy(
-                b.asc(root.get("statusId").get("id")),//Xep su kien can duyet len truoc
-                b.desc(root.get("id"))
-        );
+        
+        // Đã giữ lại bản code xịn hỗ trợ sort
+        q.orderBy(buildEventOrder(params, b, root));
 
         Query query = session.createQuery(q);
 
@@ -230,6 +256,12 @@ public class EventRepositoryImpl implements EventRepository {
             String organizerId = params.get("organizerId");
             String categoryId = params.get("categoryId");
             String activeOnly = params.get("activeOnly");
+            String location = params.get("location");
+            BigDecimal minPrice = parseBigDecimal(params.get("minPrice"));
+            BigDecimal maxPrice = parseBigDecimal(params.get("maxPrice"));
+            Date fromDate = parseDate(params.get("fromDate"), false);
+            Date toDate = parseDate(params.get("toDate"), true);
+            
             if (statusId != null && !statusId.isBlank()) {
                 predicates.add(b.equal(root.get("statusId").get("id"), Integer.parseInt(statusId)));
             }
@@ -243,19 +275,37 @@ public class EventRepositoryImpl implements EventRepository {
                 Join<Event, Category> categoryJoin = root.join("categoryCollection", JoinType.INNER);
                 predicates.add(b.equal(categoryJoin.get("id"), Integer.parseInt(categoryId)));
             }
+            if (location != null && !location.isBlank()) {
+                predicates.add(b.like(b.lower(root.get("location")), "%" + location.trim().toLowerCase() + "%"));
+            }
+            if (minPrice != null) {
+                predicates.add(b.greaterThanOrEqualTo(root.get("price"), minPrice));
+            }
+            if (maxPrice != null) {
+                predicates.add(b.lessThanOrEqualTo(root.get("price"), maxPrice));
+            }
+            if (fromDate != null) {
+                predicates.add(b.greaterThanOrEqualTo(root.get("startTime"), fromDate));
+            }
+            if (toDate != null) {
+                predicates.add(b.lessThanOrEqualTo(root.get("startTime"), toDate));
+            }
             if (kw != null && !kw.isBlank()) {
-                String t = kw.trim();
+                String t = kw.trim().toLowerCase();
 
                 if (searchBy == null || searchBy.isEmpty()) {
-                    Predicate byTitle = b.like(root.get("title"), "%" + t + "%");
+                    Predicate byTitle = b.like(b.lower(root.get("title")), "%" + t + "%");
+                    Predicate byLocation = b.like(b.lower(root.get("location")), "%" + t + "%");
                     Join<Event, Category> categoryJoin = root.join("categoryCollection", JoinType.LEFT);
-                    Predicate byCategoryName = b.like(categoryJoin.get("name"), "%" + t + "%");
-                    predicates.add(b.or(byTitle, byCategoryName));
+                    Predicate byCategoryName = b.like(b.lower(categoryJoin.get("name")), "%" + t + "%");
+                    predicates.add(b.or(byTitle, byCategoryName, byLocation));
                 } else if ("title".equals(searchBy)) {
-                    predicates.add(b.like(root.get("title"), "%" + t + "%"));
+                    predicates.add(b.like(b.lower(root.get("title")), "%" + t + "%"));
                 } else if ("category".equals(searchBy)) {
                     Join<Event, Category> categoryJoin = root.join("categoryCollection", JoinType.INNER);
-                    predicates.add(b.like(categoryJoin.get("name"), "%" + t + "%"));
+                    predicates.add(b.like(b.lower(categoryJoin.get("name")), "%" + t + "%"));
+                } else if ("location".equals(searchBy)) {
+                    predicates.add(b.like(b.lower(root.get("location")), "%" + t + "%"));
                 }
             }
         }
@@ -266,6 +316,53 @@ public class EventRepositoryImpl implements EventRepository {
 
         Query query = session.createQuery(q);
         return (long) query.getSingleResult();
+    }
+
+    private List<Order> buildEventOrder(Map<String, String> params, CriteriaBuilder b, Root<Event> root) {
+        String sort = params != null ? params.get("sort") : null;
+        if ("dateAsc".equals(sort)) {
+            return List.of(b.asc(root.get("startTime")), b.desc(root.get("id")));
+        }
+        if ("dateDesc".equals(sort)) {
+            return List.of(b.desc(root.get("startTime")), b.desc(root.get("id")));
+        }
+        if ("priceAsc".equals(sort)) {
+            return List.of(b.asc(root.get("price")), b.asc(root.get("startTime")), b.desc(root.get("id")));
+        }
+        if ("priceDesc".equals(sort)) {
+            return List.of(b.desc(root.get("price")), b.asc(root.get("startTime")), b.desc(root.get("id")));
+        }
+        if ("popular".equals(sort)) {
+            return List.of(b.desc(root.get("soldTickets")), b.asc(root.get("startTime")), b.desc(root.get("id")));
+        }
+        return List.of(b.asc(root.get("statusId").get("id")), b.desc(root.get("id")));
+    }
+
+    private BigDecimal parseBigDecimal(String value) {
+        if (value == null || value.isBlank()) {
+            return null;
+        }
+        try {
+            return new BigDecimal(value.trim());
+        } catch (NumberFormatException ex) {
+            return null;
+        }
+    }
+
+    private Date parseDate(String value, boolean endOfDay) {
+        if (value == null || value.isBlank()) {
+            return null;
+        }
+        String pattern = value.trim().length() == 10 ? "yyyy-MM-dd" : "yyyy-MM-dd HH:mm:ss";
+        try {
+            Date date = new SimpleDateFormat(pattern).parse(value.trim());
+            if (endOfDay && "yyyy-MM-dd".equals(pattern)) {
+                return new Date(date.getTime() + 86399999);
+            }
+            return date;
+        } catch (ParseException ex) {
+            return null;
+        }
     }
 
     @Override
@@ -303,9 +400,11 @@ public class EventRepositoryImpl implements EventRepository {
     @Override
     public List<Event> getEventsForRefund() {
         Session session = this.factory.getObject().getCurrentSession();
+        // Cập nhật lấy thông tin user của organizer
         String hql = "SELECT DISTINCT e FROM Event e "
                 + "LEFT JOIN FETCH e.categoryCollection "
-                + "LEFT JOIN FETCH e.organizerId "
+                + "LEFT JOIN FETCH e.organizerId o "
+                + "LEFT JOIN FETCH o.user "
                 + "JOIN e.bookingCollection b "
                 + "WHERE e.statusId.id = 5 AND b.statusId.id = 3";
 
@@ -315,9 +414,11 @@ public class EventRepositoryImpl implements EventRepository {
     @Override
     public List<Event> getEventsForSettlement() {
         Session session = this.factory.getObject().getCurrentSession();
+        // Cập nhật lấy thông tin user của organizer
         String hql = "SELECT DISTINCT e FROM Event e "
                 + "LEFT JOIN FETCH e.categoryCollection "
-                + "LEFT JOIN FETCH e.organizerId "
+                + "LEFT JOIN FETCH e.organizerId o "
+                + "LEFT JOIN FETCH o.user "
                 + "JOIN e.bookingCollection b "
                 + "WHERE e.statusId.id = 4 AND b.statusId.id = 2";
 

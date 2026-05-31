@@ -56,7 +56,7 @@ const Register = () => {
     const validate = () => {
         if (currentUser.password !== currentUser.confirm) {
             setErr('Mật khẩu không khớp!');
-            setFieldErrors({confirm: 'Mat khau khong khop!'});
+            setFieldErrors({confirm: 'Mật khẩu không khớp!'});
             return false;
         }
 
@@ -93,7 +93,7 @@ const Register = () => {
             } catch (ex) {
                 console.error(ex);
                 const data = ex.response?.data;
-                setErr(data?.message || "Dang ky that bai!");
+                setErr(data?.message || "Đăng ký thất bại!");
                 setFieldErrors(data?.errors || {});
             } finally {
                 setLoading(false);

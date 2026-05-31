@@ -27,7 +27,7 @@ const OrganizerEventDetail = () => {
 
     const formatDate = (value) => {
         if (!value)
-            return "Dang cap nhat";
+            return "Đang cập nhật";
 
         return new Date(value.replace(" ", "T")).toLocaleString("vi-VN");
     }
@@ -57,11 +57,11 @@ const OrganizerEventDetail = () => {
             } catch (statsEx) {
                 console.error(statsEx);
                 setFinancialStats(null);
-                setStatsErr(statsEx.response?.data?.message || "Khong the tai bao cao tai chinh su kien.");
+                setStatsErr(statsEx.response?.data?.message || "Không thể tải báo cáo tài chính sự kiện.");
             }
         } catch (ex) {
             console.error(ex);
-            setErr(ex.response?.data?.message || "Khong the tai chi tiet su kien.");
+            setErr(ex.response?.data?.message || "Không thể tải chi tiết sự kiện.");
         } finally {
             setLoading(false);
         }
@@ -80,11 +80,11 @@ const OrganizerEventDetail = () => {
             setMsg("");
 
             await authApis().patch(`${endpoints["change-organizer-event-status"](eventId)}?statusId=${statusId}`, null);
-            setMsg("Cap nhat trang thai su kien thanh cong.");
+            setMsg("Cập nhật trạng thái sự kiện thành công.");
             await loadEvent();
         } catch (ex) {
             console.error(ex);
-            setErr(ex.response?.data?.message || "Khong the cap nhat trang thai su kien.");
+            setErr(ex.response?.data?.message || "Không thể cập nhật trạng thái sự kiện.");
         } finally {
             setSavingStatus(false);
         }
@@ -97,13 +97,13 @@ const OrganizerEventDetail = () => {
         return (
             <div className="organizer-detail-actions mt-4">
                 {event.statusId === STATUS.DRAFT && <Button className="btn-pink" onClick={() => changeStatus(STATUS.PENDING)} disabled={savingStatus}>
-                    Gui duyet
+                    Gửi duyệt
                 </Button>}
                 {event.statusId === STATUS.PUBLISHED && <Button className="btn-soft-pink" onClick={() => changeStatus(STATUS.COMPLETED)} disabled={savingStatus}>
-                    Danh dau hoan thanh
+                    Đánh dấu hoàn thành
                 </Button>}
                 <Button className="btn-outline-pink" onClick={() => changeStatus(STATUS.CANCELLED)} disabled={savingStatus}>
-                    Huy su kien
+                    Hủy sự kiện
                 </Button>
             </div>
         );
@@ -112,16 +112,16 @@ const OrganizerEventDetail = () => {
     if (user === null) {
         return (
             <Alert className="alert-dark-pink">
-                Vui long dang nhap bang tai khoan nha to chuc de xem chi tiet su kien.
+                Vui lòng đăng nhập bằng tài khoản nhà tổ chức để xem chi tiết sự kiện.
                 <div className="mt-3">
-                    <Button className="btn-pink" onClick={() => nav(`/login?next=/organizer/events/${eventId}`)}>Dang nhap</Button>
+                    <Button className="btn-pink" onClick={() => nav(`/login?next=/organizer/events/${eventId}`)}>Đăng nhập</Button>
                 </div>
             </Alert>
         );
     }
 
     if (user?.roleId !== 2)
-        return <Alert className="alert-dark-pink">Chi tai khoan nha to chuc moi co the quan ly su kien.</Alert>;
+        return <Alert className="alert-dark-pink">Chỉ tài khoản nhà tổ chức mới có thể quản lý sự kiện.</Alert>;
 
     if (loading)
         return <MySpinner />;
@@ -135,8 +135,8 @@ const OrganizerEventDetail = () => {
     return (
         <div className="event-detail">
             <div className="organizer-detail-toolbar">
-                <Button className="btn-soft-pink" onClick={() => nav("/organizer/events")}>Quay lai</Button>
-                <Button className="btn-outline-pink" onClick={() => nav(`/organizer/events/${event.id}/edit`)}>Sua su kien</Button>
+                <Button className="btn-soft-pink" onClick={() => nav("/organizer/events")}>Quay lại</Button>
+                <Button className="btn-outline-pink" onClick={() => nav(`/organizer/events/${event.id}/edit`)}>Sửa sự kiện</Button>
             </div>
 
             {err && <Alert className="alert-dark-pink mt-3">{err}</Alert>}
@@ -154,24 +154,24 @@ const OrganizerEventDetail = () => {
                     <div className="event-detail-summary glass-panel">
                         <div className="page-kicker mb-3">{event.categoryName || "Organizer"}</div>
                         <h1 className="event-detail-title">{event.title}</h1>
-                        <div className="event-badge mt-3">{event.statusName || "Dang cap nhat"}</div>
+                        <div className="event-badge mt-3">{event.statusName || "Đang cập nhật"}</div>
                         <div className="event-detail-price">{formatPrice(event.price)}</div>
 
                         <div className="event-detail-stats">
                             <div>
-                                <span>Tong ve</span>
-                                <strong>{event.totalTickets} ve</strong>
+                                <span>Tổng vé</span>
+                                <strong>{event.totalTickets} vé</strong>
                             </div>
                             <div>
-                                <span>Con lai</span>
-                                <strong>{event.availableTickets} ve</strong>
+                                <span>Còn lại</span>
+                                <strong>{event.availableTickets} vé</strong>
                             </div>
                             <div>
-                                <span>Da ban</span>
-                                <strong>{event.soldTickets} ve</strong>
+                                <span>Đã bán</span>
+                                <strong>{event.soldTickets} vé</strong>
                             </div>
                             <div>
-                                <span>Phi niem yet</span>
+                                <span>Phí niêm yết</span>
                                 <strong>{formatPrice(event.listingFee)}</strong>
                             </div>
                         </div>
@@ -185,36 +185,36 @@ const OrganizerEventDetail = () => {
                 <div className="organizer-finance-head">
                     <div>
                         <div className="page-kicker mb-2">Finance</div>
-                        <h2>Bao cao tai chinh</h2>
+                        <h2>Báo cáo tài chính</h2>
                     </div>
-                    <Button className="btn-soft-pink" onClick={loadEvent} disabled={loading}>Lam moi</Button>
+                    <Button className="btn-soft-pink" onClick={loadEvent} disabled={loading}>Làm mới</Button>
                 </div>
 
                 {statsErr && <Alert className="alert-dark-pink mt-3">{statsErr}</Alert>}
 
                 <div className="organizer-finance-grid">
                     <div>
-                        <span>Doanh thu ve</span>
+                        <span>Doanh thu vé</span>
                         <strong>{formatPrice(financialStats?.grossRevenue)}</strong>
                     </div>
                     <div>
-                        <span>Phi niem yet</span>
+                        <span>Phí niêm yết</span>
                         <strong>{formatPrice(financialStats?.listingFee)}</strong>
                     </div>
                     <div>
-                        <span>Doanh thu thuc nhan</span>
+                        <span>Doanh thu thực nhận</span>
                         <strong>{formatPrice(financialStats?.netRevenue)}</strong>
                     </div>
                     <div>
-                        <span>Booking da thanh toan</span>
+                        <span>Booking đã thanh toán</span>
                         <strong>{financialStats?.paidBookings || 0}</strong>
                     </div>
                     <div>
-                        <span>Ve da ban</span>
-                        <strong>{financialStats?.ticketsSold || 0} ve</strong>
+                        <span>Vé đã bán</span>
+                        <strong>{financialStats?.ticketsSold || 0} vé</strong>
                     </div>
                     <div>
-                        <span>Gia ve</span>
+                        <span>Giá vé</span>
                         <strong>{formatPrice(financialStats?.ticketPrice)}</strong>
                     </div>
                 </div>
@@ -223,37 +223,37 @@ const OrganizerEventDetail = () => {
             <Row className="event-detail-info">
                 <Col lg={7}>
                     <section className="event-detail-section">
-                        <h2>Mo ta su kien</h2>
-                        <p>{event.description || "Su kien chua co mo ta chi tiet."}</p>
+                        <h2>Mô tả sự kiện</h2>
+                        <p>{event.description || "Sự kiện chưa có mô tả chi tiết."}</p>
                     </section>
                 </Col>
 
                 <Col lg={5}>
                     <section className="event-detail-section">
-                        <h2>Thong tin quan ly</h2>
+                        <h2>Thông tin quản lý</h2>
                         <dl className="event-detail-list">
                             <div>
-                                <dt>Bat dau</dt>
+                                <dt>Bắt đầu</dt>
                                 <dd>{formatDate(event.startTime)}</dd>
                             </div>
                             <div>
-                                <dt>Ket thuc</dt>
+                                <dt>Kết thúc</dt>
                                 <dd>{formatDate(event.endTime)}</dd>
                             </div>
                             <div>
-                                <dt>Dia diem</dt>
-                                <dd>{event.location || "Dang cap nhat"}</dd>
+                                <dt>Địa điểm</dt>
+                                <dd>{event.location || "Đang cập nhật"}</dd>
                             </div>
                             <div>
-                                <dt>Ma doi soat</dt>
-                                <dd>{event.settlementCode || "Chua co"}</dd>
+                                <dt>Mã đối soát</dt>
+                                <dd>{event.settlementCode || "Chưa có"}</dd>
                             </div>
                             <div>
-                                <dt>Phi dang tin</dt>
-                                <dd>{event.isPaidFee ? "Da thanh toan" : "Chua thanh toan"}</dd>
+                                <dt>Phí đăng tin</dt>
+                                <dd>{event.isPaidFee ? "Đã thanh toán" : "Chưa thanh toán"}</dd>
                             </div>
                             <div>
-                                <dt>Cap nhat luc</dt>
+                                <dt>Cập nhật lúc</dt>
                                 <dd>{formatDate(event.updatedDate || event.createdDate)}</dd>
                             </div>
                         </dl>

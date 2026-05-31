@@ -53,7 +53,7 @@ const Profile = () => {
             });
         } catch (ex) {
             console.error(ex);
-            setErr(ex.response?.data?.message || "Khong tai duoc thong tin ca nhan.");
+            setErr(ex.response?.data?.message || "Không thể tải được thông tin cá nhân.");
         } finally {
             setLoading(false);
         }
@@ -110,11 +110,11 @@ const Profile = () => {
             });
             if (avatarRef.current)
                 avatarRef.current.value = "";
-            setSuccess(res.data.message || "Cap nhat thong tin thanh cong.");
+            setSuccess(res.data.message || "Cập nhật thông tin thành công.");
         } catch (ex) {
             console.error(ex);
             const data = ex.response?.data;
-            setErr(data?.message || "Cap nhat thong tin that bai.");
+            setErr(data?.message || "Cập nhật thông tin thất bại.");
             setFieldErrors(data?.errors || {});
         } finally {
             setSaving(false);
@@ -137,7 +137,7 @@ const Profile = () => {
                                 <div className="profile-avatar-fallback">{(profile?.fullName || profile?.email || "U").charAt(0)}</div>}
                         </div>
 
-                        <h1>{profile?.fullName || "Nguoi dung"}</h1>
+                        <h1>{profile?.fullName || "Người dùng"}</h1>
                         <p>{profile?.email}</p>
 
                         <div className="profile-badges">
@@ -151,8 +151,8 @@ const Profile = () => {
                 <Col lg={8}>
                     <section className="profile-form glass-panel">
                         <div className="page-kicker mb-2">Account</div>
-                        <h2>Thong tin ca nhan</h2>
-                        <p>Cap nhat ho so va anh dai dien cua tai khoan.</p>
+                        <h2>Thông tin cá nhân</h2>
+                        <p>Cập nhật hồ sơ và ảnh đại diện của tài khoản.</p>
 
                         {err && <Alert variant="danger">
                             <div>{err}</div>
@@ -167,14 +167,14 @@ const Profile = () => {
                             <Row>
                                 <Col md={6}>
                                     <Form.Group className="mb-3" controlId="profile-fullName">
-                                        <Form.Label>Ho va ten</Form.Label>
+                                        <Form.Label>Họ và tên</Form.Label>
                                         <Form.Control value={form.fullName || ""} onChange={e => updateForm("fullName", e.target.value)} isInvalid={!!fieldErrors.fullName} required />
                                         <Form.Control.Feedback type="invalid">{fieldErrors.fullName}</Form.Control.Feedback>
                                     </Form.Group>
                                 </Col>
                                 <Col md={6}>
                                     <Form.Group className="mb-3" controlId="profile-phone">
-                                        <Form.Label>So dien thoai</Form.Label>
+                                        <Form.Label>Số điện thoại</Form.Label>
                                         <Form.Control value={form.phone || ""} onChange={e => updateForm("phone", e.target.value)} isInvalid={!!fieldErrors.phone} required />
                                         <Form.Control.Feedback type="invalid">{fieldErrors.phone}</Form.Control.Feedback>
                                     </Form.Group>
@@ -182,25 +182,25 @@ const Profile = () => {
                             </Row>
 
                             <Form.Group className="mb-3" controlId="profile-avatar">
-                                <Form.Label>Anh dai dien</Form.Label>
+                                <Form.Label>Ảnh đại diện</Form.Label>
                                 <Form.Control ref={avatarRef} type="file" accept="image/*" />
                             </Form.Group>
 
                             {!isOrganizer && <Row>
                                 <Col md={6}>
                                     <Form.Group className="mb-3" controlId="profile-birthDate">
-                                        <Form.Label>Ngay sinh</Form.Label>
+                                        <Form.Label>Ngày sinh</Form.Label>
                                         <Form.Control type="date" value={form.birthDate || ""} onChange={e => updateForm("birthDate", e.target.value)} isInvalid={!!fieldErrors.birthDate} required />
                                         <Form.Control.Feedback type="invalid">{fieldErrors.birthDate}</Form.Control.Feedback>
                                     </Form.Group>
                                 </Col>
                                 <Col md={6}>
                                     <Form.Group className="mb-3" controlId="profile-gender">
-                                        <Form.Label>Gioi tinh</Form.Label>
+                                        <Form.Label>Giới tính</Form.Label>
                                         <Form.Select value={form.gender || ""} onChange={e => updateForm("gender", e.target.value)} isInvalid={!!fieldErrors.gender} required>
-                                            <option value="">Chon gioi tinh</option>
+                                            <option value="">Chọn giới tính</option>
                                             <option value="male">Nam</option>
-                                            <option value="female">Nu</option>
+                                            <option value="female">Nữ</option>
                                         </Form.Select>
                                         <Form.Control.Feedback type="invalid">{fieldErrors.gender}</Form.Control.Feedback>
                                     </Form.Group>
@@ -211,7 +211,7 @@ const Profile = () => {
                                 <Row>
                                     <Col md={12}>
                                         <Form.Group className="mb-3" controlId="profile-organizationName">
-                                            <Form.Label>Ten to chuc</Form.Label>
+                                            <Form.Label>Tên tổ chức</Form.Label>
                                             <Form.Control value={form.organizationName || ""} onChange={e => updateForm("organizationName", e.target.value)} isInvalid={!!fieldErrors.organizationName} required />
                                             <Form.Control.Feedback type="invalid">{fieldErrors.organizationName}</Form.Control.Feedback>
                                         </Form.Group>
@@ -225,7 +225,7 @@ const Profile = () => {
                                     </Col>
                                     <Col md={6}>
                                         <Form.Group className="mb-3" controlId="profile-taxCode">
-                                            <Form.Label>Ma so thue</Form.Label>
+                                            <Form.Label>Mã số thuế</Form.Label>
                                             <Form.Control value={form.taxCode || ""} onChange={e => updateForm("taxCode", e.target.value)} isInvalid={!!fieldErrors.taxCode} required />
                                             <Form.Control.Feedback type="invalid">{fieldErrors.taxCode}</Form.Control.Feedback>
                                         </Form.Group>
@@ -234,7 +234,7 @@ const Profile = () => {
                             </div>}
 
                             <Button className="btn-pink px-4" type="submit" disabled={saving}>
-                                {saving ? <MySpinner /> : "Luu thay doi"}
+                                {saving ? <MySpinner /> : "Lưu thay đổi"}
                             </Button>
                         </Form>
                     </section>
