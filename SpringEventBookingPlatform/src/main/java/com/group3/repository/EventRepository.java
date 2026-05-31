@@ -16,5 +16,8 @@ public interface EventRepository {
     List<Event> findByParams(Map<String, String> params);
     long countEvents(Map<String, String> params);
     int updateExpiredPublishedEvents(Integer publishedStatusId, Integer completedStatusId, Date now);
+    
+    List<Event> getEventsForRefund();
+    List<Event> getEventsForSettlement();
   
 }
