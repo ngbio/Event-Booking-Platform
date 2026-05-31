@@ -24,6 +24,18 @@ public class ApiSecurityConfigs {
             .securityMatcher("/api/**")
             .csrf(csrf -> csrf.disable())
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .exceptionHandling(exception -> exception
+                    .authenticationEntryPoint((request, response, authException) -> {
+                        response.setStatus(401);
+                        response.setContentType("application/json;charset=UTF-8");
+                        response.getWriter().write("{\"status\":401,\"message\":\"Chưa xác thực: " + authException.getMessage() + "\"}");
+                    })
+                    .accessDeniedHandler((request, response, accessDeniedException) -> {
+                        response.setStatus(403);
+                        response.setContentType("application/json;charset=UTF-8");
+                        response.getWriter().write("{\"status\":403,\"message\":\"Không có quyền truy cập: " + accessDeniedException.getMessage() + "\"}");
+                    })
+            )
             .authorizeHttpRequests(auth -> auth
                     .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                     .requestMatchers("/api/auth/login", "/api/auth/register/**", "/api/auth/**").permitAll()

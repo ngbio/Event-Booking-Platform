@@ -1,7 +1,7 @@
 <!doctype html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Đăng nhập </title>
+    <title>Đăng nhập</title>
     <th:block th:replace="base :: css"></th:block>
 </head>
 <body class="bg-light">
@@ -17,11 +17,15 @@
                 <div class="card shadow-lg border-0">
                     <div class="card-body p-5">
                         <h2 class="text-center mb-4 fw-bold">LOGIN</h2>
-                        
+
+                        <div th:if="${param.error}" class="alert alert-danger">
+                            Email hoặc mật khẩu không đúng, hoặc tài khoản không có quyền admin.
+                        </div>
+
                         <form method="post" th:action="@{/admin/login}">
                             <div class="mb-3">
-                                <label class="form-label">Tên đăng nhập</label>
-                                <input type="text" class="form-control form-control-lg" name="username" placeholder="Nhập username..." required />
+                                <label class="form-label">Email</label>
+                                <input type="email" class="form-control form-control-lg" name="email" placeholder="Nhập email admin..." required />
                             </div>
                             <div class="mb-4">
                                 <label class="form-label">Mật khẩu</label>

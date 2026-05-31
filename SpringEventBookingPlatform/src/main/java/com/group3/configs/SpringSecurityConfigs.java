@@ -43,10 +43,18 @@ public class SpringSecurityConfigs {
     @Bean
     @Order(2)
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.securityMatcher("/admin/**", "/", "/login")
+        http.securityMatcher("/admin/**", "/")
                 .csrf(c -> c.disable())
+                .exceptionHandling(exception -> exception
+                .authenticationEntryPoint((request, response, authException) -> {
+                    response.sendRedirect(request.getContextPath() + "/admin/login");
+                })
+                .accessDeniedHandler((request, response, accessDeniedException) -> {
+                    response.sendRedirect(request.getContextPath() + "/admin/login?denied=true");
+                })
+                )
                 .authorizeHttpRequests((requests) -> requests
-                .requestMatchers("/admin/login", "/login").permitAll()
+                .requestMatchers("/admin/login").permitAll()
                 .requestMatchers(
                         "/swagger-ui/**",
                         "/swagger-ui.html",
@@ -61,13 +69,16 @@ public class SpringSecurityConfigs {
                 )
                 .formLogin(form -> form
                 .loginPage("/admin/login")
-                .loginProcessingUrl("/login")
-                .defaultSuccessUrl("/", true)
+                .loginProcessingUrl("/admin/login")
+                .usernameParameter("email")
+                .passwordParameter("password")
+                .defaultSuccessUrl("/admin", true)
                 .failureUrl("/admin/login?error=true")
                 .permitAll()
                 )
                 .logout((logout) -> logout.logoutSuccessUrl("/admin/login").permitAll());
 
+        http.userDetailsService(userDetailsService);
         return http.build();
     }
 
