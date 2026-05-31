@@ -63,23 +63,33 @@ public class SpringSecurityConfigs {
                     String requestUri = request.getRequestURI();
                     String apiPrefix = request.getContextPath() + "/api/";
 
+                    // Nếu không phải API (tức là giao diện admin), tự chuyển hướng về trang login admin
                     if (!requestUri.startsWith(apiPrefix)) {
                         response.sendRedirect(request.getContextPath() + "/admin/login");
                         return;
                     }
 
-                    response.setStatus(401);
+                    // Nếu là API, trả về cấu trúc JSON lỗi 401 cho Client nhận diện
+                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                     response.setContentType("application/json;charset=UTF-8");
                     response.getWriter().write("{\"status\": 401, \"message\": \"Chưa xác thực: " + authException.getMessage() + "\"}");
                 })
                 .accessDeniedHandler((request, response, accessDeniedException) -> {
-                    response.setStatus(403);
+                    String requestUri = request.getRequestURI();
+                    String apiPrefix = request.getContextPath() + "/api/";
+
+                    if (!requestUri.startsWith(apiPrefix)) {
+                        response.sendRedirect(request.getContextPath() + "/admin/login?denied=true");
+                        return;
+                    }
+
+                    response.setStatus(HttpServletResponse.SC_FORBIDDEN);
                     response.setContentType("application/json;charset=UTF-8");
                     response.getWriter().write("{\"status\": 403, \"message\": \"Không có quyền truy cập: " + accessDeniedException.getMessage() + "\"}");
                 })
                 )
                 .authorizeHttpRequests((requests) -> requests
-                .requestMatchers("/").permitAll()
+                .requestMatchers("/", "/admin/login").permitAll()
                 .requestMatchers(
                         "/swagger-ui/**",
                         "/swagger-ui.html",
@@ -89,7 +99,6 @@ public class SpringSecurityConfigs {
                         "/webjars/**"
                 ).permitAll()
                 .requestMatchers(
-                        "/admin/login",
                         "/api/auth/login",
                         "/api/auth/register/**",
                         "/api/auth/**"
@@ -107,12 +116,15 @@ public class SpringSecurityConfigs {
                 .formLogin(form -> form
                 .loginPage("/admin/login")
                 .loginProcessingUrl("/admin/login")
+                .usernameParameter("email")    // Giữ lại cấu hình mapping form đăng nhập từ main
+                .passwordParameter("password") // Giữ lại cấu hình mapping form đăng nhập từ main
                 .defaultSuccessUrl("/admin", true)
                 .failureUrl("/admin/login?error=true")
                 .permitAll()
                 )
                 .logout((logout) -> logout.logoutSuccessUrl("/admin/login").permitAll());
 
+        http.userDetailsService(userDetailsService);
         return http.build();
     }
 
@@ -129,7 +141,6 @@ public class SpringSecurityConfigs {
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
-
         CorsConfiguration config = new CorsConfiguration();
 
         config.setAllowedOrigins(List.of("http://localhost:3000"));
