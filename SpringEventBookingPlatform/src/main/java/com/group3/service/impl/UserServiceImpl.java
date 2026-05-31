@@ -24,10 +24,8 @@ import com.group3.pojo.StatusUser;
 import com.group3.repository.UserRepository;
 import com.group3.repository.RoleRepository;
 import com.group3.repository.StatusUserRepository;
-
 import com.group3.service.UserService;
 import com.group3.utils.DTOMapper;
-
 import java.io.IOException;
 import java.security.Principal;
 import java.util.Date;

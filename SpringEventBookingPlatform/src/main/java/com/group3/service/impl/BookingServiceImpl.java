@@ -340,4 +340,16 @@ public class BookingServiceImpl implements BookingService {
     private Session getCurrentSession() {
         return this.factory.getObject().getCurrentSession();
     }
+    
+    @Override
+    public int updateStatusByEventId(Integer eventId, Integer oldStatusId, Integer newStatusId) {
+        return bookingRepo.updateStatusByEventId(eventId, oldStatusId, newStatusId);
+    }
+    
+    @Override
+    @Transactional(readOnly = true)
+    public List<BookingResponse> getBookingsByEventId(Integer eventId, Map<String, String> params) {
+        List<BookingResponse> bookings = DTOMapper.toBookingResponseList(this.bookingRepo.getBookingsByEventId(eventId, params));
+        return bookings;
+    }
 }

@@ -27,9 +27,7 @@ public class StatusUserRepositoryImpl implements StatusUserRepository{
     @Override
     public StatusUser getStatusUserById(Integer id){
         Session session = this.factory.getObject().getCurrentSession();
-        Query<StatusUser> q = session.createNamedQuery("StatusUser.findById",StatusUser.class);
-        q.setParameter("id", id);
-        return q.uniqueResult();
+        return session.get(StatusUser.class, id);
     }
     
     @Override
