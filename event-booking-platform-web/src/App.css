@@ -702,6 +702,245 @@ a {
   margin-bottom: 12px;
 }
 
+.booking-box {
+  display: grid;
+  gap: 12px;
+  padding: 14px;
+  border: 1px solid rgba(255, 120, 191, 0.24);
+  border-radius: 8px;
+  background: rgba(255, 61, 154, 0.08);
+}
+
+.booking-box-total {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  color: var(--eb-muted);
+  font-weight: 800;
+}
+
+.booking-box-total strong {
+  color: #fff;
+  overflow-wrap: anywhere;
+}
+
+.booking-screen {
+  padding-top: 20px;
+}
+
+.booking-status-filter {
+  width: min(100%, 240px);
+}
+
+.booking-grid {
+  row-gap: 18px;
+}
+
+.booking-card {
+  height: 100%;
+  padding: 20px;
+}
+
+.booking-card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.booking-card-head strong {
+  color: var(--eb-muted);
+  font-size: 0.92rem;
+}
+
+.booking-card h2 {
+  margin: 16px 0;
+  color: #fff;
+  font-size: 1.18rem;
+  font-weight: 900;
+  line-height: 1.25;
+}
+
+.booking-card-list {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+}
+
+.booking-card-list div {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--eb-border);
+}
+
+.booking-card-list dt {
+  color: var(--eb-muted);
+  font-size: 0.86rem;
+  font-weight: 800;
+}
+
+.booking-card-list dd {
+  margin: 0;
+  color: #fff;
+  font-weight: 800;
+  text-align: right;
+  overflow-wrap: anywhere;
+}
+
+.booking-detail-layout {
+  row-gap: 18px;
+}
+
+.booking-detail-panel {
+  height: 100%;
+  padding: 26px;
+}
+
+.booking-detail-panel h1,
+.booking-detail-panel h2 {
+  color: #fff;
+  font-weight: 900;
+  letter-spacing: 0;
+}
+
+.booking-detail-panel h1 {
+  font-size: clamp(1.8rem, 4vw, 3rem);
+  line-height: 1;
+}
+
+.booking-detail-panel h2 {
+  margin-bottom: 18px;
+  font-size: 1.35rem;
+}
+
+.booking-total {
+  padding: 18px;
+  border: 1px solid var(--eb-border);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.055);
+}
+
+.booking-total span {
+  display: block;
+  color: var(--eb-muted);
+  font-size: 0.86rem;
+  font-weight: 800;
+}
+
+.booking-total strong {
+  display: block;
+  margin-top: 8px;
+  color: #fff;
+  font-size: clamp(1.8rem, 4vw, 3rem);
+  font-weight: 900;
+  line-height: 1;
+  overflow-wrap: anywhere;
+}
+
+.ticket-screen {
+  padding-top: 20px;
+}
+
+.ticket-grid {
+  row-gap: 18px;
+}
+
+.ticket-card {
+  height: 100%;
+  padding: 20px;
+}
+
+.ticket-card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.ticket-card-head strong {
+  color: var(--eb-muted);
+  font-size: 0.92rem;
+}
+
+.ticket-card h2 {
+  margin: 16px 0;
+  color: #fff;
+  font-size: 1.18rem;
+  font-weight: 900;
+  line-height: 1.25;
+}
+
+.ticket-qr-preview,
+.ticket-qr-large {
+  border: 1px dashed rgba(255, 120, 191, 0.42);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(255, 61, 154, 0.12), rgba(255, 255, 255, 0.04));
+}
+
+.ticket-qr-preview {
+  min-height: 96px;
+  margin-bottom: 16px;
+  padding: 16px;
+  display: grid;
+  place-items: center;
+  color: #fff;
+  font-size: 0.9rem;
+  font-weight: 900;
+  overflow-wrap: anywhere;
+  text-align: center;
+}
+
+.ticket-detail-layout {
+  row-gap: 18px;
+}
+
+.ticket-detail-panel {
+  height: 100%;
+  padding: 26px;
+}
+
+.ticket-detail-panel h1,
+.ticket-detail-panel h2 {
+  color: #fff;
+  font-weight: 900;
+  letter-spacing: 0;
+}
+
+.ticket-detail-panel h1 {
+  font-size: clamp(1.8rem, 4vw, 3rem);
+  line-height: 1;
+}
+
+.ticket-detail-panel h2 {
+  margin-bottom: 18px;
+  font-size: 1.35rem;
+}
+
+.ticket-qr-large {
+  padding: 24px;
+}
+
+.ticket-qr-large span {
+  display: block;
+  color: var(--eb-muted);
+  font-size: 0.86rem;
+  font-weight: 800;
+}
+
+.ticket-qr-large strong {
+  display: block;
+  margin-top: 10px;
+  color: #fff;
+  font-size: clamp(1.2rem, 3vw, 2rem);
+  font-weight: 900;
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+}
+
 .organizer-list-head {
   display: flex;
   align-items: center;

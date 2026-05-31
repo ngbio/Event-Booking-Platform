@@ -10,6 +10,7 @@ public class TicketResponse {
     private Integer bookingId;
     private Integer eventId;
     private String eventTitle;
+    private String eventLocation;
     private Integer userId;
     private String email;
     private BigDecimal unitPrice;
@@ -31,7 +32,7 @@ public class TicketResponse {
     public TicketResponse() {
     }
 
-    public TicketResponse(Integer id, String qrCode, Integer bookingId, Integer eventId, String eventTitle,
+    public TicketResponse(Integer id, String qrCode, Integer bookingId, Integer eventId, String eventTitle, String eventLocation,
             Integer userId, String email, BigDecimal unitPrice, Integer statusId, String statusName,
             Date eventStartTime, Date eventEndTime, Date createdDate, Date updatedDate) {
         this.id = id;
@@ -39,6 +40,7 @@ public class TicketResponse {
         this.bookingId = bookingId;
         this.eventId = eventId;
         this.eventTitle = eventTitle;
+        this.eventLocation = eventLocation;
         this.userId = userId;
         this.email = email;
         this.unitPrice = unitPrice;
@@ -88,6 +90,14 @@ public class TicketResponse {
 
     public void setEventTitle(String eventTitle) {
         this.eventTitle = eventTitle;
+    }
+
+    public String getEventLocation() {
+        return eventLocation;
+    }
+
+    public void setEventLocation(String eventLocation) {
+        this.eventLocation = eventLocation;
     }
 
     public Integer getUserId() {

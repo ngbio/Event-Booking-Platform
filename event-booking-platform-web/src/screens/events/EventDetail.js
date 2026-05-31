@@ -1,14 +1,17 @@
 import { useContext, useEffect, useState } from "react";
-import { Alert, Button, Col, Row } from "react-bootstrap";
+import { Alert, Button, Col, Form, Row } from "react-bootstrap";
 import { useNavigate, useParams } from "react-router-dom";
 import MySpinner from "../../components/MySpinner";
-import Apis, { endpoints } from "../../configs/Apis";
+import Apis, { authApis, endpoints } from "../../configs/Apis";
 import { MyUserContext } from "../../configs/Contexts";
 
 const EventDetail = () => {
     const [event, setEvent] = useState(null);
     const [loading, setLoading] = useState(false);
+    const [bookingLoading, setBookingLoading] = useState(false);
     const [err, setErr] = useState("");
+    const [bookingErr, setBookingErr] = useState("");
+    const [quantity, setQuantity] = useState(1);
     const [user,] = useContext(MyUserContext);
     const { eventId } = useParams();
     const nav = useNavigate();
@@ -37,6 +40,7 @@ const EventDetail = () => {
 
             const res = await Apis.get(endpoints["event-details"](eventId));
             setEvent(res.data.data);
+            setQuantity(1);
         } catch (ex) {
             console.error(ex);
             setErr(ex.response?.data?.message || "Không thể tải được thông tin sự kiện.");
@@ -50,10 +54,29 @@ const EventDetail = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [eventId]);
 
-    const renderBookingAction = () => {
-        if (event.availableTickets <= 0) {
-            return <Button className="btn-pink w-100 mt-4" disabled>Hết vé</Button>;
+    const createBooking = async () => {
+        try {
+            setBookingLoading(true);
+            setBookingErr("");
+
+            const res = await authApis().post(endpoints["bookings"], {
+                eventId: event.id,
+                quantity: Number(quantity),
+                paymentMethod: "CASH"
+            });
+
+            nav(`/bookings/${res.data.data.id}`);
+        } catch (ex) {
+            console.error(ex);
+            setBookingErr(ex.response?.data?.message || "Không thể tạo đơn đặt vé.");
+        } finally {
+            setBookingLoading(false);
         }
+    }
+
+    const renderBookingAction = () => {
+        if (event.availableTickets <= 0)
+            return <Button className="btn-pink w-100 mt-4" disabled>Hết vé</Button>;
 
         if (user === null) {
             return (
@@ -75,7 +98,28 @@ const EventDetail = () => {
             );
         }
 
-        return <Button className="btn-pink w-100 mt-4">Đặt vé</Button>;
+        return (
+            <div className="booking-box mt-4">
+                {bookingErr && <Alert className="alert-dark-pink">{bookingErr}</Alert>}
+                <Form.Group controlId="booking-quantity">
+                    <Form.Label>Số lượng vé</Form.Label>
+                    <Form.Control
+                        type="number"
+                        min="1"
+                        max={event.availableTickets}
+                        value={quantity}
+                        onChange={e => setQuantity(e.target.value)}
+                    />
+                </Form.Group>
+                <div className="booking-box-total">
+                    <span>Tạm tính</span>
+                    <strong>{formatPrice(Number(event.price || 0) * Number(quantity || 0))}</strong>
+                </div>
+                <Button className="btn-pink w-100" onClick={createBooking} disabled={bookingLoading || Number(quantity) < 1 || Number(quantity) > event.availableTickets}>
+                    {bookingLoading ? "Đang tạo đơn..." : "Đặt vé"}
+                </Button>
+            </div>
+        );
     }
 
     if (loading)

@@ -35,6 +35,7 @@ public class TicketMapper {
             if (event != null) {
                 response.setEventId(event.getId());
                 response.setEventTitle(event.getTitle());
+                response.setEventLocation(event.getLocation());
                 response.setEventStartTime(event.getStartTime());
                 response.setEventEndTime(event.getEndTime());
             }
