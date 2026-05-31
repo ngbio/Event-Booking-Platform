@@ -19,6 +19,7 @@ import com.group3.repository.EventRepository;
 import com.group3.repository.TicketDetailRepository;
 import com.group3.repository.UserRepository;
 import com.group3.service.BookingService;
+import com.group3.service.TicketEmailService;
 import com.group3.utils.DTOMapper;
 import java.math.BigDecimal;
 import java.security.Principal;
@@ -32,6 +33,8 @@ import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.support.TransactionSynchronization;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
@@ -67,6 +70,9 @@ public class BookingServiceImpl implements BookingService {
     
     @Autowired
     private UserRepository userRepo;
+
+    @Autowired
+    private TicketEmailService ticketEmailService;
 
     private void validateAttendee(User attendee) {
         if (attendee == null || attendee.getRoleId() == null || attendee.getStatusId() == null) {
@@ -119,7 +125,7 @@ public class BookingServiceImpl implements BookingService {
                 && event.getOrganizerId().getUserId().equals(user.getId());
     }
 
-    private void createTickets(Booking booking, int quantity) {
+    private List<TicketDetail> createTickets(Booking booking, int quantity) {
         StatusTicket validStatus = getStatusTicket(TICKET_VALID);
         Date now = new Date();
         List<TicketDetail> tickets = new ArrayList<>();
@@ -133,6 +139,7 @@ public class BookingServiceImpl implements BookingService {
             tickets.add(ticket);
         }
         tickets.forEach(this.ticketDetailRepo::addTicket);
+        return tickets;
     }
     
     private User validateAndGetAttendee(Principal principal) {
@@ -184,8 +191,37 @@ public class BookingServiceImpl implements BookingService {
         // }
 
         increaseSoldTickets(event, request.getQuantity());
-        createTickets(savedBooking, request.getQuantity());
+        List<TicketDetail> tickets = createTickets(savedBooking, request.getQuantity());
+        sendTicketsEmail(attendee, savedBooking, event, tickets);
         return DTOMapper.toBookingResponse(savedBooking);
+    }
+
+    private void sendTicketsEmail(User attendee, Booking booking, Event event, List<TicketDetail> tickets) {
+        List<String> qrCodes = tickets.stream()
+                .map(TicketDetail::getQrCode)
+                .toList();
+
+        Runnable sendEmailTask = () -> this.ticketEmailService.sendTicketsEmail(
+                attendee.getEmail(),
+                attendee.getFullName(),
+                booking.getId(),
+                event.getTitle(),
+                event.getLocation(),
+                event.getStartTime(),
+                event.getEndTime(),
+                booking.getTotalPrice(),
+                qrCodes);
+
+        if (TransactionSynchronizationManager.isSynchronizationActive()) {
+            TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+                @Override
+                public void afterCommit() {
+                    sendEmailTask.run();
+                }
+            });
+        } else {
+            sendEmailTask.run();
+        }
     }
 
     @Override
