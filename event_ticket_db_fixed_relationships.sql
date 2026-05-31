@@ -236,6 +236,18 @@ INSERT INTO `event` (`id`, `organizer_id`, `status_id`, `title`, `description`, 
 (19, 2, 5, 'Giải Marathon Quốc Tế Đà Nẵng', 'Sự kiện bị hủy do thời tiết bất lợi.', '2026-05-14 04:00:00', '2026-05-14 11:00:00', 'Công viên Biển Đông Đà Nẵng', 3000, 600000.00, 0, 400000.00, 1, NULL),
 (20, 2, 2, 'Đêm Nhạc Jazz Độc Bản Tháng 7', 'Thưởng thức nhạc Jazz nguyên bản tinh tế.', '2026-07-05 20:00:00', '2026-07-05 23:00:00', 'Nhà hát lớn Hà Nội', 250, 600000.00, 0, 250000.00, 1, NULL);
 
+-- Image banner cho cac su kien da published (status_id = 2)
+UPDATE `event` SET `image_url` = 'https://res.cloudinary.com/dprwsgoeg/image/upload/v1780208274/IMG_20211120_235307_303_oykjck.jpg' WHERE `id` = 4 AND `status_id` = 2;
+UPDATE `event` SET `image_url` = 'https://res.cloudinary.com/dprwsgoeg/image/upload/v1780208274/maxresdefault_hkyrv1.jpg' WHERE `id` = 5 AND `status_id` = 2;
+UPDATE `event` SET `image_url` = 'https://res.cloudinary.com/dprwsgoeg/image/upload/v1780208274/OIP_iluxno.webp' WHERE `id` = 6 AND `status_id` = 2;
+UPDATE `event` SET `image_url` = 'https://res.cloudinary.com/dprwsgoeg/image/upload/v1780208275/hinh-nen-shin-bua-cho-may-tinh-4k_ujkpfb.jpg' WHERE `id` = 7 AND `status_id` = 2;
+UPDATE `event` SET `image_url` = 'https://res.cloudinary.com/dprwsgoeg/image/upload/v1780208275/wallpapersden.com_attack-on-titan-japanese-tv-series-poster_2560x1600_e1gnhy.jpg' WHERE `id` = 8 AND `status_id` = 2;
+UPDATE `event` SET `image_url` = 'https://res.cloudinary.com/ducouuixg/image/upload/v1780161849/iljvri4g5v8pbnsaepsy.png' WHERE `id` = 9 AND `status_id` = 2;
+UPDATE `event` SET `image_url` = 'https://res.cloudinary.com/dprwsgoeg/image/upload/v1780209162/big-bang-2-696x392_jorzdg.jpg' WHERE `id` = 10 AND `status_id` = 2;
+UPDATE `event` SET `image_url` = 'https://res.cloudinary.com/dprwsgoeg/image/upload/v1780209307/1925959_capfbt.jpg' WHERE `id` = 11 AND `status_id` = 2;
+UPDATE `event` SET `image_url` = 'https://res.cloudinary.com/dprwsgoeg/image/upload/v1780209309/poster-3930_copy_wnoaw2.jpg' WHERE `id` = 12 AND `status_id` = 2;
+UPDATE `event` SET `image_url` = 'https://res.cloudinary.com/dprwsgoeg/image/upload/v1780209309/thumb-1920-1119553_iofbte.jpg' WHERE `id` = 20 AND `status_id` = 2;
+
 INSERT INTO `event_category` (`event_id`, `category_id`) VALUES 
 (1, 4), (1, 12), (2, 1), (2, 10), (3, 7), (3, 8), (4, 1), (4, 10), (5, 2), (5, 8), 
 (5, 9), (6, 1), (7, 3), (7, 6), (8, 3), (8, 10), (9, 7), (10, 10), (10, 13), (11, 11),

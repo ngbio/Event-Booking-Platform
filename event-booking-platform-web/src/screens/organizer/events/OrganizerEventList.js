@@ -79,7 +79,7 @@ const OrganizerEventList = () => {
         } catch (ex) {
             console.error(ex);
             loadedRequestRef.current = "";
-            setErr(ex.response?.data?.message || "Khong the tai danh sach su kien cua ban.");
+            setErr(ex.response?.data?.message || "Không thể tải danh sách sự kiện của bạn.");
         } finally {
             pendingOrganizerEventRequests.delete(requestKey);
             setLoading(false);
@@ -116,16 +116,16 @@ const OrganizerEventList = () => {
     if (user === null) {
         return (
             <Alert className="alert-dark-pink">
-                Vui long dang nhap bang tai khoan nha to chuc de xem su kien cua ban.
+                Vui lòng đăng nhập bằng tài khoản nhà tổ chức để xem sự kiện của bạn.
                 <div className="mt-3">
-                    <Button className="btn-pink" onClick={() => nav("/login?next=/organizer/events")}>Dang nhap</Button>
+                    <Button className="btn-pink" onClick={() => nav("/login?next=/organizer/events")}>Đăng nhập</Button>
                 </div>
             </Alert>
         );
     }
 
     if (user.roleId !== 2) {
-        return <Alert className="alert-dark-pink">Chi tai khoan nha to chuc moi co the quan ly su kien.</Alert>;
+        return <Alert className="alert-dark-pink">Chỉ tài khoản nhà tổ chức mới có thể quản lý sự kiện.</Alert>;
     }
 
     return (
@@ -133,14 +133,14 @@ const OrganizerEventList = () => {
             <div className="organizer-list-head">
                 <div>
                     <div className="page-kicker mb-2">Organizer</div>
-                    <h1 className="organizer-title">Su kien cua toi</h1>
+                    <h1 className="organizer-title">Sự kiện của tôi</h1>
                 </div>
 
-                <Button className="btn-pink" onClick={() => nav("/organizer/events/new")}>Tao su kien</Button>
+                <Button className="btn-pink" onClick={() => nav("/organizer/events/new")}>Tạo sự kiện</Button>
             </div>
 
             {err && <Alert className="alert-dark-pink mt-3">{err}</Alert>}
-            {events.length === 0 && loading === false && !err && <Alert className="alert-dark-pink mt-3">Ban chua co su kien nao.</Alert>}
+            {events.length === 0 && loading === false && !err && <Alert className="alert-dark-pink mt-3">Bạn chưa có sự kiện nào.</Alert>}
 
             <Row className="event-grid mt-3">
                 {events.map(e => <Col xs={12} md={6} xl={4} key={e.id}>
@@ -149,22 +149,22 @@ const OrganizerEventList = () => {
                             <div className="event-card-placeholder">EVENT</div>}
 
                         <Card.Body className="d-flex flex-column">
-                            <div className="event-badge mb-3">{e.statusName || "Dang cap nhat"}</div>
+                            <div className="event-badge mb-3">{e.statusName || "Đang cập nhật"}</div>
                             <Card.Title className="event-title">{e.title}</Card.Title>
-                            <Card.Text className="event-meta mb-1">{e.location || "Dang cap nhat dia diem"}</Card.Text>
+                            <Card.Text className="event-meta mb-1">{e.location || "Đang cập nhật địa điểm"}</Card.Text>
                             <Card.Text className="event-meta">{formatDate(e.startTime)}</Card.Text>
 
                             <div className="organizer-event-stats mt-auto">
                                 <div>
-                                    <span>Tong ve</span>
+                                    <span>Tổng vé</span>
                                     <strong>{e.totalTickets}</strong>
                                 </div>
                                 <div>
-                                    <span>Con lai</span>
+                                    <span>Còn lại</span>
                                     <strong>{e.availableTickets}</strong>
                                 </div>
                                 <div>
-                                    <span>Da ban</span>
+                                    <span>Đã bán</span>
                                     <strong>{e.soldTickets}</strong>
                                 </div>
                             </div>
@@ -173,15 +173,15 @@ const OrganizerEventList = () => {
                         </Card.Body>
 
                         <Card.Body className="pt-0 organizer-event-actions">
-                            <Button className="btn-soft-pink" onClick={() => nav(`/organizer/events/${e.id}`)}>Chi tiet</Button>
-                            <Button className="btn-outline-pink" onClick={() => nav(`/organizer/events/${e.id}/edit`)}>Sua</Button>
+                            <Button className="btn-soft-pink" onClick={() => nav(`/organizer/events/${e.id}`)}>Chi tiết</Button>
+                            <Button className="btn-outline-pink" onClick={() => nav(`/organizer/events/${e.id}/edit`)}>Sửa</Button>
                         </Card.Body>
                     </Card>
                 </Col>)}
             </Row>
 
             {hasMore && <div className="text-center mt-4 mb-2">
-                <Button className="btn-soft-pink px-4" onClick={loadMore} disabled={loading}>Xem them</Button>
+                <Button className="btn-soft-pink px-4" onClick={loadMore} disabled={loading}>Xem thêm</Button>
             </div>}
 
             {loading && <MySpinner />}

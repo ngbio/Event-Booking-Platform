@@ -84,7 +84,7 @@ const OrganizerEventForm = () => {
                     await loadEvent();
             } catch (ex) {
                 console.error(ex);
-                setErr(ex.response?.data?.message || "Khong the tai du lieu su kien.");
+                setErr(ex.response?.data?.message || "Không thể tải dữ liệu sự kiện.");
             } finally {
                 setLoading(false);
             }
@@ -100,25 +100,25 @@ const OrganizerEventForm = () => {
         const video = videoRef.current?.files?.[0];
 
         if (!form.title.trim())
-            errors.title = "Vui long nhap ten su kien.";
+            errors.title = "Vui lòng nhập tên sự kiện.";
         if (!form.startTime)
-            errors.startTime = "Vui long chon thoi gian bat dau.";
+            errors.startTime = "Vui lòng chọn thời gian bắt đầu.";
         if (!form.endTime)
-            errors.endTime = "Vui long chon thoi gian ket thuc.";
+            errors.endTime = "Vui lòng chọn thời gian kết thúc.";
         if (form.startTime && form.endTime && new Date(form.startTime) >= new Date(form.endTime))
-            errors.endTime = "Thoi gian ket thuc phai sau thoi gian bat dau.";
+            errors.endTime = "Thời gian kết thúc phải sau thời gian bắt đầu.";
         if (!form.location.trim())
-            errors.location = "Vui long nhap dia diem.";
+            errors.location = "Vui lòng nhập địa điểm.";
         if (Number(form.totalTickets) < 1)
-            errors.totalTickets = "So ve phai lon hon 0.";
+            errors.totalTickets = "Số vé phải lớn hơn 0.";
         if (Number(form.price) < 0)
-            errors.price = "Gia ve khong duoc am.";
+            errors.price = "Giá vé không được âm.";
         if (!form.categoryIds)
-            errors.categoryIds = "Vui long chon danh muc.";
+            errors.categoryIds = "Vui lòng chọn danh mục.";
         if (image && image.size > MAX_MEDIA_FILE_SIZE)
-            errors.image = "Anh toi da 20MB.";
+            errors.image = "Ảnh quá lớn. Vui lòng chọn ảnh nhỏ hơn 20MB.";
         if (video && video.size > MAX_MEDIA_FILE_SIZE)
-            errors.video = "Video toi da 20MB.";
+            errors.video = "Video quá lớn. Vui lòng chọn video nhỏ hơn 20MB.";
 
         setFieldErrors(errors);
         return Object.keys(errors).length === 0;
@@ -164,7 +164,7 @@ const OrganizerEventForm = () => {
                 : await authApis().post(endpoints["create-organizer-event"], data, config);
 
             const saved = res.data.data;
-            setMsg(isEdit ? "Cap nhat su kien thanh cong." : "Tao su kien thanh cong.");
+            setMsg(isEdit ? "Cập nhật sự kiện thành công." : "Tạo sự kiện thành công.");
 
             if (imageRef.current)
                 imageRef.current.value = "";
@@ -181,7 +181,7 @@ const OrganizerEventForm = () => {
             console.error(ex);
             const data = ex.response?.data;
             const uploadError = ex.response?.status === 413 || !ex.response;
-            setErr(data?.message || (uploadError ? "Khong the upload media. Vui long kiem tra video/anh khong vuot qua 20MB." : "Khong the luu su kien. Vui long thu lai."));
+            setErr(data?.message || (uploadError ? "Không thể upload media. Vui lòng kiểm tra video/ảnh không vượt quá 20MB." : "Không thể lưu sự kiện. Vui lòng thử lại."));
             if (data?.errors)
                 setFieldErrors(data.errors);
         } finally {
@@ -192,16 +192,16 @@ const OrganizerEventForm = () => {
     if (user === null) {
         return (
             <Alert className="alert-dark-pink">
-                Vui long dang nhap bang tai khoan nha to chuc de quan ly su kien.
+                Vui lòng đăng nhập bằng tài khoản nhà tổ chức để quản lý sự kiện.
                 <div className="mt-3">
-                    <Button className="btn-pink" onClick={() => nav(`/login?next=${isEdit ? `/organizer/events/${eventId}/edit` : "/organizer/events/new"}`)}>Dang nhap</Button>
+                    <Button className="btn-pink" onClick={() => nav(`/login?next=${isEdit ? `/organizer/events/${eventId}/edit` : "/organizer/events/new"}`)}>Đăng nhập</Button>
                 </div>
             </Alert>
         );
     }
 
     if (user?.roleId !== 2)
-        return <Alert className="alert-dark-pink">Chi tai khoan nha to chuc moi co the quan ly su kien.</Alert>;
+        return <Alert className="alert-dark-pink">Chỉ tài khoản nhà tổ chức mới có thể quản lý sự kiện.</Alert>;
 
     if (loading)
         return <MySpinner />;
@@ -209,43 +209,43 @@ const OrganizerEventForm = () => {
     return (
         <div className="organizer-form-screen">
             <div className="organizer-detail-toolbar">
-                <Button className="btn-soft-pink" onClick={() => nav(isEdit ? `/organizer/events/${eventId}` : "/organizer/events")}>Quay lai</Button>
-                {isEdit && <Button className="btn-outline-pink" onClick={() => nav(`/organizer/events/${eventId}`)}>Xem chi tiet</Button>}
+                <Button className="btn-soft-pink" onClick={() => nav(isEdit ? `/organizer/events/${eventId}` : "/organizer/events")}>Quay lại</Button>
+                {isEdit && <Button className="btn-outline-pink" onClick={() => nav(`/organizer/events/${eventId}`)}>Xem chi tiết</Button>}
             </div>
 
             <Row className="organizer-form-layout mt-4">
                 <Col lg={8}>
                     <section className="profile-form glass-panel">
                         <div className="page-kicker mb-2">Organizer</div>
-                        <h2>{isEdit ? "Sua su kien" : "Tao su kien"}</h2>
-                        <p>{isEdit ? "Cap nhat thong tin, anh banner va video gioi thieu neu co." : "Nhap thong tin co ban de tao ban nhap su kien moi."}</p>
+                        <h2>{isEdit ? "Sửa sự kiện" : "Tạo sự kiện"}</h2>
+                        <p>{isEdit ? "Cập nhật thông tin, ảnh banner và video giới thiệu nếu có." : "Nhập thông tin cơ bản để tạo sự kiện mới."}</p>
 
                         {err && <Alert className="alert-dark-pink">{err}</Alert>}
                         {msg && <Alert variant="success">{msg}</Alert>}
 
                         <Form onSubmit={saveEvent}>
                             <Form.Group className="mb-3" controlId="event-title">
-                                <Form.Label>Ten su kien</Form.Label>
+                                <Form.Label>Tên sự kiện</Form.Label>
                                 <Form.Control value={form.title} onChange={e => updateForm("title", e.target.value)} isInvalid={!!fieldErrors.title} />
                                 <Form.Control.Feedback type="invalid">{fieldErrors.title}</Form.Control.Feedback>
                             </Form.Group>
 
                             <Form.Group className="mb-3" controlId="event-description">
-                                <Form.Label>Mo ta</Form.Label>
+                                <Form.Label>Mô tả</Form.Label>
                                 <Form.Control as="textarea" rows={5} value={form.description} onChange={e => updateForm("description", e.target.value)} />
                             </Form.Group>
 
                             <Row>
                                 <Col md={6}>
                                     <Form.Group className="mb-3" controlId="event-start">
-                                        <Form.Label>Bat dau</Form.Label>
+                                        <Form.Label>Bắt đầu</Form.Label>
                                         <Form.Control type="datetime-local" value={form.startTime} onChange={e => updateForm("startTime", e.target.value)} isInvalid={!!fieldErrors.startTime} />
                                         <Form.Control.Feedback type="invalid">{fieldErrors.startTime}</Form.Control.Feedback>
                                     </Form.Group>
                                 </Col>
                                 <Col md={6}>
                                     <Form.Group className="mb-3" controlId="event-end">
-                                        <Form.Label>Ket thuc</Form.Label>
+                                        <Form.Label>Kết thúc</Form.Label>
                                         <Form.Control type="datetime-local" value={form.endTime} onChange={e => updateForm("endTime", e.target.value)} isInvalid={!!fieldErrors.endTime} />
                                         <Form.Control.Feedback type="invalid">{fieldErrors.endTime}</Form.Control.Feedback>
                                     </Form.Group>
@@ -253,7 +253,7 @@ const OrganizerEventForm = () => {
                             </Row>
 
                             <Form.Group className="mb-3" controlId="event-location">
-                                <Form.Label>Dia diem</Form.Label>
+                                <Form.Label>Địa điểm</Form.Label>
                                 <Form.Control value={form.location} onChange={e => updateForm("location", e.target.value)} isInvalid={!!fieldErrors.location} />
                                 <Form.Control.Feedback type="invalid">{fieldErrors.location}</Form.Control.Feedback>
                             </Form.Group>
@@ -261,23 +261,23 @@ const OrganizerEventForm = () => {
                             <Row>
                                 <Col md={4}>
                                     <Form.Group className="mb-3" controlId="event-total-tickets">
-                                        <Form.Label>Tong so ve</Form.Label>
+                                        <Form.Label>Tổng số vé</Form.Label>
                                         <Form.Control type="number" min="1" value={form.totalTickets} onChange={e => updateForm("totalTickets", e.target.value)} isInvalid={!!fieldErrors.totalTickets} />
                                         <Form.Control.Feedback type="invalid">{fieldErrors.totalTickets}</Form.Control.Feedback>
                                     </Form.Group>
                                 </Col>
                                 <Col md={4}>
                                     <Form.Group className="mb-3" controlId="event-price">
-                                        <Form.Label>Gia ve</Form.Label>
+                                        <Form.Label>Giá vé</Form.Label>
                                         <Form.Control type="number" min="0" value={form.price} onChange={e => updateForm("price", e.target.value)} isInvalid={!!fieldErrors.price} />
                                         <Form.Control.Feedback type="invalid">{fieldErrors.price}</Form.Control.Feedback>
                                     </Form.Group>
                                 </Col>
                                 <Col md={4}>
                                     <Form.Group className="mb-3" controlId="event-category">
-                                        <Form.Label>Danh muc</Form.Label>
+                                        <Form.Label>Danh mục</Form.Label>
                                         <Form.Select value={form.categoryIds} onChange={e => updateForm("categoryIds", e.target.value)} isInvalid={!!fieldErrors.categoryIds}>
-                                            <option value="">Chon danh muc</option>
+                                            <option value="">Chọn danh mục</option>
                                             {categories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
                                         </Form.Select>
                                         <Form.Control.Feedback type="invalid">{fieldErrors.categoryIds}</Form.Control.Feedback>
@@ -288,14 +288,14 @@ const OrganizerEventForm = () => {
                             <Row>
                                 <Col md={6}>
                                     <Form.Group className="mb-3" controlId="event-image">
-                                        <Form.Label>Anh banner</Form.Label>
+                                        <Form.Label>Ảnh banner</Form.Label>
                                         <Form.Control ref={imageRef} type="file" accept="image/*" isInvalid={!!fieldErrors.image} onChange={() => clearFileError("image")} />
                                         <Form.Control.Feedback type="invalid">{fieldErrors.image}</Form.Control.Feedback>
                                     </Form.Group>
                                 </Col>
                                 <Col md={6}>
                                     <Form.Group className="mb-3" controlId="event-video">
-                                        <Form.Label>Video gioi thieu (khong bat buoc)</Form.Label>
+                                        <Form.Label>Video giới thiệu (không bắt buộc)</Form.Label>
                                         <Form.Control ref={videoRef} type="file" accept="video/*" isInvalid={!!fieldErrors.video} onChange={() => clearFileError("video")} />
                                         <Form.Control.Feedback type="invalid">{fieldErrors.video}</Form.Control.Feedback>
                                     </Form.Group>
@@ -303,7 +303,7 @@ const OrganizerEventForm = () => {
                             </Row>
 
                             <Button className="btn-pink px-4" type="submit" disabled={saving}>
-                                {saving ? "Dang luu..." : "Luu su kien"}
+                                {saving ? "Đang lưu..." : "Lưu sự kiện"}
                             </Button>
                         </Form>
                     </section>
@@ -314,11 +314,11 @@ const OrganizerEventForm = () => {
                         <div className="page-kicker mb-2">Preview</div>
                         {currentEvent?.imageUrl ? <img className="organizer-form-preview-img" src={currentEvent.imageUrl} alt={currentEvent.title} /> :
                             <div className="event-card-placeholder">EVENT</div>}
-                        <h3>{form.title || "Ten su kien"}</h3>
-                        <p>{form.location || "Dia diem to chuc"}</p>
+                        <h3>{form.title || "Tên sự kiện"}</h3>
+                        <p>{form.location || "Địa điểm tổ chức"}</p>
                         <div className="profile-badges">
-                            <span>{currentEvent?.statusName || "Ban nhap"}</span>
-                            <span>{categories.find(c => String(c.id) === String(form.categoryIds))?.name || "Danh muc"}</span>
+                            <span>{currentEvent?.statusName || "Bản nháp"}</span>
+                            <span>{categories.find(c => String(c.id) === String(form.categoryIds))?.name || "Danh mục"}</span>
                         </div>
                     </aside>
                 </Col>

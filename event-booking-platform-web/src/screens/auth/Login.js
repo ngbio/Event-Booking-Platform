@@ -13,7 +13,7 @@ const Login = () => {
         type: "email"
     }, {
         field: "password",
-        label: "Mat khau",
+        label: "Mật khẩu",
         type: "password"
     }];
 
@@ -27,7 +27,7 @@ const Login = () => {
 
     const validate = () => {
         if (!user.email || !user.password) {
-            setErr("Vui long nhap email va mat khau!");
+            setErr("Vui lòng nhập email và mật khẩu!");
             return false;
         }
 
@@ -61,7 +61,7 @@ const Login = () => {
                     nav('/');
             } catch (ex) {
                 console.error(ex);
-                setErr(ex.response?.data?.message || "Dang nhap that bai!");
+                setErr(ex.response?.data?.message || "Đăng nhập thất bại!");
             } finally {
                 setLoading(false);
             }
@@ -71,8 +71,8 @@ const Login = () => {
     return (
         <div className="auth-wrap glass-panel">
             <div className="page-kicker mb-2">Welcome back</div>
-            <h1 className="auth-title">Dang nhap</h1>
-            <p className="auth-copy">Tiep tuc voi tai khoan Event Booking cua ban.</p>
+            <h1 className="auth-title">Đăng nhập</h1>
+            <p className="auth-copy">Tiếp tục với tài khoản Event Booking của bạn.</p>
 
             {err && <Alert variant="danger">{err}</Alert>}
 
@@ -83,7 +83,7 @@ const Login = () => {
                 </Form.Group>)}
 
                 <Form.Group className="mb-3">
-                    {loading === true ? <MySpinner /> : <Button className="btn-pink w-100" type="submit">Dang nhap</Button>}
+                    {loading === true ? <MySpinner /> : <Button className="btn-pink w-100" type="submit">Đăng nhập</Button>}
                 </Form.Group>
             </Form>
         </div>
