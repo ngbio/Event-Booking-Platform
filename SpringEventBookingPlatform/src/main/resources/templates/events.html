@@ -33,6 +33,10 @@
                         <option value="title" th:selected="${searchBy == 'title'}">Tìm theo tên sự kiện</option>
                         <option value="category" th:selected="${searchBy == 'category'}">Tìm theo danh mục</option>
                     </select>
+                    
+                    <input type="text" name="kw" class="form-control" 
+                           placeholder="Tìm kiếm..." 
+                           th:value="${param.kw}" autocomplete="off" style="width: 220px;">
 
                     <button type="submit" class="btn btn-outline-secondary text-nowrap">Tìm</button>
 

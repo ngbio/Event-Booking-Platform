@@ -1,9 +1,11 @@
 package com.group3.mapper;
 
 import com.group3.dto.request.EventRequest;
+import com.group3.dto.response.EventRefundResponse;
 import com.group3.pojo.Category;
 import com.group3.pojo.Event;
 import com.group3.dto.response.EventResponse;
+import com.group3.dto.response.EventSettlementResponse;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -29,7 +31,6 @@ public class EventMapper {
         response.setEndTime(event.getEndTime());
         response.setCreatedDate(event.getCreatedDate());
         response.setUpdatedDate(event.getUpdatedDate());
-        response.setIsPaidFee(event.getIsPaidFee());
         response.setListingFee(event.getListingFee());
         response.setSettlementCode(event.getSettlementCode());
 
@@ -40,9 +41,9 @@ public class EventMapper {
         Integer evtSold = event.getSoldTickets();
         response.setSoldTickets(evtSold);
         int sold = (evtSold != null) ? evtSold : 0;
-        
+
         response.setAvailableTickets(Math.max(total - sold, 0));
-        
+
         if (event.getStatusId() != null) {
             response.setStatusId(event.getStatusId().getId());
             response.setStatusName(event.getStatusId().getName());
@@ -68,14 +69,14 @@ public class EventMapper {
 
         return response;
     }
-    
+
     public static List<EventResponse> toResponseList(List<Event> events) {
         if (events == null) {
             return new ArrayList<>();
         }
         return events.stream()
-            .map(EventMapper::toResponse)
-            .collect(Collectors.toList());
+                .map(EventMapper::toResponse)
+                .collect(Collectors.toList());
     }
 
     public static Event toEntity(EventRequest request) {
@@ -104,39 +105,99 @@ public class EventMapper {
         if (title != null) {
             existingEvent.setTitle(title);
         }
-        
+
         String desc = request.getDescription();
         if (desc != null) {
             existingEvent.setDescription(desc);
         }
-        
+
         Date startTime = request.getStartTime();
         if (startTime != null) {
             existingEvent.setStartTime(startTime);
         }
-        
+
         Date endTime = request.getEndTime();
         if (endTime != null) {
             existingEvent.setEndTime(endTime);
         }
-        
+
         String location = request.getLocation();
         if (location != null) {
             existingEvent.setLocation(location);
         }
-        
+
         Integer totalTickets = request.getTotalTickets();
         if (totalTickets != null) {
             existingEvent.setTotalTickets(totalTickets);
         }
-        
+
         BigDecimal price = request.getPrice();
         if (price != null) {
             existingEvent.setPrice(price);
         }
-   
+
         existingEvent.setUpdatedDate(new Date());
 
         return existingEvent;
+    }
+
+    public static EventRefundResponse toEventRefundResponse(Event event) {
+        if (event == null) {
+            return null;
+        }
+        EventRefundResponse response = new EventRefundResponse();
+        response.setId(event.getId());
+        response.setTitle(event.getTitle());
+        response.setPrice(event.getPrice());
+        response.setSoldTickets(event.getSoldTickets());
+        response.setOrganizerName(event.getOrganizerId().getOrganizationName());
+
+        return response;
+    }
+
+    public static List<EventRefundResponse> toEventRefundResponseList(List<Event> events) {
+        if (events == null) {
+            return new ArrayList<>();
+        }
+        return events.stream()
+                .map(EventMapper::toEventRefundResponse)
+                .collect(Collectors.toList());
+    }
+
+    public static EventSettlementResponse toEventSettlementResponse(Event event) {
+        if (event == null) {
+            return null;
+        }
+        EventSettlementResponse response = new EventSettlementResponse();
+        response.setId(event.getId());
+        response.setTitle(event.getTitle());
+
+        response.setOrganizerName(event.getOrganizerId().getOrganizationName());
+        response.setEmail(event.getOrganizerId().getUser().getEmail());
+        response.setPhone(event.getOrganizerId().getUser().getPhone());
+        response.setEndTime(event.getEndTime());
+        response.setPrice(event.getPrice());
+        response.setSoldTickets(event.getSoldTickets());
+        
+        BigDecimal totalRevenue = event.getPrice().multiply(BigDecimal.valueOf(event.getSoldTickets()));
+        response.setTotalRevenue(totalRevenue);
+        
+        response.setListingFee(event.getListingFee());
+        
+        BigDecimal actualPayout = totalRevenue.subtract(event.getListingFee());
+        response.setActualPayout(actualPayout.compareTo(BigDecimal.ZERO) > 0 ? actualPayout : BigDecimal.ZERO);
+        response.setIsSettlement(event.getIsSettlement());
+        response.setSettlementCode(event.getSettlementCode());
+
+        return response;
+    }
+
+    public static List<EventSettlementResponse> toEventSettlementResponseList(List<Event> events) {
+        if (events == null) {
+            return new ArrayList<>();
+        }
+        return events.stream()
+                .map(EventMapper::toEventSettlementResponse)
+                .collect(Collectors.toList());
     }
 }

@@ -25,4 +25,5 @@ public interface BookingRepository {
     boolean existsPaidBooking(Integer eventId, Integer userId);
     
     int updateStatusByEventId(Integer eventId, Integer oldStatusId, Integer newStatusId);
+
 }

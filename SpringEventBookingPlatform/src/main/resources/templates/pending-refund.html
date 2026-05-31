@@ -1,7 +1,7 @@
 <!doctype html>
 <html xmlns:th="http://www.thymeleaf.org">
-    <head>
-        <title>Quản lý Hoàn tiền</title>
+<head>
+    <title>Quản lý Hoàn tiền</title>
     <th:block th:replace="base :: css"></th:block>
 </head>
 <body>
@@ -22,15 +22,16 @@
         </div>
 
         <div th:if="${events == null or #lists.isEmpty(events)}" class="alert alert-info text-center mt-4 shadow-sm p-5 border">
-            <i class="bi bi-check-circle text-success" style="font-size: 1rem;"></i>
+            <h5 class="mt-3 text-secondary">Hoàn tất</h5>
             <p class="text-muted mb-0">Hiện tại không có sự kiện nào bị hủy cần phải hoàn tiền.</p>
         </div>
 
-        <table class="table table-hover table-bordered align-middle bg-white shadow-sm mt-3">
+        <table th:if="${events != null and !#lists.isEmpty(events)}" class="table table-hover table-bordered align-middle bg-white shadow-sm mt-3">
             <thead class="table-dark text-center">
                 <tr>
+                    <th>ID</th>
                     <th>Tên sự kiện</th>
-                    <th>Ngày bắt đầu</th>
+                    <th>Tên nhà tổ chức</th>
                     <th>Số lượng vé</th>
                     <th>Số tiền hoàn trả</th>
                     <th>Trạng thái</th>
@@ -39,21 +40,47 @@
             </thead>
             <tbody>
                 <tr th:each="e : ${events}">
+                    <td class="text-center fw-bold" th:text="${e.id}">1</td>
                     <td class="fw-bold">
                         <a th:href="@{/admin/finance/events/{id}/bookings(id=${e.id})}" th:text="${e.title}" class="text-decoration-none text-danger"></a>
                     </td>
-                    <td class="text-center" th:text="${#dates.format(e.startTime, 'dd/MM/yyyy HH:mm')}"></td>
-                    <td class="text-center fw-bold" th:text="${e.soldTickets}"></td>
-                    <td class="text-center fw-bold" th:text="${e.soldTickets*e.price}"></td>
+                    <td class="text-center" th:text="${e.organizerName}">Tên nhà tổ chức</td>
+                    <td class="text-center fw-bold"><span th:text="${e.soldTickets}"></span> Vé</td>
+                    
+                    <td class="text-end text-primary fw-bold" 
+                        th:text="${e.price != null ? #numbers.formatDecimal(e.soldTickets * e.price, 0, 'COMMA', 0, 'POINT') + ' đ' : '0 đ'}">
+                    </td>
                     
                     <td class="text-center">
-                        <span class="badge bg-warning text-dark">Chờ hoàn tiền</span>
+                        <span class="badge bg-warning text-dark shadow-sm">Chờ hoàn tiền</span>
                     </td>
+                    
                     <td class="text-center">
-                        <form th:action="@{/admin/finance/approve-refund}" method="post" class="m-0">
-                            <input type="hidden" name="id" th:value="${e.id}"/>
-                            <button type="submit" class="btn btn-sm btn-danger fw-bold">Duyệt Hoàn Tiền</button>
-                        </form>
+                        <div class="dropdown">
+                            <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Thao tác
+                            </button>
+
+                            <ul class="dropdown-menu dropdown-menu-end shadow">
+                                <li>
+                                    <a class="dropdown-item py-2" th:href="@{/admin/finance/events/{id}/bookings(id=${e.id},statusId='3')}">
+                                        DS đơn đặt vé
+                                    </a>
+                                </li>
+
+                                <li><hr class="dropdown-divider"></li>
+
+                                <li>
+                                    <form th:action="@{/admin/finance/approve-refund}" method="post" class="d-inline">
+                                        <input type="hidden" name="id" th:value="${e.id}"/>
+                                        <button type="submit" class="dropdown-item text-danger py-2 fw-bold" 
+                                                onclick="return confirm('Bạn có chắc chắn muốn duyệt hoàn trả toàn bộ tiền vé cho sự kiện này?')">
+                                            Duyệt Hoàn Tiền
+                                        </button>
+                                    </form>
+                                </li>
+                            </ul>
+                        </div>
                     </td>
                 </tr>
             </tbody>

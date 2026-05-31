@@ -1,20 +1,34 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
 package com.group3.configs;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
+import jakarta.servlet.http.HttpServletResponse;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.annotation.Order;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 
+/**
+ *
+ * @author thanh
+ */
 @Configuration
 @EnableWebSecurity
 @EnableTransactionManagement
@@ -41,20 +55,31 @@ public class SpringSecurityConfigs {
     }
 
     @Bean
-    @Order(2)
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.securityMatcher("/admin/**", "/")
+        http.cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(c -> c.disable())
                 .exceptionHandling(exception -> exception
                 .authenticationEntryPoint((request, response, authException) -> {
-                    response.sendRedirect(request.getContextPath() + "/admin/login");
+                    String requestUri = request.getRequestURI();
+                    String apiPrefix = request.getContextPath() + "/api/";
+
+                    if (!requestUri.startsWith(apiPrefix)) {
+                        response.sendRedirect(request.getContextPath() + "/admin/login");
+                        return;
+                    }
+
+                    response.setStatus(401);
+                    response.setContentType("application/json;charset=UTF-8");
+                    response.getWriter().write("{\"status\": 401, \"message\": \"Chưa xác thực: " + authException.getMessage() + "\"}");
                 })
                 .accessDeniedHandler((request, response, accessDeniedException) -> {
-                    response.sendRedirect(request.getContextPath() + "/admin/login?denied=true");
+                    response.setStatus(403);
+                    response.setContentType("application/json;charset=UTF-8");
+                    response.getWriter().write("{\"status\": 403, \"message\": \"Không có quyền truy cập: " + accessDeniedException.getMessage() + "\"}");
                 })
                 )
                 .authorizeHttpRequests((requests) -> requests
-                .requestMatchers("/admin/login").permitAll()
+                .requestMatchers("/").permitAll()
                 .requestMatchers(
                         "/swagger-ui/**",
                         "/swagger-ui.html",
@@ -63,31 +88,59 @@ public class SpringSecurityConfigs {
                         "/swagger-resources/**",
                         "/webjars/**"
                 ).permitAll()
-                .requestMatchers("/", "/admin", "/admin/").hasRole("ADMIN")
+                .requestMatchers(
+                        "/admin/login",
+                        "/api/auth/login",
+                        "/api/auth/register/**",
+                        "/api/auth/**"
+                ).permitAll()
+                .requestMatchers("/api/secure/**").authenticated()
+                .requestMatchers(HttpMethod.GET, "/api/events/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/categories").permitAll()
                 .requestMatchers("/admin/**").hasRole("ADMIN")
-                .anyRequest().permitAll()
+                // Khu vực này sẽ do JwtFilter bảo vệ
+                .requestMatchers("/api/users/secure/**").authenticated()
+                .anyRequest().authenticated()
                 )
+                // Khởi tạo JwtFilter và đặt nó gác ở cửa kiểm tra API
+                .addFilterBefore(new com.group3.filters.JwtFilter(), UsernamePasswordAuthenticationFilter.class)
                 .formLogin(form -> form
                 .loginPage("/admin/login")
                 .loginProcessingUrl("/admin/login")
-                .usernameParameter("email")
-                .passwordParameter("password")
                 .defaultSuccessUrl("/admin", true)
                 .failureUrl("/admin/login?error=true")
                 .permitAll()
                 )
                 .logout((logout) -> logout.logoutSuccessUrl("/admin/login").permitAll());
 
-        http.userDetailsService(userDetailsService);
         return http.build();
     }
 
     @Bean
     public Cloudinary cloudinary() {
-        return new Cloudinary(ObjectUtils.asMap(
-                "cloud_name", "ducouuixg",
-                "api_key", "222724154773865",
-                "api_secret", "im6x_Bg68qbbPgx9RYalYAm5iwY",
-                "secure", true));
+        Cloudinary cloudinary
+                = new Cloudinary(ObjectUtils.asMap(
+                        "cloud_name", "ducouuixg",
+                        "api_key", "222724154773865",
+                        "api_secret", "im6x_Bg68qbbPgx9RYalYAm5iwY",
+                        "secure", true));
+        return cloudinary;
+    }
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+
+        CorsConfiguration config = new CorsConfiguration();
+
+        config.setAllowedOrigins(List.of("http://localhost:3000"));
+        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        config.setAllowedHeaders(List.of("Authorization", "Content-Type"));
+        config.setExposedHeaders(List.of("Authorization"));
+        config.setAllowCredentials(true);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", config);
+
+        return source;
     }
 }

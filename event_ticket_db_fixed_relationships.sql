@@ -75,7 +75,7 @@ CREATE TABLE `event` (
   `price` decimal(10,2) DEFAULT 0.00,
   `sold_tickets` int NOT NULL DEFAULT 0,
   `listing_fee` decimal(10,2) DEFAULT 0.00,
-  `is_paid_fee` tinyint(1) DEFAULT 0,
+  `is_settlement` boolean DEFAULT 0,
   `settlement_code` varchar(100) DEFAULT NULL, 
   `created_date` datetime DEFAULT CURRENT_TIMESTAMP,
   `updated_date` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -130,17 +130,6 @@ CREATE TABLE `ticket_detail` (
   FOREIGN KEY (`status_id`) REFERENCES `status_ticket` (`id`)
 );
 
-CREATE TABLE `event_fee` (
-  `id` int PRIMARY KEY AUTO_INCREMENT,
-  `event_id` int NOT NULL,
-  `amount` decimal(10,2) NOT NULL,
-  `status_id` int NOT NULL,
-  `payment_method` varchar(50),
-  `transaction_id` varchar(255),
-  `created_date` datetime DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (`event_id`) REFERENCES `event` (`id`) ON DELETE CASCADE,
-  FOREIGN KEY (`status_id`) REFERENCES `status_pay` (`id`)
-);
 
 -- ------------------------------------------------------
 -- 3. SEEDING MOCK DATA
@@ -214,28 +203,44 @@ INSERT INTO `attendee` (`user_id`, `birth_date`, `gender`) VALUES
 (17, '1990-06-22', 'Male');
 
 -- Sự kiện, Đặt vé và Thanh toán
-INSERT INTO `event` (`id`, `organizer_id`, `status_id`, `title`, `description`, `start_time`, `end_time`, `location`, `total_tickets`, `price`, `sold_tickets`, `listing_fee`, `is_paid_fee`, `settlement_code`) VALUES 
-(1, 2, 1, 'Triển Lãm Tranh Sơn Dầu Việt', 'Trưng bày tác phẩm nghệ thuật.', '2026-10-05 09:00:00', '2026-10-12 18:00:00', 'Bảo tàng Mỹ thuật TP.HCM', 300, 80000.00, 0, 100000.00, 1, NULL),
-(2, 2, 1, 'Đại Hội Kpop Dance Cover 2026', 'Sân chơi âm nhạc vũ đạo trẻ.', '2026-07-20 18:00:00', '2026-07-20 22:00:00', 'Nhà thi đấu Phú Thọ', 800, 120000.00, 0, 150000.00, 1, NULL),
-(3, 3, 1, 'Workshop Thiết Kế UI/UX Nâng Cao', 'Học thiết kế cùng chuyên gia.', '2026-06-25 08:30:00', '2026-06-25 12:00:00', 'Toà nhà văn phòng TechHub', 50, 450000.00, 0, 50000.00, 1, NULL),
-(4, 2, 2, 'Đêm Nhạc Hội Indie 2026', 'Sự kiện âm nhạc quy mô lớn.', '2026-07-15 19:00:00', '2026-07-15 23:00:00', 'Sân vận động Hoa Lư', 1000, 500000.00, 5, 200000.00, 1, NULL),
-(5, 2, 2, 'Hội Thảo Khởi Nghiệp Công Nghệ', 'Xu hướng phát triển công nghệ.', '2026-08-10 08:00:00', '2026-08-10 12:00:00', 'Trung tâm Hội nghị SSE', 200, 150000.00, 4, 100000.00, 1, NULL),
-(6, 3, 2, 'Saigon Rock Fest 2026', 'Đại nhạc hội Rock bùng nổ sức trẻ.', '2026-09-01 17:00:00', '2026-09-01 22:30:00', 'Nhà thi đấu Nguyễn Du', 1500, 350000.00, 3, 200000.00, 1, NULL),
-(7, 3, 2, 'Giải Chạy Marathon Vì Cộng Đồng', 'Chạy bộ 5km và 10km bảo vệ môi trường.', '2026-06-20 05:00:00', '2026-06-20 10:00:00', 'Công viên Vinhomes Central Park', 500, 0.00, 0, 0.00, 1, NULL),
-(8, 2, 2, 'Giải Đấu Liên Minh Huyền Tao', 'Tranh cúp vô địch.', '2026-07-22 13:00:00', '2026-07-24 20:00:00', 'Vikings Esports Arena', 100, 50000.00, 0, 50000.00, 1, NULL),
-(9, 2, 2, 'Hội Thảo Xu Hướng Học Tiếng Anh', 'Bí quyết đạt TOEIC 625 nhanh chóng.', '2026-06-05 09:00:00', '2026-06-05 11:30:00', 'Đại Học Mở TP.HCM', 120, 0.00, 0, 0.00, 1, NULL),
-(10, 3, 2, 'Đêm Hài Độc Thoại Sài Gòn tếu', 'Mang lại tiếng cười cuối tuần.', '2026-07-02 20:00:00', '2026-07-02 22:30:00', 'Sân khấu kịch Q1', 80, 200000.00, 0, 50000.00, 1, NULL),
-(11, 2, 2, 'Lễ Hội Ẩm Thực Đường Phố Á Châu', 'Khám phá các món ăn đặc sắc Châu Á.', '2026-07-10 10:00:00', '2026-07-12 22:00:00', 'Phố đi bộ Nguyễn Huệ', 5000, 0.00, 0, 300000.00, 1, NULL),
-(12, 3, 2, 'Hội Chợ Sách Quốc Tế Sài Gòn', 'Triển lãm và giao lưu tác giả sách.', '2026-08-01 08:00:00', '2026-08-05 21:00:00', 'SECC Quận 7', 3000, 20000.00, 0, 200000.00, 1, NULL),
+INSERT INTO `event` (`id`, `organizer_id`, `status_id`, `title`, `description`, `start_time`, `end_time`, `location`, `total_tickets`, `price`, `sold_tickets`, `listing_fee`,`is_settlement`, `settlement_code`) VALUES 
+(1, 2, 1, 'Triển Lãm Tranh Sơn Dầu Việt', 'Trưng bày tác phẩm nghệ thuật.', '2026-10-05 09:00:00', '2026-10-12 18:00:00', 'Bảo tàng Mỹ thuật TP.HCM', 300, 80000.00, 0, 100000.00,0, NULL),
+(2, 2, 1, 'Đại Hội Kpop Dance Cover 2026', 'Sân chơi âm nhạc vũ đạo trẻ.', '2026-07-20 18:00:00', '2026-07-20 22:00:00', 'Nhà thi đấu Phú Thọ', 800, 120000.00, 0, 150000.00, 0, NULL),
+(3, 3, 1, 'Workshop Thiết Kế UI/UX Nâng Cao', 'Học thiết kế cùng chuyên gia.', '2026-06-25 08:30:00', '2026-06-25 12:00:00', 'Toà nhà văn phòng TechHub', 50, 450000.00, 0, 50000.00, 0, NULL),
+(4, 2, 2, 'Đêm Nhạc Hội Indie 2026', 'Sự kiện âm nhạc quy mô lớn.', '2026-07-15 19:00:00', '2026-07-15 23:00:00', 'Sân vận động Hoa Lư', 1000, 500000.00, 5, 200000.00, 0, NULL),
+(5, 2, 2, 'Hội Thảo Khởi Nghiệp Công Nghệ', 'Xu hướng phát triển công nghệ.', '2026-08-10 08:00:00', '2026-08-10 12:00:00', 'Trung tâm Hội nghị SSE', 200, 150000.00, 4, 100000.00, 0, NULL),
+(6, 3, 2, 'Saigon Rock Fest 2026', 'Đại nhạc hội Rock bùng nổ sức trẻ.', '2026-09-01 17:00:00', '2026-09-01 22:30:00', 'Nhà thi đấu Nguyễn Du', 1500, 350000.00, 3, 200000.00, 0, NULL),
+(7, 3, 2, 'Giải Chạy Marathon Vì Cộng Đồng', 'Chạy bộ 5km và 10km bảo vệ môi trường.', '2026-06-20 05:00:00', '2026-06-20 10:00:00', 'Công viên Vinhomes Central Park', 500, 0.00, 0, 0.00, 0, NULL),
+(8, 2, 2, 'Giải Đấu Liên Minh Huyền Tao', 'Tranh cúp vô địch.', '2026-07-22 13:00:00', '2026-07-24 20:00:00', 'Vikings Esports Arena', 100, 50000.00, 0, 50000.00, 0, NULL),
+(9, 2, 2, 'Hội Thảo Xu Hướng Học Tiếng Anh', 'Bí quyết đạt TOEIC 625 nhanh chóng.', '2026-06-05 09:00:00', '2026-06-05 11:30:00', 'Đại Học Mở TP.HCM', 120, 0.00, 0, 0.00, 0, NULL),
+(10, 3, 2, 'Đêm Hài Độc Thoại Sài Gòn tếu', 'Mang lại tiếng cười cuối tuần.', '2026-07-02 20:00:00', '2026-07-02 22:30:00', 'Sân khấu kịch Q1', 80, 200000.00, 0, 50000.00, 0, NULL),
+(11, 2, 2, 'Lễ Hội Ẩm Thực Đường Phố Á Châu', 'Khám phá các món ăn đặc sắc Châu Á.', '2026-07-10 10:00:00', '2026-07-12 22:00:00', 'Phố đi bộ Nguyễn Huệ', 5000, 0.00, 0, 300000.00, 0, NULL),
+(12, 3, 2, 'Hội Chợ Sách Quốc Tế Sài Gòn', 'Triển lãm và giao lưu tác giả sách.', '2026-08-01 08:00:00', '2026-08-05 21:00:00', 'SECC Quận 7', 3000, 20000.00, 0, 200000.00, 0, NULL),
 (13, 2, 3, 'Workshop Làm Bánh Gối Cổ Truyền', 'Làm bánh gối chuẩn vị.', '2026-06-15 14:00:00', '2026-06-15 17:00:00', 'Bếp Bánh Ngon Q3', 30, 250000.00, 0, 50000.00, 0, NULL),
 (14, 2, 3, 'Đêm Kịch Nói: Lan Và Điệp 2026', 'Vở kịch cải lương cổ truyền tái hiện.', '2026-08-15 19:30:00', '2026-08-15 22:00:00', 'Nhà hát Thành Phố', 400, 300000.00, 0, 100000.00, 0, NULL),
 (15, 3, 3, 'Triển Lãm High-Tech & Giới Thiệu AI', 'Giới thiệu robot và AI thế hệ mới.', '2026-09-10 09:00:00', '2026-09-12 17:00:00', 'Trung tâm Triển lãm Q. Tân Bình', 1000, 50000.00, 0, 150000.00, 0, NULL),
 (16, 3, 4, 'Live Concert Thanh Âm Hoàng Hôn', 'Đêm nhạc acoustic đã kết thúc.', '2026-04-01 18:00:00', '2026-04-01 21:00:00', 'Đà Lạt Mộng Mơ', 150, 450000.00, 150, 150000.00, 1, 'FT260401888'),
 (17, 2, 4, 'Hội Thảo Digital Marketing Quốc Tế', 'Cập nhật xu hướng SEO và Ads 2026.', '2026-05-02 08:00:00', '2026-05-02 17:00:00', 'Khách sạn Caravelle Sài Gòn', 200, 1200000.00, 200, 500000.00, 1, 'ST260502111'),
-(18, 3, 5, 'Hội Chợ Sách Cũ Sài Gòn', 'Sự kiện bị hủy bỏ.', '2026-05-10 08:00:00', '2026-05-12 21:00:00', 'Nhà văn hóa Thanh Niên', 2000, 0.00, 0, 0.00, 1, NULL),
-(19, 2, 5, 'Giải Marathon Quốc Tế Đà Nẵng', 'Sự kiện bị hủy do thời tiết bất lợi.', '2026-05-14 04:00:00', '2026-05-14 11:00:00', 'Công viên Biển Đông Đà Nẵng', 3000, 600000.00, 0, 400000.00, 1, NULL),
-(20, 2, 2, 'Đêm Nhạc Jazz Độc Bản Tháng 7', 'Thưởng thức nhạc Jazz nguyên bản tinh tế.', '2026-07-05 20:00:00', '2026-07-05 23:00:00', 'Nhà hát lớn Hà Nội', 250, 600000.00, 0, 250000.00, 1, NULL);
+(18, 3, 5, 'Hội Chợ Sách Cũ Sài Gòn', 'Sự kiện bị hủy bỏ.', '2026-05-10 08:00:00', '2026-05-12 21:00:00', 'Nhà văn hóa Thanh Niên', 2000, 0.00, 0, 0.00, 0, NULL),
+(19, 2, 5, 'Giải Marathon Quốc Tế Đà Nẵng', 'Sự kiện bị hủy do thời tiết bất lợi.', '2026-05-14 04:00:00', '2026-05-14 11:00:00', 'Công viên Biển Đông Đà Nẵng', 3000, 600000.00, 0, 400000.00, 0, NULL),
+(20, 2, 2, 'Đêm Nhạc Jazz Độc Bản Tháng 7', 'Thưởng thức nhạc Jazz nguyên bản tinh tế.', '2026-07-05 20:00:00', '2026-07-05 23:00:00', 'Nhà hát lớn Hà Nội', 250, 600000.00, 0, 250000.00, 0, NULL),
+(21, 2, 4, 'Đêm Nhạc Trữ Tình Mùa Thu', 'Sự kiện âm nhạc hoành tráng quy tụ nhiều ngôi sao.', 'https://res.cloudinary.com/dprwsgoeg/image/upload/v1780208274/OIP_iluxno.webp', '2026-05-10 19:00:00', '2026-05-10 22:30:00', 'Nhà hát Hòa Bình, TP.HCM', 1000, 500000.00, 800, 20000000.00, 0, NULL),
 
+-- -----------------------------------------------------------------------------------------
+-- KỊCH BẢN 2: Sự kiện quy mô nhỏ, bán cháy vé (Sold Out)
+-- Giá vé: 250,000đ | Đã bán: 50 vé (Hết vé)
+-- => Tổng doanh thu: 12,500,000đ 
+-- => Phí sàn (5%): 625,000đ | Kế toán cần chuyển: 11,875,000đ
+-- -----------------------------------------------------------------------------------------
+(22, 3, 4, 'Workshop Nhiếp Ảnh Chân Dung', 'Chia sẻ kỹ năng setup ánh sáng chụp chân dung.', 'https://res.cloudinary.com/dprwsgoeg/image/upload/v1780209307/1925959_capfbt.jpg', '2026-05-15 08:30:00', '2026-05-15 11:30:00', 'The Coffee House Signature', 50, 250000.00, 50, 625000.00, 0, NULL),
+
+-- -----------------------------------------------------------------------------------------
+-- KỊCH BẢN 3: Sự kiện Miễn Phí (Đại trà)
+-- Giá vé: 0đ | Đã bán: 280 vé
+-- => Tổng doanh thu: 0đ 
+-- => Phí sàn (5%): 0đ | Kế toán cần chuyển: 0đ (Nhưng vẫn phải bấm chốt sổ để đóng luồng)
+-- -----------------------------------------------------------------------------------------
+(23, 20, 4, 'Hội Thảo Du Học Khởi Nghiệp 2026', 'Sự kiện chia sẻ định hướng miễn phí cho sinh viên.', 'https://res.cloudinary.com/ducouuixg/image/upload/v1780161849/iljvri4g5v8pbnsaepsy.png', '2026-05-20 14:00:00', '2026-05-20 17:00:00', 'Đại học Bách Khoa Hà Nội', 300, 0.00, 280, 0.00, 0, NULL);
 -- Image banner cho cac su kien da published (status_id = 2)
 UPDATE `event` SET `image_url` = 'https://res.cloudinary.com/dprwsgoeg/image/upload/v1780208274/IMG_20211120_235307_303_oykjck.jpg' WHERE `id` = 4 AND `status_id` = 2;
 UPDATE `event` SET `image_url` = 'https://res.cloudinary.com/dprwsgoeg/image/upload/v1780208274/maxresdefault_hkyrv1.jpg' WHERE `id` = 5 AND `status_id` = 2;
@@ -319,24 +324,3 @@ INSERT INTO `ticket_detail` (`id`, `booking_id`, `qrCode`, `status_id`) VALUES
 (19, 19, 'E-TKT-UUID-K7L8-M9N0-0019', 2),
 (20, 20, 'E-TKT-UUID-O1P2-Q3R4-0020', 1);
 
-INSERT INTO `event_fee` (`id`, `event_id`, `amount`, `status_id`, `payment_method`, `transaction_id`) VALUES 
-(1, 4, 200000.00, 2, 'VNPAY', 'FEE_VNP111'),
-(2, 5, 100000.00, 2, 'MOMO', 'FEE_MOMO222'),
-(3, 6, 200000.00, 2, 'BANK_TRANSFER', 'FEE_BANK333'),
-(4, 1, 100000.00, 2, 'VNPAY', 'FEE_VNP444'),
-(5, 13, 50000.00, 1, NULL, NULL),
-(6, 16, 150000.00, 2, 'MOMO', 'FEE_MOMO555'),
-(7, 8, 50000.00, 2, 'VNPAY', 'FEE_VNP666'),
-(8, 10, 50000.00, 2, 'MOMO', 'FEE_MOMO755'),
-(9, 2, 150000.00, 2, 'BANK_TRANSFER', 'FEE_BANK444'),
-(10, 3, 50000.00, 2, 'VNPAY', 'FEE_VNP888'),
-(11, 11, 300000.00, 2, 'MOMO', 'FEE_MOMO999'),
-(12, 12, 200000.00, 2, 'VNPAY', 'FEE_VNP123'),
-(13, 14, 100000.00, 1, NULL, NULL),
-(14, 15, 150000.00, 1, NULL, NULL),
-(15, 17, 500000.00, 2, 'BANK_TRANSFER', 'FEE_BANK555'),
-(16, 20, 250000.00, 2, 'VNPAY', 'FEE_VNP777'),
-(17, 7, 0.00, 2, 'SYSTEM', 'FREE_FEE_777'),
-(18, 9, 0.00, 2, 'SYSTEM', 'FREE_FEE_999'),
-(19, 18, 0.00, 2, 'SYSTEM', 'FREE_FEE_188'),
-(20, 19, 400000.00, 3, 'VNPAY', NULL);

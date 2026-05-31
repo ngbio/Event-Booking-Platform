@@ -1,7 +1,9 @@
 package com.group3.service;
 
 import com.group3.dto.request.EventRequest;
+import com.group3.dto.response.EventRefundResponse;
 import com.group3.dto.response.EventResponse;
+import com.group3.dto.response.EventSettlementResponse;
 import com.group3.pojo.User;
 import java.util.List;
 import java.util.Map;
@@ -29,7 +31,9 @@ public interface EventService {
     
     EventResponse getEventByIdForAdmin(Integer evenId);
     
-    List<EventResponse> getEventsForRefund();
+    List<EventRefundResponse> getEventsForRefund();
     
-    List<EventResponse> getEventsForSettlement();
+    List<EventSettlementResponse> getEventsForSettlement();
+    
+    boolean processSettlement(Integer eventId, String settlementCode);
 }

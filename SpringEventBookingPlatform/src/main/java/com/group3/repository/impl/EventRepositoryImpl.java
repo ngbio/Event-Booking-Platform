@@ -63,7 +63,7 @@ public class EventRepositoryImpl implements EventRepository {
             BigDecimal maxPrice = parseBigDecimal(params.get("maxPrice"));
             Date fromDate = parseDate(params.get("fromDate"), false);
             Date toDate = parseDate(params.get("toDate"), true);
-            
+
             if (statusId != null && !statusId.isBlank()) {
                 predicates.add(b.equal(root.get("statusId").get("id"), Integer.parseInt(statusId)));
             }
@@ -115,8 +115,6 @@ public class EventRepositoryImpl implements EventRepository {
         if (!predicates.isEmpty()) {
             q.where(predicates.toArray(Predicate[]::new));
         }
-        
-        // Đã giữ lại bản code xịn hỗ trợ sort
         q.orderBy(buildEventOrder(params, b, root));
 
         Query query = session.createQuery(q);
@@ -261,7 +259,7 @@ public class EventRepositoryImpl implements EventRepository {
             BigDecimal maxPrice = parseBigDecimal(params.get("maxPrice"));
             Date fromDate = parseDate(params.get("fromDate"), false);
             Date toDate = parseDate(params.get("toDate"), true);
-            
+
             if (statusId != null && !statusId.isBlank()) {
                 predicates.add(b.equal(root.get("statusId").get("id"), Integer.parseInt(statusId)));
             }
@@ -400,10 +398,8 @@ public class EventRepositoryImpl implements EventRepository {
     @Override
     public List<Event> getEventsForRefund() {
         Session session = this.factory.getObject().getCurrentSession();
-        // Cập nhật lấy thông tin user của organizer
         String hql = "SELECT DISTINCT e FROM Event e "
-                + "LEFT JOIN FETCH e.categoryCollection "
-                + "LEFT JOIN FETCH e.organizerId o "
+                + "LEFT JOIN FETCH e.organizerId o " //FETCH giup lay luon gia tri cot
                 + "LEFT JOIN FETCH o.user "
                 + "JOIN e.bookingCollection b "
                 + "WHERE e.statusId.id = 5 AND b.statusId.id = 3";
@@ -414,14 +410,14 @@ public class EventRepositoryImpl implements EventRepository {
     @Override
     public List<Event> getEventsForSettlement() {
         Session session = this.factory.getObject().getCurrentSession();
-        // Cập nhật lấy thông tin user của organizer
         String hql = "SELECT DISTINCT e FROM Event e "
-                + "LEFT JOIN FETCH e.categoryCollection "
                 + "LEFT JOIN FETCH e.organizerId o "
                 + "LEFT JOIN FETCH o.user "
-                + "JOIN e.bookingCollection b "
-                + "WHERE e.statusId.id = 4 AND b.statusId.id = 2";
+                + "WHERE e.statusId.id = 4 AND e.isSettlement = false "
+                + "AND e.price > 0"
+                + "ORDER BY e.endTime DESC";
 
         return session.createQuery(hql, Event.class).getResultList();
     }
+
 }
