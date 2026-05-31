@@ -499,6 +499,18 @@ a {
   box-shadow: 0 0 0 4px rgba(255, 61, 154, 0.18);
 }
 
+.event-search-panel {
+  margin-bottom: 18px;
+  padding: 18px;
+}
+
+.event-search-actions {
+  display: grid;
+  align-content: end;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
 .event-grid {
   row-gap: 18px;
 }
@@ -1371,6 +1383,10 @@ a {
 
   .event-hero {
     padding-top: 30px;
+  }
+
+  .event-search-actions {
+    grid-template-columns: 1fr;
   }
 
   .organizer-list-head {
