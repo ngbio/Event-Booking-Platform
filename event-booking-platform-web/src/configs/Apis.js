@@ -28,6 +28,8 @@ export const endpoints = {
     'bookings': '/secure/bookings',
     'booking-details': (bookingId) => `/secure/bookings/${bookingId}`,
     'cancel-booking': (bookingId) => `/secure/bookings/${bookingId}/cancel`,
+    'momo-payment': '/secure/payments/momo',
+    'momo-redirect': '/payment/momo/redirect',
 
     // Tickets
     'tickets': '/secure/tickets',

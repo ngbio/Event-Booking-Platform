@@ -20,6 +20,7 @@ import OrganizerEventDetail from "./screens/organizer/events/OrganizerEventDetai
 import OrganizerEventForm from "./screens/organizer/events/OrganizerEventForm";
 import OrganizerStatsOverview from "./screens/organizer/stats/OrganizerStatsOverview";
 import OrganizerEventStats from "./screens/organizer/stats/OrganizerEventStats";
+import MomoReturn from "./screens/payments/MomoReturn";
 import NotFound from "./screens/common/NotFound";
 import { MyUserContext } from "./configs/Contexts";
 import MyUserReducer from "./reducers/MyUserReducer";
@@ -48,6 +49,7 @@ const App = () => {
                 <Route path="/profile/password" element={<ChangePassword />} />
                 <Route path="/bookings" element={<BookingList />} />
                 <Route path="/bookings/:bookingId" element={<BookingDetail />} />
+                <Route path="/payment/momo/return" element={<MomoReturn />} />
                 <Route path="/tickets" element={<TicketList />} />
                 <Route path="/tickets/:ticketId" element={<TicketDetail />} />
                 <Route path="/chats" element={<ChatList />} />

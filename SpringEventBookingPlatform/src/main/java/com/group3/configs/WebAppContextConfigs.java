@@ -3,6 +3,7 @@ package com.group3.configs;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.servlet.config.annotation.DefaultServletHandlerConfigurer;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
@@ -24,6 +25,7 @@ import org.springframework.context.annotation.Bean;
 @EnableWebMvc
 @EnableTransactionManagement
 @EnableAsync
+@EnableScheduling
 public class WebAppContextConfigs implements WebMvcConfigurer{
 
     @Override

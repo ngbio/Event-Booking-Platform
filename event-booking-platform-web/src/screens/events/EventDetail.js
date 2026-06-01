@@ -62,13 +62,29 @@ const EventDetail = () => {
             const res = await authApis().post(endpoints["bookings"], {
                 eventId: event.id,
                 quantity: Number(quantity),
-                paymentMethod: "CASH"
+                paymentMethod: "MOMO"
             });
 
-            nav(`/bookings/${res.data.data.id}`);
+            const booking = res.data.data;
+            const totalPrice = Number(booking.totalPrice || 0);
+
+            if (totalPrice <= 0) {
+                nav(`/bookings/${booking.id}`);
+                return;
+            }
+
+            const paymentRes = await authApis().post(endpoints["momo-payment"], {
+                bookingId: booking.id
+            });
+            const payUrl = paymentRes.data.data?.payUrl;
+
+            if (!payUrl)
+                throw new Error("Không nhận được đường dẫn thanh toán MoMo.");
+
+            window.location.href = payUrl;
         } catch (ex) {
             console.error(ex);
-            setBookingErr(ex.response?.data?.message || "Không thể tạo đơn đặt vé.");
+            setBookingErr(ex.response?.data?.message || ex.message || "Không thể tạo đơn đặt vé.");
         } finally {
             setBookingLoading(false);
         }
@@ -136,7 +152,7 @@ const EventDetail = () => {
                     <strong>{formatPrice(Number(event.price || 0) * Number(quantity || 0))}</strong>
                 </div>
                 <Button className="btn-pink w-100" onClick={createBooking} disabled={bookingLoading || Number(quantity) < 1 || Number(quantity) > event.availableTickets}>
-                    {bookingLoading ? "Đang tạo đơn..." : "Đặt vé"}
+                    {bookingLoading ? "Đang chuyển sang MoMo..." : "Đặt vé"}
                 </Button>
             </div>
         );

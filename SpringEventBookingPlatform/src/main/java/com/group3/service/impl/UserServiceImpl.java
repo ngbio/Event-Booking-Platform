@@ -34,6 +34,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -277,6 +278,7 @@ public class UserServiceImpl implements UserService {
 
         if (isAuthenticated) {
             User user = this.userRepo.findUserByEmail(request.getEmail());
+            validateUserCanLogin(user);
             return DTOMapper.toUserResponse(user);
         }
         return null;
@@ -287,6 +289,10 @@ public class UserServiceImpl implements UserService {
         User user = this.userRepo.findUserByEmail(email);
         if (user == null) {
             throw new ResourceNotFoundException("Không tồn tại người dùng với email: " + email);
+        }
+
+        if (user.getStatusId() == null || !ACTIVE.equals(user.getStatusId().getId())) {
+            throw new DisabledException("Tài khoản chưa được duyệt hoặc đang bị khóa");
         }
 
         Set<GrantedAuthority> authorities = new HashSet<>();
@@ -317,6 +323,29 @@ public class UserServiceImpl implements UserService {
     public UserResponse getCurrentUserProfile(Principal principal){
         User user = validateAndGetCurrentUser(principal);
         return DTOMapper.toUserResponse(user);
+    }
+
+    private void validateUserCanLogin(User user) {
+        if (user == null || user.getStatusId() == null) {
+            throw new UnauthorizedException("Tài khoản không hợp lệ");
+        }
+
+        Integer statusId = user.getStatusId().getId();
+        Integer roleId = user.getRoleId() != null ? user.getRoleId().getId() : null;
+
+        if (ACTIVE.equals(statusId)) {
+            return;
+        }
+
+        if (Integer.valueOf(ROLE_ORGANIZER).equals(roleId) && PENDING.equals(statusId)) {
+            throw new UnauthorizedException("Tài khoản nhà tổ chức đang chờ admin duyệt");
+        }
+
+        if (REJECTED.equals(statusId)) {
+            throw new UnauthorizedException("Tài khoản đã bị khóa");
+        }
+
+        throw new UnauthorizedException("Tài khoản chưa được kích hoạt");
     }
 
 }

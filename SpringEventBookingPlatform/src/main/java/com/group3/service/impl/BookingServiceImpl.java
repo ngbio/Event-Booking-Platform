@@ -31,6 +31,8 @@ import java.util.Map;
 import java.util.UUID;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.env.Environment;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.support.TransactionSynchronization;
@@ -39,6 +41,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional
+@PropertySource("classpath:configs.properties")
 public class BookingServiceImpl implements BookingService {
 
     private static final int ROLE_ADMIN = 1;
@@ -52,7 +55,6 @@ public class BookingServiceImpl implements BookingService {
     private static final int BOOKING_PENDING = 1;
     private static final int BOOKING_PAID = 2;
     private static final int BOOKING_CANCELLED = 5;
-
     private static final int PAYMENT_PENDING = 1;
     private static final int TICKET_VALID = 1;
 
@@ -73,6 +75,9 @@ public class BookingServiceImpl implements BookingService {
 
     @Autowired
     private TicketEmailService ticketEmailService;
+
+    @Autowired
+    private Environment env;
 
     private void validateAttendee(User attendee) {
         if (attendee == null || attendee.getRoleId() == null || attendee.getStatusId() == null) {
@@ -175,24 +180,17 @@ public class BookingServiceImpl implements BookingService {
         booking.setTotalPrice(totalPrice);
         booking.setCreatedDate(now);
         booking.setUpdatedDate(now);
-        // booking.setStatusId(getStatusBooking(freeEvent ? BOOKING_PAID : BOOKING_PENDING));
-        booking.setStatusId(getStatusBooking(BOOKING_PAID));
+        booking.setStatusId(getStatusBooking(freeEvent ? BOOKING_PAID : BOOKING_PENDING));
         Booking savedBooking = this.bookingRepo.addBooking(booking);
-        // Khi nào lam thanh toán thì mới tăng soldTickets 
-            // và tạo payment để tránh trường hợp người dùng không thanh toán mà đã chiếm vé của người khác.
-            // Note: For paid booking, we create tickets first to ensure QR codes are generated even 
-            // if payment is not completed within 10 minutes.
 
-        // if (freeEvent) {
-        //     increaseSoldTickets(event, request.getQuantity());
-        //     createTickets(savedBooking, request.getQuantity());
-        // } else {
-        //     createPendingPayment(savedBooking, attendee, totalPrice, request.getPaymentMethod(), now);
-        // }
-
-        increaseSoldTickets(event, request.getQuantity());
-        List<TicketDetail> tickets = createTickets(savedBooking, request.getQuantity());
-        sendTicketsEmail(attendee, savedBooking, event, tickets);
+        if (freeEvent) {
+            increaseSoldTickets(event, request.getQuantity());
+            List<TicketDetail> tickets = createTickets(savedBooking, request.getQuantity());
+            sendTicketsEmail(attendee, savedBooking, event, tickets);
+        } else {
+            createPendingPayment(savedBooking, totalPrice, now);
+            sendPaymentReminderEmail(attendee, savedBooking, event);
+        }
         return DTOMapper.toBookingResponse(savedBooking);
     }
 
@@ -294,24 +292,15 @@ public class BookingServiceImpl implements BookingService {
 
     //hàm này để tạo payment với trạng thái pending, 
     // chờ thanh toán xong mới chuyển booking sang paid và tạo vé
-    private void createPendingPayment(Booking booking, User attendee, BigDecimal totalPrice, String paymentMethod, Date now) {
+    private void createPendingPayment(Booking booking, BigDecimal totalPrice, Date now) {
         Payment payment = new Payment();
         payment.setBookingId(booking);
         payment.setStatusId(getStatusPay(PAYMENT_PENDING));
         payment.setAmount(totalPrice);
-        payment.setMethod(normalizePaymentMethod(paymentMethod));
+        payment.setMethod("MOMO");
         payment.setCreatedDate(now);
         payment.setUpdatedDate(now);
         getCurrentSession().persist(payment);
-    }
-
-    
-
-    private String normalizePaymentMethod(String paymentMethod) {
-        if (paymentMethod == null || paymentMethod.isBlank()) {
-            return "VNPAY";
-        }
-        return paymentMethod.trim().toUpperCase();
     }
 
     private StatusBooking getStatusBooking(int id) {
@@ -339,6 +328,35 @@ public class BookingServiceImpl implements BookingService {
 
     private Session getCurrentSession() {
         return this.factory.getObject().getCurrentSession();
+    }
+
+    private void sendPaymentReminderEmail(User attendee, Booking booking, Event event) {
+        Date paymentDeadline = new Date(booking.getCreatedDate().getTime() + getPaymentTimeoutMillis());
+        Runnable sendEmailTask = () -> this.ticketEmailService.sendPaymentReminderEmail(
+                attendee.getEmail(),
+                attendee.getFullName(),
+                booking.getId(),
+                event.getTitle(),
+                event.getLocation(),
+                event.getStartTime(),
+                paymentDeadline,
+                booking.getTotalPrice());
+
+        if (TransactionSynchronizationManager.isSynchronizationActive()) {
+            TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+                @Override
+                public void afterCommit() {
+                    sendEmailTask.run();
+                }
+            });
+        } else {
+            sendEmailTask.run();
+        }
+    }
+
+    private long getPaymentTimeoutMillis() {
+        long minutes = Long.parseLong(env.getProperty("booking.payment_timeout_minutes", "5"));
+        return minutes * 60_000L;
     }
     
     @Override

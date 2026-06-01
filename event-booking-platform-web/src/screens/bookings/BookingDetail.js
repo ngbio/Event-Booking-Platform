@@ -72,6 +72,29 @@ const BookingDetail = () => {
         }
     }
 
+    const payWithMomo = async () => {
+        try {
+            setSaving(true);
+            setErr("");
+            setMsg("");
+
+            const res = await authApis().post(endpoints["momo-payment"], {
+                bookingId: Number(bookingId)
+            });
+            const payUrl = res.data.data?.payUrl;
+
+            if (!payUrl)
+                throw new Error("Không nhận được đường dẫn thanh toán MoMo.");
+
+            window.location.href = payUrl;
+        } catch (ex) {
+            console.error(ex);
+            setErr(ex.response?.data?.message || ex.message || "Không thể tạo lại thanh toán MoMo.");
+        } finally {
+            setSaving(false);
+        }
+    }
+
     if (user === null) {
         return (
             <Alert className="alert-dark-pink">
@@ -142,9 +165,14 @@ const BookingDetail = () => {
                             </div>
                         </dl>
 
-                        {booking.statusId === 1 && <Button className="btn-outline-pink w-100 mt-4" onClick={cancelBooking} disabled={saving}>
-                            {saving ? "Đang hủy..." : "Hủy đơn đặt vé"}
-                        </Button>}
+                        {booking.statusId === 1 && <>
+                            <Button className="btn-pink w-100 mt-4" onClick={payWithMomo} disabled={saving}>
+                                {saving ? "Đang chuyển sang MoMo..." : "Thanh toán MoMo"}
+                            </Button>
+                            <Button className="btn-outline-pink w-100 mt-3" onClick={cancelBooking} disabled={saving}>
+                                {saving ? "Đang xử lý..." : "Hủy đơn đặt vé"}
+                            </Button>
+                        </>}
                     </section>
                 </Col>
             </Row>

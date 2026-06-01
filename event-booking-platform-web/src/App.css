@@ -906,6 +906,23 @@ a {
   text-align: center;
 }
 
+.ticket-qr-preview img,
+.ticket-qr-large img {
+  display: block;
+  width: min(100%, 240px);
+  aspect-ratio: 1;
+  margin: 0 auto;
+  border-radius: 8px;
+  background: #fff;
+  padding: 10px;
+  object-fit: contain;
+}
+
+.ticket-qr-preview img {
+  width: 112px;
+  padding: 8px;
+}
+
 .ticket-detail-layout {
   row-gap: 18px;
 }
@@ -934,6 +951,7 @@ a {
 
 .ticket-qr-large {
   padding: 24px;
+  text-align: center;
 }
 
 .ticket-qr-large span {

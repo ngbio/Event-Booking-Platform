@@ -31,6 +31,21 @@ const BookingList = () => {
         });
     }
 
+    const payWithMomo = async (bookingId) => {
+        try {
+            const res = await authApis().post(endpoints["momo-payment"], { bookingId });
+            const payUrl = res.data.data?.payUrl;
+
+            if (!payUrl)
+                throw new Error("Không nhận được đường dẫn thanh toán MoMo.");
+
+            window.location.href = payUrl;
+        } catch (ex) {
+            console.error(ex);
+            setErr(ex.response?.data?.message || ex.message || "Không thể tạo lại thanh toán MoMo.");
+        }
+    }
+
     const loadBookings = async () => {
         const requestKey = statusId || "all";
         if (loadedRequestRef.current === requestKey)
@@ -122,7 +137,10 @@ const BookingList = () => {
                             </div>
                         </dl>
 
-                        <Button className="btn-pink w-100 mt-3" onClick={() => nav(`/bookings/${b.id}`)}>Xem chi tiết</Button>
+                        {b.statusId === 1 && <Button className="btn-pink w-100 mt-3" onClick={() => payWithMomo(b.id)}>
+                            Thanh toán MoMo
+                        </Button>}
+                        <Button className={b.statusId === 1 ? "btn-outline-pink w-100 mt-2" : "btn-pink w-100 mt-3"} onClick={() => nav(`/bookings/${b.id}`)}>Xem chi tiết</Button>
                     </article>
                 </Col>)}
             </Row>
