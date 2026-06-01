@@ -16,6 +16,5 @@
     <class>com.group3.pojo.TicketDetail</class>
     <class>com.group3.pojo.StatusBooking</class>
     <class>com.group3.pojo.StatusUser</class>
-    <class>com.group3.pojo.EventFee</class>
   </persistence-unit>
 </persistence>

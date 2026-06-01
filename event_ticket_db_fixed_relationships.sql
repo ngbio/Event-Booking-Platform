@@ -224,7 +224,7 @@ INSERT INTO `event` (`id`, `organizer_id`, `status_id`, `title`, `description`, 
 (18, 3, 5, 'Hội Chợ Sách Cũ Sài Gòn', 'Sự kiện bị hủy bỏ.', '2026-05-10 08:00:00', '2026-05-12 21:00:00', 'Nhà văn hóa Thanh Niên', 2000, 0.00, 0, 0.00, 0, NULL),
 (19, 2, 5, 'Giải Marathon Quốc Tế Đà Nẵng', 'Sự kiện bị hủy do thời tiết bất lợi.', '2026-05-14 04:00:00', '2026-05-14 11:00:00', 'Công viên Biển Đông Đà Nẵng', 3000, 600000.00, 0, 400000.00, 0, NULL),
 (20, 2, 2, 'Đêm Nhạc Jazz Độc Bản Tháng 7', 'Thưởng thức nhạc Jazz nguyên bản tinh tế.', '2026-07-05 20:00:00', '2026-07-05 23:00:00', 'Nhà hát lớn Hà Nội', 250, 600000.00, 0, 250000.00, 0, NULL),
-(21, 2, 4, 'Đêm Nhạc Trữ Tình Mùa Thu', 'Sự kiện âm nhạc hoành tráng quy tụ nhiều ngôi sao.', 'https://res.cloudinary.com/dprwsgoeg/image/upload/v1780208274/OIP_iluxno.webp', '2026-05-10 19:00:00', '2026-05-10 22:30:00', 'Nhà hát Hòa Bình, TP.HCM', 1000, 500000.00, 800, 20000000.00, 0, NULL),
+(21, 2, 4, 'Đêm Nhạc Trữ Tình Mùa Thu', 'Sự kiện âm nhạc hoành tráng quy tụ nhiều ngôi sao.', '2026-05-10 19:00:00', '2026-05-10 22:30:00', 'Nhà hát Hòa Bình, TP.HCM', 1000, 500000.00, 800, 20000000.00, 0, NULL),
 
 -- -----------------------------------------------------------------------------------------
 -- KỊCH BẢN 2: Sự kiện quy mô nhỏ, bán cháy vé (Sold Out)
@@ -232,7 +232,7 @@ INSERT INTO `event` (`id`, `organizer_id`, `status_id`, `title`, `description`, 
 -- => Tổng doanh thu: 12,500,000đ 
 -- => Phí sàn (5%): 625,000đ | Kế toán cần chuyển: 11,875,000đ
 -- -----------------------------------------------------------------------------------------
-(22, 3, 4, 'Workshop Nhiếp Ảnh Chân Dung', 'Chia sẻ kỹ năng setup ánh sáng chụp chân dung.', 'https://res.cloudinary.com/dprwsgoeg/image/upload/v1780209307/1925959_capfbt.jpg', '2026-05-15 08:30:00', '2026-05-15 11:30:00', 'The Coffee House Signature', 50, 250000.00, 50, 625000.00, 0, NULL),
+(22, 3, 4, 'Workshop Nhiếp Ảnh Chân Dung', 'Chia sẻ kỹ năng setup ánh sáng chụp chân dung.', '2026-05-15 08:30:00', '2026-05-15 11:30:00', 'The Coffee House Signature', 50, 250000.00, 50, 625000.00, 0, NULL),
 
 -- -----------------------------------------------------------------------------------------
 -- KỊCH BẢN 3: Sự kiện Miễn Phí (Đại trà)
@@ -240,7 +240,10 @@ INSERT INTO `event` (`id`, `organizer_id`, `status_id`, `title`, `description`, 
 -- => Tổng doanh thu: 0đ 
 -- => Phí sàn (5%): 0đ | Kế toán cần chuyển: 0đ (Nhưng vẫn phải bấm chốt sổ để đóng luồng)
 -- -----------------------------------------------------------------------------------------
-(23, 20, 4, 'Hội Thảo Du Học Khởi Nghiệp 2026', 'Sự kiện chia sẻ định hướng miễn phí cho sinh viên.', 'https://res.cloudinary.com/ducouuixg/image/upload/v1780161849/iljvri4g5v8pbnsaepsy.png', '2026-05-20 14:00:00', '2026-05-20 17:00:00', 'Đại học Bách Khoa Hà Nội', 300, 0.00, 280, 0.00, 0, NULL);
+(23, 20, 4, 'Hội Thảo Du Học Khởi Nghiệp 2026', 'Sự kiện chia sẻ định hướng miễn phí cho sinh viên.', '2026-05-20 14:00:00', '2026-05-20 17:00:00', 'Đại học Bách Khoa Hà Nội', 300, 0.00, 280, 0.00, 0, NULL);
+UPDATE `event` SET `image_url` = 'https://res.cloudinary.com/dprwsgoeg/image/upload/v1780208274/OIP_iluxno.webp' WHERE `id` = 21;
+UPDATE `event` SET `image_url` = 'https://res.cloudinary.com/dprwsgoeg/image/upload/v1780209307/1925959_capfbt.jpg' WHERE `id` = 22;
+UPDATE `event` SET `image_url` = 'https://res.cloudinary.com/ducouuixg/image/upload/v1780161849/iljvri4g5v8pbnsaepsy.png' WHERE `id` = 23;
 -- Image banner cho cac su kien da published (status_id = 2)
 UPDATE `event` SET `image_url` = 'https://res.cloudinary.com/dprwsgoeg/image/upload/v1780208274/IMG_20211120_235307_303_oykjck.jpg' WHERE `id` = 4 AND `status_id` = 2;
 UPDATE `event` SET `image_url` = 'https://res.cloudinary.com/dprwsgoeg/image/upload/v1780208274/maxresdefault_hkyrv1.jpg' WHERE `id` = 5 AND `status_id` = 2;
