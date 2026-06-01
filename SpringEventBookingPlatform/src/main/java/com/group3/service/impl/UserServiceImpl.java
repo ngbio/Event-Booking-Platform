@@ -24,6 +24,7 @@ import com.group3.pojo.StatusUser;
 import com.group3.repository.UserRepository;
 import com.group3.repository.RoleRepository;
 import com.group3.repository.StatusUserRepository;
+import com.group3.service.TicketEmailService;
 import com.group3.service.UserService;
 import com.group3.utils.DTOMapper;
 import java.io.IOException;
@@ -42,6 +43,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronization;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.springframework.web.multipart.MultipartFile;
 
 @Service
@@ -62,6 +65,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private StatusUserRepository statusUserRepo;
+
+    @Autowired
+    private TicketEmailService ticketEmailService;
 
     private static final int ROLE_ATTENDEE = 3;
     private static final int ROLE_ORGANIZER = 2;
@@ -165,7 +171,10 @@ public class UserServiceImpl implements UserService {
             }
         }
 
-        return DTOMapper.toUserResponse(this.userRepo.addUser(user));
+        User savedUser = this.userRepo.addUser(user);
+        sendAfterCommit(() -> ticketEmailService.sendOrganizerRegistrationEmail(
+                savedUser.getEmail(), savedUser.getFullName()));
+        return DTOMapper.toUserResponse(savedUser);
     }
     
     @Override
@@ -200,7 +209,10 @@ public class UserServiceImpl implements UserService {
             }
         }
 
-        return DTOMapper.toUserResponse(this.userRepo.addUser(user));
+        User savedUser = this.userRepo.addUser(user);
+        sendAfterCommit(() -> ticketEmailService.sendAttendeeRegistrationEmail(
+                savedUser.getEmail(), savedUser.getFullName()));
+        return DTOMapper.toUserResponse(savedUser);
     }
 
     @Override
@@ -323,6 +335,19 @@ public class UserServiceImpl implements UserService {
     public UserResponse getCurrentUserProfile(Principal principal){
         User user = validateAndGetCurrentUser(principal);
         return DTOMapper.toUserResponse(user);
+    }
+
+    private void sendAfterCommit(Runnable action) {
+        if (TransactionSynchronizationManager.isSynchronizationActive()) {
+            TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+                @Override
+                public void afterCommit() {
+                    action.run();
+                }
+            });
+        } else {
+            action.run();
+        }
     }
 
     private void validateUserCanLogin(User user) {

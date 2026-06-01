@@ -74,6 +74,45 @@ public class TicketEmailServiceImpl implements TicketEmailService {
         }
     }
 
+    @Override
+    @Async
+    public void sendAttendeeRegistrationEmail(String toEmail, String customerName) {
+        sendAccountEmail(toEmail, "Đăng ký tài khoản thành công",
+                buildAttendeeRegistrationEmail(customerName));
+    }
+
+    @Override
+    @Async
+    public void sendOrganizerRegistrationEmail(String toEmail, String organizerName) {
+        sendAccountEmail(toEmail, "Tài khoản nhà tổ chức đang chờ duyệt",
+                buildOrganizerRegistrationEmail(organizerName));
+    }
+
+    @Override
+    @Async
+    public void sendOrganizerApprovedEmail(String toEmail, String organizerName) {
+        sendAccountEmail(toEmail, "Tài khoản nhà tổ chức đã được duyệt",
+                buildOrganizerApprovedEmail(organizerName));
+    }
+
+    private void sendAccountEmail(String toEmail, String subject, String html) {
+        if (!isMailEnabled() || toEmail == null || toEmail.isBlank()) {
+            return;
+        }
+
+        try {
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+            helper.setTo(toEmail);
+            helper.setFrom(getFromAddress());
+            helper.setSubject(subject);
+            helper.setText(html, true);
+            mailSender.send(message);
+        } catch (Exception ex) {
+            System.err.println("Không thể gửi email tài khoản đến " + toEmail + ": " + ex.getMessage());
+        }
+    }
+
     private boolean isMailEnabled() {
         return Boolean.parseBoolean(env.getProperty("mail.enabled", "false"))
                 && !env.getProperty("mail.username", "").isBlank()
@@ -138,6 +177,37 @@ public class TicketEmailServiceImpl implements TicketEmailService {
                 + "<p><strong>Hạn thanh toán:</strong> " + formatDate(paymentDeadline) + "</p>"
                 + "</div>"
                 + "<p style='margin-top:18px;'>Vui lòng mở mục <strong>Đơn đặt vé của tôi</strong> và bấm <strong>Thanh toán MoMo</strong> trước hạn trên. Sau thời gian này booking sẽ tự hủy.</p>"
+                + "</div>";
+    }
+
+    private String buildAttendeeRegistrationEmail(String customerName) {
+        return "<div style='font-family:Arial,sans-serif;color:#222;line-height:1.6;'>"
+                + "<h2 style='color:#c3156b;'>Đăng ký tài khoản thành công</h2>"
+                + "<p>Xin chào " + escape(blankToDefault(customerName, "bạn")) + ",</p>"
+                + "<p>Tài khoản Event Booking của bạn đã được tạo thành công và có thể đăng nhập để đặt vé ngay.</p>"
+                + "<p style='margin-top:18px;color:#666;'>Cảm ơn bạn đã sử dụng Event Booking Platform.</p>"
+                + "</div>";
+    }
+
+    private String buildOrganizerRegistrationEmail(String organizerName) {
+        return "<div style='font-family:Arial,sans-serif;color:#222;line-height:1.6;'>"
+                + "<h2 style='color:#c3156b;'>Hồ sơ nhà tổ chức đang chờ duyệt</h2>"
+                + "<p>Xin chào " + escape(blankToDefault(organizerName, "bạn")) + ",</p>"
+                + "<p>Tài khoản nhà tổ chức của bạn đã được ghi nhận thành công.</p>"
+                + "<div style='padding:14px;border:1px solid #eee;border-radius:8px;background:#fafafa;'>"
+                + "<p><strong>Trạng thái hiện tại:</strong> Đang chờ admin duyệt</p>"
+                + "<p>Bạn sẽ chưa thể đăng nhập vào hệ thống với vai trò nhà tổ chức cho đến khi admin phê duyệt hồ sơ.</p>"
+                + "</div>"
+                + "<p style='margin-top:18px;color:#666;'>Hệ thống sẽ gửi email thông báo khi tài khoản được duyệt.</p>"
+                + "</div>";
+    }
+
+    private String buildOrganizerApprovedEmail(String organizerName) {
+        return "<div style='font-family:Arial,sans-serif;color:#222;line-height:1.6;'>"
+                + "<h2 style='color:#c3156b;'>Tài khoản nhà tổ chức đã được duyệt</h2>"
+                + "<p>Xin chào " + escape(blankToDefault(organizerName, "bạn")) + ",</p>"
+                + "<p>Admin đã phê duyệt hồ sơ nhà tổ chức của bạn. Từ bây giờ bạn có thể đăng nhập và quản lý sự kiện trên Event Booking Platform.</p>"
+                + "<p style='margin-top:18px;color:#666;'>Chúc bạn tạo được nhiều sự kiện thành công.</p>"
                 + "</div>";
     }
 

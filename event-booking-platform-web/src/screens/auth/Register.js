@@ -88,8 +88,12 @@ const Register = () => {
                         'Content-Type': 'multipart/form-data'
                     }
                 });
-                if (res.status === 201)
-                    nav('/login');
+                if (res.status === 201) {
+                    const message = role === "organizer"
+                        ? "Đăng ký nhà tổ chức thành công. Tài khoản của bạn đang chờ admin duyệt."
+                        : "Đăng ký tài khoản thành công. Bạn có thể đăng nhập.";
+                    nav('/login', {state: {message}});
+                }
             } catch (ex) {
                 console.error(ex);
                 const data = ex.response?.data;
