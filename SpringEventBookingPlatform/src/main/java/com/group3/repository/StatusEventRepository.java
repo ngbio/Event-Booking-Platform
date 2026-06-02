@@ -12,7 +12,7 @@ import com.group3.pojo.StatusEvent;
  * @author thanh
  */
 public interface StatusEventRepository {
-    StatusEvent getById(Integer id);
+    StatusEvent findById(Integer id);
 
     StatusEvent getStatusEventById(Integer id);
 
