@@ -2,7 +2,6 @@ package com.group3.repository.impl;
 
 import com.group3.pojo.Booking;
 import com.group3.repository.BookingRepository;
-import com.group3.repository.StatusBookingRepository;
 import jakarta.persistence.NoResultException;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
@@ -35,9 +34,6 @@ public class BookingRepositoryImpl implements BookingRepository {
 
     @Autowired
     private LocalSessionFactoryBean factory;
-    
-    @Autowired
-    private StatusBookingRepository statusBookingRepo;
 
     @Override
     public Booking addBooking(Booking booking) {
