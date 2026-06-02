@@ -15,7 +15,7 @@ import org.springframework.stereotype.Repository;
 public class StatsRepositoryImpl implements StatsRepository {
 
     private static final int STATUS_BOOKING_PAID = 2;
-    private static final int STATUS_EVENT_PUBLISHED=2;
+    private static final int STATUS_EVENT_PUBLISHED = 2;
     @Autowired
     private LocalSessionFactoryBean factory;
 
@@ -50,6 +50,40 @@ public class StatsRepositoryImpl implements StatsRepository {
     }
 
     @Override
+    public List<Object[]> getOrganizerRevenueByMonth(Integer organizerId, int year) {
+        Session session = this.factory.getObject().getCurrentSession();
+        String hql = "SELECT MONTH(b.createdDate), COALESCE(SUM(b.totalPrice), 0) "
+                + "FROM Booking b "
+                + "WHERE YEAR(b.createdDate) = :year "
+                + "AND b.statusId.id = :paidStatus "
+                + "AND b.eventId.organizerId.user.id = :organizerId "
+                + "GROUP BY MONTH(b.createdDate) "
+                + "ORDER BY MONTH(b.createdDate)";
+
+        return session.createQuery(hql, Object[].class)
+                .setParameter("year", year)
+                .setParameter("paidStatus", STATUS_BOOKING_PAID)
+                .setParameter("organizerId", organizerId)
+                .getResultList();
+    }
+
+    @Override
+    public List<Object[]> getOrganizerRevenueByYear(Integer organizerId) {
+        Session session = this.factory.getObject().getCurrentSession();
+        String hql = "SELECT YEAR(b.createdDate), COALESCE(SUM(b.totalPrice), 0) "
+                + "FROM Booking b "
+                + "WHERE b.statusId.id = :paidStatus "
+                + "AND b.eventId.organizerId.user.id = :organizerId "
+                + "GROUP BY YEAR(b.createdDate) "
+                + "ORDER BY YEAR(b.createdDate)";
+
+        return session.createQuery(hql, Object[].class)
+                .setParameter("paidStatus", STATUS_BOOKING_PAID)
+                .setParameter("organizerId", organizerId)
+                .getResultList();
+    }
+
+    @Override
     public BigDecimal getTotalRevenue() {
         Session session = this.factory.getObject().getCurrentSession();
         String hql = "SELECT SUM(b.totalPrice) "
@@ -78,7 +112,7 @@ public class StatsRepositoryImpl implements StatsRepository {
                 + "FROM Booking b "
                 + "WHERE b.statusId.id = :id";
         Query<Long> q = session.createQuery(hql, Long.class);
-        q.setParameter("id",STATUS_BOOKING_PAID);
+        q.setParameter("id", STATUS_BOOKING_PAID);
         Long count = q.getSingleResult();
         return count != null ? count : 0L;
     }
@@ -90,19 +124,20 @@ public class StatsRepositoryImpl implements StatsRepository {
                 + "FROM Event e "
                 + "WHERE e.statusId.id = :id";
         Query<Long> q = session.createQuery(hql, Long.class);
-        q.setParameter("id",STATUS_EVENT_PUBLISHED);
+        q.setParameter("id", STATUS_EVENT_PUBLISHED);
         return q.getSingleResult();
     }
 
     @Override
-    public List<Object[]> getRevenueByMonth(int year) {
+    public List<Object[]> getRevenueByMonth(int year
+    ) {
         Session session = this.factory.getObject().getCurrentSession();
         String hql = "SELECT MONTH(b.createdDate), SUM(b.totalPrice) FROM Booking b "
                 + "WHERE YEAR(b.createdDate) = :year AND b.statusId.id = :id "
                 + "GROUP BY MONTH(b.createdDate)";
         Query<Object[]> q = session.createQuery(hql, Object[].class);
         q.setParameter("year", year);
-        q.setParameter("id",STATUS_BOOKING_PAID);
+        q.setParameter("id", STATUS_BOOKING_PAID);
         return q.getResultList();
     }
 
@@ -115,7 +150,7 @@ public class StatsRepositoryImpl implements StatsRepository {
                 + "WHERE b.statusId.id = :id "
                 + "GROUP BY c.name";
         Query<Object[]> q = session.createQuery(hql, Object[].class);
-        q.setParameter("id",STATUS_BOOKING_PAID);
+        q.setParameter("id", STATUS_BOOKING_PAID);
         return q.getResultList();
     }
 }
