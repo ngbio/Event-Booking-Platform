@@ -1,6 +1,7 @@
 package com.group3.dto.response;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 public class OrganizerStatsOverviewResponse {
     private Integer organizerId;
@@ -9,6 +10,9 @@ public class OrganizerStatsOverviewResponse {
     private Long totalPaidBookings;
     private Long totalTicketsSold;
     private BigDecimal totalRevenue;
+    private List<RevenuePeriodResponse> monthlyRevenue;
+    private List<RevenuePeriodResponse> quarterlyRevenue;
+    private List<RevenuePeriodResponse> yearlyRevenue;
 
     public OrganizerStatsOverviewResponse() {
     }
@@ -59,5 +63,29 @@ public class OrganizerStatsOverviewResponse {
 
     public void setTotalRevenue(BigDecimal totalRevenue) {
         this.totalRevenue = totalRevenue;
+    }
+
+    public List<RevenuePeriodResponse> getMonthlyRevenue() {
+        return monthlyRevenue;
+    }
+
+    public void setMonthlyRevenue(List<RevenuePeriodResponse> monthlyRevenue) {
+        this.monthlyRevenue = monthlyRevenue;
+    }
+
+    public List<RevenuePeriodResponse> getQuarterlyRevenue() {
+        return quarterlyRevenue;
+    }
+
+    public void setQuarterlyRevenue(List<RevenuePeriodResponse> quarterlyRevenue) {
+        this.quarterlyRevenue = quarterlyRevenue;
+    }
+
+    public List<RevenuePeriodResponse> getYearlyRevenue() {
+        return yearlyRevenue;
+    }
+
+    public void setYearlyRevenue(List<RevenuePeriodResponse> yearlyRevenue) {
+        this.yearlyRevenue = yearlyRevenue;
     }
 }

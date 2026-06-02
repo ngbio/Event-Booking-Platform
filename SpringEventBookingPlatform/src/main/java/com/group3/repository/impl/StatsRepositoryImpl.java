@@ -50,6 +50,38 @@ public class StatsRepositoryImpl implements StatsRepository {
                 .getSingleResult();
     }
 
+    @Override
+    public List<Object[]> getOrganizerRevenueByMonth(Integer organizerId, int year) {
+        String hql = "SELECT MONTH(b.createdDate), COALESCE(SUM(b.totalPrice), 0) "
+                + "FROM Booking b "
+                + "WHERE YEAR(b.createdDate) = :year "
+                + "AND b.statusId.id = :paidStatus "
+                + "AND b.eventId.organizerId.user.id = :organizerId "
+                + "GROUP BY MONTH(b.createdDate) "
+                + "ORDER BY MONTH(b.createdDate)";
+
+        return getCurrentSession().createQuery(hql, Object[].class)
+                .setParameter("year", year)
+                .setParameter("paidStatus", BOOKING_PAID)
+                .setParameter("organizerId", organizerId)
+                .getResultList();
+    }
+
+    @Override
+    public List<Object[]> getOrganizerRevenueByYear(Integer organizerId) {
+        String hql = "SELECT YEAR(b.createdDate), COALESCE(SUM(b.totalPrice), 0) "
+                + "FROM Booking b "
+                + "WHERE b.statusId.id = :paidStatus "
+                + "AND b.eventId.organizerId.user.id = :organizerId "
+                + "GROUP BY YEAR(b.createdDate) "
+                + "ORDER BY YEAR(b.createdDate)";
+
+        return getCurrentSession().createQuery(hql, Object[].class)
+                .setParameter("paidStatus", BOOKING_PAID)
+                .setParameter("organizerId", organizerId)
+                .getResultList();
+    }
+
     private Session getCurrentSession() {
         return this.factory.getObject().getCurrentSession();
     }

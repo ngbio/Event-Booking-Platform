@@ -150,7 +150,12 @@ const EventDetail = () => {
 
     return (
         <div className="event-detail">
-            <Button className="btn-soft-pink mb-4" onClick={() => nav(-1)}>Quay lại</Button>
+            <div className="organizer-detail-toolbar mb-4">
+                <Button className="btn-soft-pink" onClick={() => nav(-1)}>Quay lại</Button>
+                <Button className="btn-outline-pink" onClick={() => nav(`/events/compare?eventIds=${event.id}`)}>
+                    Thêm vào so sánh
+                </Button>
+            </div>
 
             <Row className="event-detail-layout">
                 <Col lg={7}>

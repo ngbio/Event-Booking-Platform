@@ -21,6 +21,24 @@ const OrganizerStatsOverview = () => {
 
     const formatNumber = (value) => Number(value || 0).toLocaleString("vi-VN");
 
+    const renderRevenuePeriods = (title, periods) => (
+        <section className="organizer-finance-panel glass-panel">
+            <div className="organizer-finance-head">
+                <div>
+                    <div className="page-kicker mb-2">Revenue</div>
+                    <h2>{title}</h2>
+                </div>
+            </div>
+
+            <div className="organizer-finance-grid">
+                {(periods || []).map(item => <div key={item.period}>
+                    <span>{item.label}</span>
+                    <strong>{formatCurrency(item.revenue)}</strong>
+                </div>)}
+            </div>
+        </section>
+    );
+
     const loadStats = async () => {
         try {
             setLoading(true);
@@ -101,6 +119,10 @@ const OrganizerStatsOverview = () => {
             <div className="organizer-detail-toolbar mt-4">
                 <Button className="btn-outline-pink" onClick={() => nav("/organizer/events")}>Xem sự kiện của tôi</Button>
             </div>
+
+            {renderRevenuePeriods("Doanh thu theo tháng", stats?.monthlyRevenue)}
+            {renderRevenuePeriods("Doanh thu theo quý", stats?.quarterlyRevenue)}
+            {renderRevenuePeriods("Doanh thu theo năm", stats?.yearlyRevenue)}
         </div>
     );
 }

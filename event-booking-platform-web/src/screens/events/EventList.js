@@ -10,6 +10,7 @@ const Home = () => {
     const [loading, setLoading] = useState(false);
     const [page, setPage] = useState(1);
     const [hasMore, setHasMore] = useState(true);
+    const [compareIds, setCompareIds] = useState([]);
     const [q, setSearchParams] = useSearchParams();
     const lastQueryRef = useRef("");
     const loadedRequestRef = useRef("");
@@ -179,6 +180,23 @@ const Home = () => {
         setActiveBanner(current => (current + step + bannerEvents.length) % bannerEvents.length);
     }
 
+    const toggleCompare = (eventId) => {
+        const id = String(eventId);
+        setCompareIds(current => {
+            if (current.includes(id))
+                return current.filter(item => item !== id);
+            if (current.length >= 3)
+                return current;
+            return [...current, id];
+        });
+    }
+
+    const openCompare = () => {
+        const params = new URLSearchParams();
+        compareIds.forEach(id => params.append("eventIds", id));
+        nav(`/events/compare?${params.toString()}`);
+    }
+
     return (
         <>
             {bannerEvents.length > 0 && <section className="movie-banner-carousel glass-panel">
@@ -264,6 +282,13 @@ const Home = () => {
                 </Row>
             </Form>
 
+            {compareIds.length > 0 && <div className="organizer-detail-toolbar mt-3">
+                <Button className="btn-pink" onClick={openCompare} disabled={compareIds.length < 2}>
+                    So sánh {compareIds.length} sự kiện
+                </Button>
+                <Button className="btn-outline-pink" onClick={() => setCompareIds([])}>Bỏ chọn</Button>
+            </div>}
+
             {events.length === 0 && loading === false && <Alert className="alert-dark-pink mt-3">Không có sự kiện nào.</Alert>}
 
             <Row className="event-grid mt-3">
@@ -275,6 +300,14 @@ const Home = () => {
 
                             <Card.Body className="d-flex flex-column">
                                 <div className="event-badge mb-3">Còn {e.availableTickets} vé</div>
+                                <Form.Check
+                                    className="mb-2"
+                                    type="checkbox"
+                                    label="Chọn so sánh"
+                                    checked={compareIds.includes(String(e.id))}
+                                    onChange={() => toggleCompare(e.id)}
+                                    disabled={!compareIds.includes(String(e.id)) && compareIds.length >= 3}
+                                />
                                 <Card.Title className="event-title">{e.title}</Card.Title>
                                 <Card.Text className="event-meta mb-1">{e.location || "Đang cập nhật địa điểm"}</Card.Text>
                                 <Card.Text className="event-meta">{formatDate(e.startTime)}</Card.Text>

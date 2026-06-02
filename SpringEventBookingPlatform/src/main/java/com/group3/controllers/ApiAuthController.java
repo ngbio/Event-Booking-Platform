@@ -10,7 +10,6 @@ import com.group3.exceptions.UnauthorizedException;
 import com.group3.service.UserService;
 import com.group3.utils.JwtUtils;
 import jakarta.validation.Valid;
-import java.security.Principal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -32,7 +31,6 @@ public class ApiAuthController {
 //Chứa các API (Nhóm 1 - Xác thực):
 /// /login (POST: Đăng nhập hệ thống)
 /// /register (POST: Đăng ký tài khoản Attendee/Organizer)
-/// /logout (POST: Đăng xuất)
     @Autowired
     private UserService userService;
 
@@ -72,13 +70,5 @@ public class ApiAuthController {
         }
 
         return ResponseEntity.ok(new ApiResponse<>(200, "Đăng nhập thành công", response));
-    }
-
-    @PostMapping("/logout")
-    public ResponseEntity<?> logout(Principal principal) {
-        if (principal == null) {
-            throw new UnauthorizedException("Chưa đăng nhập hoặc token hết hạn");
-        }
-        return ResponseEntity.ok(new ApiResponse<>(200, "Đăng xuất thành công"));
     }
 }

@@ -92,6 +92,7 @@ public class ApiOrganizerEventController {
         return ResponseEntity.ok(new ApiResponse<>(200, "Cập nhật trạng thái sự kiện thành công", null));
     }
 
+    // UNUSED_BY_CURRENT_FRONTEND: no React endpoint key or screen currently calls this API.
     @GetMapping("/{id}/bookings")
     public ResponseEntity<ApiResponse<List<BookingResponse>>> getEventBookings(
             Principal principal,

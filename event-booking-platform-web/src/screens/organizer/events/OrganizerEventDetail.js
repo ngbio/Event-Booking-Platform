@@ -137,6 +137,7 @@ const OrganizerEventDetail = () => {
             <div className="organizer-detail-toolbar">
                 <Button className="btn-soft-pink" onClick={() => nav("/organizer/events")}>Quay lại</Button>
                 <Button className="btn-outline-pink" onClick={() => nav(`/organizer/events/${event.id}/edit`)}>Sửa sự kiện</Button>
+                <Button className="btn-outline-pink" onClick={() => nav(`/organizer/events/${event.id}/bookings`)}>Khách mua vé</Button>
             </div>
 
             {err && <Alert className="alert-dark-pink mt-3">{err}</Alert>}
