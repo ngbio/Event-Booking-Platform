@@ -414,7 +414,7 @@ public class EventRepositoryImpl implements EventRepository {
                 + "LEFT JOIN FETCH e.organizerId o "
                 + "LEFT JOIN FETCH o.user "
                 + "WHERE e.statusId.id = 4 AND e.isSettlement = false "
-                + "AND e.price > 0"
+                + "AND e.price > 0 "
                 + "ORDER BY e.endTime DESC";
 
         return session.createQuery(hql, Event.class).getResultList();

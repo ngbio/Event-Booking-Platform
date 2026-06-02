@@ -13,6 +13,13 @@ const TicketDetail = () => {
     const { ticketId } = useParams();
     const nav = useNavigate();
 
+    const buildQrImageUrl = (value, size = 240) => {
+        if (!value)
+            return "";
+
+        return `https://api.qrserver.com/v1/create-qr-code/?size=${size}x${size}&data=${encodeURIComponent(value)}`;
+    }
+
     const formatDate = (value) => {
         if (!value)
             return "Đang cập nhật";
@@ -90,7 +97,10 @@ const TicketDetail = () => {
 
                         <div className="ticket-qr-large mt-4">
                             <span>Mã QR</span>
-                            <strong>{ticket.qrCode || "Chưa có mã QR"}</strong>
+                            {ticket.qrCode ? <>
+                                <img src={buildQrImageUrl(ticket.qrCode)} alt={`QR ${ticket.qrCode}`} />
+                                <strong>{ticket.qrCode}</strong>
+                            </> : <strong>Chưa có mã QR</strong>}
                         </div>
                     </section>
                 </Col>

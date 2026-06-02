@@ -32,6 +32,7 @@ public class EventMapper {
         response.setCreatedDate(event.getCreatedDate());
         response.setUpdatedDate(event.getUpdatedDate());
         response.setListingFee(event.getListingFee());
+        response.setIsSettlement(Boolean.TRUE.equals(event.getIsSettlement()));
         response.setSettlementCode(event.getSettlementCode());
 
         Integer evtTotal = event.getTotalTickets();
@@ -176,15 +177,19 @@ public class EventMapper {
         response.setEmail(event.getOrganizerId().getUser().getEmail());
         response.setPhone(event.getOrganizerId().getUser().getPhone());
         response.setEndTime(event.getEndTime());
-        response.setPrice(event.getPrice());
+
+        BigDecimal price = event.getPrice() != null ? event.getPrice() : BigDecimal.ZERO;
+        BigDecimal listingFee = event.getListingFee() != null ? event.getListingFee() : BigDecimal.ZERO;
+
+        response.setPrice(price);
         response.setSoldTickets(event.getSoldTickets());
         
-        BigDecimal totalRevenue = event.getPrice().multiply(BigDecimal.valueOf(event.getSoldTickets()));
+        BigDecimal totalRevenue = price.multiply(BigDecimal.valueOf(event.getSoldTickets()));
         response.setTotalRevenue(totalRevenue);
         
-        response.setListingFee(event.getListingFee());
+        response.setListingFee(listingFee);
         
-        BigDecimal actualPayout = totalRevenue.subtract(event.getListingFee());
+        BigDecimal actualPayout = totalRevenue.subtract(listingFee);
         response.setActualPayout(actualPayout.compareTo(BigDecimal.ZERO) > 0 ? actualPayout : BigDecimal.ZERO);
         response.setIsSettlement(event.getIsSettlement());
         response.setSettlementCode(event.getSettlementCode());

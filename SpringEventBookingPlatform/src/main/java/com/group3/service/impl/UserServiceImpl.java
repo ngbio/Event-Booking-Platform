@@ -24,6 +24,7 @@ import com.group3.pojo.StatusUser;
 import com.group3.repository.UserRepository;
 import com.group3.repository.RoleRepository;
 import com.group3.repository.StatusUserRepository;
+import com.group3.service.TicketEmailService;
 import com.group3.service.UserService;
 import com.group3.utils.DTOMapper;
 import java.io.IOException;
@@ -34,6 +35,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -41,6 +43,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronization;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.springframework.web.multipart.MultipartFile;
 
 @Service
@@ -61,6 +65,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private StatusUserRepository statusUserRepo;
+
+    @Autowired
+    private TicketEmailService ticketEmailService;
 
     private static final int ROLE_ATTENDEE = 3;
     private static final int ROLE_ORGANIZER = 2;
@@ -164,7 +171,10 @@ public class UserServiceImpl implements UserService {
             }
         }
 
-        return DTOMapper.toUserResponse(this.userRepo.addUser(user));
+        User savedUser = this.userRepo.addUser(user);
+        sendAfterCommit(() -> ticketEmailService.sendOrganizerRegistrationEmail(
+                savedUser.getEmail(), savedUser.getFullName()));
+        return DTOMapper.toUserResponse(savedUser);
     }
     
     @Override
@@ -199,7 +209,10 @@ public class UserServiceImpl implements UserService {
             }
         }
 
-        return DTOMapper.toUserResponse(this.userRepo.addUser(user));
+        User savedUser = this.userRepo.addUser(user);
+        sendAfterCommit(() -> ticketEmailService.sendAttendeeRegistrationEmail(
+                savedUser.getEmail(), savedUser.getFullName()));
+        return DTOMapper.toUserResponse(savedUser);
     }
 
     @Override
@@ -277,6 +290,7 @@ public class UserServiceImpl implements UserService {
 
         if (isAuthenticated) {
             User user = this.userRepo.findUserByEmail(request.getEmail());
+            validateUserCanLogin(user);
             return DTOMapper.toUserResponse(user);
         }
         return null;
@@ -287,6 +301,10 @@ public class UserServiceImpl implements UserService {
         User user = this.userRepo.findUserByEmail(email);
         if (user == null) {
             throw new ResourceNotFoundException("Không tồn tại người dùng với email: " + email);
+        }
+
+        if (user.getStatusId() == null || !ACTIVE.equals(user.getStatusId().getId())) {
+            throw new DisabledException("Tài khoản chưa được duyệt hoặc đang bị khóa");
         }
 
         Set<GrantedAuthority> authorities = new HashSet<>();
@@ -317,6 +335,42 @@ public class UserServiceImpl implements UserService {
     public UserResponse getCurrentUserProfile(Principal principal){
         User user = validateAndGetCurrentUser(principal);
         return DTOMapper.toUserResponse(user);
+    }
+
+    private void sendAfterCommit(Runnable action) {
+        if (TransactionSynchronizationManager.isSynchronizationActive()) {
+            TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+                @Override
+                public void afterCommit() {
+                    action.run();
+                }
+            });
+        } else {
+            action.run();
+        }
+    }
+
+    private void validateUserCanLogin(User user) {
+        if (user == null || user.getStatusId() == null) {
+            throw new UnauthorizedException("Tài khoản không hợp lệ");
+        }
+
+        Integer statusId = user.getStatusId().getId();
+        Integer roleId = user.getRoleId() != null ? user.getRoleId().getId() : null;
+
+        if (ACTIVE.equals(statusId)) {
+            return;
+        }
+
+        if (Integer.valueOf(ROLE_ORGANIZER).equals(roleId) && PENDING.equals(statusId)) {
+            throw new UnauthorizedException("Tài khoản nhà tổ chức đang chờ admin duyệt");
+        }
+
+        if (REJECTED.equals(statusId)) {
+            throw new UnauthorizedException("Tài khoản đã bị khóa");
+        }
+
+        throw new UnauthorizedException("Tài khoản chưa được kích hoạt");
     }
 
 }

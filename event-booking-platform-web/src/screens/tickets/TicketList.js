@@ -14,6 +14,13 @@ const TicketList = () => {
     const [user,] = useContext(MyUserContext);
     const nav = useNavigate();
 
+    const buildQrImageUrl = (value, size = 120) => {
+        if (!value)
+            return "";
+
+        return `https://api.qrserver.com/v1/create-qr-code/?size=${size}x${size}&data=${encodeURIComponent(value)}`;
+    }
+
     const formatDate = (value) => {
         if (!value)
             return "Đang cập nhật";
@@ -106,7 +113,9 @@ const TicketList = () => {
 
                         <h2>{t.eventTitle || "Sự kiện"}</h2>
 
-                        <div className="ticket-qr-preview">{t.qrCode || "QR"}</div>
+                        <div className="ticket-qr-preview">
+                            {t.qrCode ? <img src={buildQrImageUrl(t.qrCode)} alt={`QR ${t.qrCode}`} /> : "QR"}
+                        </div>
 
                         <dl className="booking-card-list">
                             <div>

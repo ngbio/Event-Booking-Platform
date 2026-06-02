@@ -2,7 +2,7 @@ import { useContext, useState } from "react";
 import { Alert, Button, Form } from "react-bootstrap";
 import MySpinner from "../../components/MySpinner";
 import Apis, { authApis, endpoints } from "../../configs/Apis";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import cookies from 'react-cookies'
 import { MyUserContext } from "../../configs/Contexts";
 
@@ -22,8 +22,10 @@ const Login = () => {
     const [loading, setLoading] = useState(false);
     const [, dispatch] = useContext(MyUserContext);
     const [q] = useSearchParams();
+    const location = useLocation();
 
     const nav = useNavigate();
+    const registerMessage = location.state?.message;
 
     const validate = () => {
         if (!user.email || !user.password) {
@@ -74,6 +76,7 @@ const Login = () => {
             <h1 className="auth-title">Đăng nhập</h1>
             <p className="auth-copy">Tiếp tục với tài khoản Event Booking của bạn.</p>
 
+            {registerMessage && <Alert variant="success">{registerMessage}</Alert>}
             {err && <Alert variant="danger">{err}</Alert>}
 
             <Form onSubmit={login}>

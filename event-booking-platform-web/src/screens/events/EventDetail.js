@@ -2,6 +2,7 @@ import { useContext, useEffect, useState } from "react";
 import { Alert, Button, Col, Form, Row } from "react-bootstrap";
 import { useNavigate, useParams } from "react-router-dom";
 import MySpinner from "../../components/MySpinner";
+import EventChatWidget from "../../components/EventChatWidget";
 import Apis, { authApis, endpoints } from "../../configs/Apis";
 import { MyUserContext } from "../../configs/Contexts";
 
@@ -62,36 +63,32 @@ const EventDetail = () => {
             const res = await authApis().post(endpoints["bookings"], {
                 eventId: event.id,
                 quantity: Number(quantity),
-                paymentMethod: "CASH"
+                paymentMethod: "MOMO"
             });
 
-            nav(`/bookings/${res.data.data.id}`);
+            const booking = res.data.data;
+            const totalPrice = Number(booking.totalPrice || 0);
+
+            if (totalPrice <= 0) {
+                nav(`/bookings/${booking.id}`);
+                return;
+            }
+
+            const paymentRes = await authApis().post(endpoints["momo-payment"], {
+                bookingId: booking.id
+            });
+            const payUrl = paymentRes.data.data?.payUrl;
+
+            if (!payUrl)
+                throw new Error("Không nhận được đường dẫn thanh toán MoMo.");
+
+            window.location.href = payUrl;
         } catch (ex) {
             console.error(ex);
-            setBookingErr(ex.response?.data?.message || "Không thể tạo đơn đặt vé.");
+            setBookingErr(ex.response?.data?.message || ex.message || "Không thể tạo đơn đặt vé.");
         } finally {
             setBookingLoading(false);
         }
-    }
-
-    const openOrganizerChat = () => {
-        if (!user) {
-            nav(`/login?next=/events/${event.id}`);
-            return;
-        }
-
-        const attendeeId = user.roleId === 3 ? user.id : "attendee";
-        const chatId = `event_${event.id}_attendee_${attendeeId}_organizer_${event.organizerId}`;
-        nav(`/chats/${chatId}`, {
-            state: {
-                eventId: event.id,
-                eventTitle: event.title,
-                attendeeId: user.roleId === 3 ? user.id : null,
-                attendeeName: user.fullName || user.email,
-                organizerId: event.organizerId,
-                organizerName: event.organizerName
-            }
-        });
     }
 
     const renderBookingAction = () => {
@@ -136,7 +133,7 @@ const EventDetail = () => {
                     <strong>{formatPrice(Number(event.price || 0) * Number(quantity || 0))}</strong>
                 </div>
                 <Button className="btn-pink w-100" onClick={createBooking} disabled={bookingLoading || Number(quantity) < 1 || Number(quantity) > event.availableTickets}>
-                    {bookingLoading ? "Đang tạo đơn..." : "Đặt vé"}
+                    {bookingLoading ? "Đang chuyển sang MoMo..." : "Đặt vé"}
                 </Button>
             </div>
         );
@@ -179,9 +176,6 @@ const EventDetail = () => {
                         </div>
 
                         {renderBookingAction()}
-                        <Button className="btn-outline-pink w-100 mt-3" onClick={openOrganizerChat}>
-                            Chat với nhà tổ chức
-                        </Button>
                     </div>
                 </Col>
             </Row>
@@ -222,6 +216,8 @@ const EventDetail = () => {
                     </section>
                 </Col>
             </Row>
+
+            <EventChatWidget event={event} />
         </div>
     );
 }
