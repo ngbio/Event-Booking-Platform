@@ -18,6 +18,8 @@ jobs:
   deploy-backend-render:
     name: Deploy backend to Render
     runs-on: ubuntu-latest
+    env:
+      MAVEN_OPTS: -Xmx2048m -XX:MaxMetaspaceSize=512m
 
     steps:
       - name: Checkout source
