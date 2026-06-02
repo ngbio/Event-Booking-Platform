@@ -7,7 +7,6 @@ const BASE_URL = process.env.REACT_APP_API_BASE_URL || "http://localhost:8081/Sp
 export const endpoints = {
     // Auth
     'login': '/auth/login',
-    'logout': '/auth/logout',
     'register-attendee': '/auth/register/attendee',
     'register-organizer': '/auth/register/organizer',
 
@@ -41,6 +40,7 @@ export const endpoints = {
     'create-organizer-event': '/secure/organizer/events',
     'update-organizer-event': (eventId) => `/secure/organizer/events/${eventId}`,
     'change-organizer-event-status': (eventId) => `/secure/organizer/events/${eventId}/status`,
+    'organizer-event-bookings': (eventId) => `/secure/organizer/events/${eventId}/bookings`,
 
     // Organizer stats
     'organizer-stats-overview': '/secure/organizer/stats/overview',

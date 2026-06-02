@@ -174,7 +174,8 @@ const OrganizerEventList = () => {
 
                         <Card.Body className="pt-0 organizer-event-actions">
                             <Button className="btn-soft-pink" onClick={() => nav(`/organizer/events/${e.id}`)}>Chi tiết</Button>
-                            <Button className="btn-outline-pink" onClick={() => nav(`/organizer/events/${e.id}/edit`)}>Sửa</Button>
+                            <Button className="btn-soft-pink" onClick={() => nav(`/organizer/events/${e.id}/edit`)}>Sửa</Button>
+                            {[2, 4].includes(e.statusId) && <Button className="btn-soft-pink" onClick={() => nav(`/organizer/events/${e.id}/bookings`)}>Khách mua vé</Button>}
                         </Card.Body>
                     </Card>
                 </Col>)}

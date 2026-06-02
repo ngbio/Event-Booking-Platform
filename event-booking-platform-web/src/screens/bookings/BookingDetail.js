@@ -119,7 +119,7 @@ const BookingDetail = () => {
         <div className="booking-screen">
             <div className="organizer-detail-toolbar">
                 <Button className="btn-soft-pink" onClick={() => nav("/bookings")}>Quay lại</Button>
-                <Button className="btn-outline-pink" onClick={() => nav(`/events/${booking.eventId}`)}>Xem sự kiện</Button>
+                <Button className="btn-soft-pink" onClick={() => nav(`/events/${booking.eventId}`)}>Xem sự kiện</Button>
             </div>
 
             {err && <Alert className="alert-dark-pink mt-3">{err}</Alert>}
@@ -169,7 +169,7 @@ const BookingDetail = () => {
                             <Button className="btn-pink w-100 mt-4" onClick={payWithMomo} disabled={saving}>
                                 {saving ? "Đang chuyển sang MoMo..." : "Thanh toán MoMo"}
                             </Button>
-                            <Button className="btn-outline-pink w-100 mt-3" onClick={cancelBooking} disabled={saving}>
+                            <Button className="btn-soft-pink w-100 mt-3" onClick={cancelBooking} disabled={saving}>
                                 {saving ? "Đang xử lý..." : "Hủy đơn đặt vé"}
                             </Button>
                         </>}

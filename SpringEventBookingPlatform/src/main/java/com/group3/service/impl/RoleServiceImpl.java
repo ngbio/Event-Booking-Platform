@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+// UNUSED_BY_CURRENT_CODE: RoleService is not injected/called anywhere in the current backend.
 @Service
 public class RoleServiceImpl implements RoleService {
 	

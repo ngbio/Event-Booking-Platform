@@ -210,7 +210,7 @@ const OrganizerEventForm = () => {
         <div className="organizer-form-screen">
             <div className="organizer-detail-toolbar">
                 <Button className="btn-soft-pink" onClick={() => nav(isEdit ? `/organizer/events/${eventId}` : "/organizer/events")}>Quay lại</Button>
-                {isEdit && <Button className="btn-outline-pink" onClick={() => nav(`/organizer/events/${eventId}`)}>Xem chi tiết</Button>}
+                {isEdit && <Button className="btn-soft-pink" onClick={() => nav(`/organizer/events/${eventId}`)}>Xem chi tiết</Button>}
             </div>
 
             <Row className="organizer-form-layout mt-4">

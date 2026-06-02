@@ -58,7 +58,7 @@ const MomoReturn = () => {
                     {bookingId && <Button className="btn-pink" onClick={() => nav(`/bookings/${bookingId}`)}>
                         Xem booking
                     </Button>}
-                    <Button className="btn-outline-pink" onClick={() => nav("/events")}>
+                    <Button className="btn-soft-pink" onClick={() => nav("/events")}>
                         Về danh sách sự kiện
                     </Button>
                 </div>

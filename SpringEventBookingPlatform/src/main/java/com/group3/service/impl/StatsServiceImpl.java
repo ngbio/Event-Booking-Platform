@@ -2,6 +2,7 @@ package com.group3.service.impl;
 
 import com.group3.dto.response.EventFinancialStatsResponse;
 import com.group3.dto.response.OrganizerStatsOverviewResponse;
+import com.group3.dto.response.RevenuePeriodResponse;
 import com.group3.exceptions.ResourceNotFoundException;
 import com.group3.exceptions.UnauthorizedException;
 import com.group3.pojo.Event;
@@ -49,7 +50,61 @@ public class StatsServiceImpl implements StatsService {
         response.setTotalPaidBookings(toLong(stats[1]));
         response.setTotalTicketsSold(toLong(stats[2]));
         response.setTotalRevenue(toBigDecimal(stats[3]));
+        applyOrganizerRevenuePeriods(response, organizer.getId());
         return response;
+    }
+
+    private void applyOrganizerRevenuePeriods(OrganizerStatsOverviewResponse response, Integer organizerId) {
+        int currentYear = LocalDate.now().getYear();
+        List<Object[]> monthlyRows = this.statsRepo.getOrganizerRevenueByMonth(organizerId, currentYear);
+
+        List<BigDecimal> monthlyTotals = new ArrayList<>();
+        for (int i = 0; i < 12; i++) {
+            monthlyTotals.add(BigDecimal.ZERO);
+        }
+
+        for (Object[] row : monthlyRows) {
+            int month = ((Number) row[0]).intValue();
+            monthlyTotals.set(month - 1, toBigDecimal(row[1]));
+        }
+
+        List<RevenuePeriodResponse> monthlyRevenue = new ArrayList<>();
+        List<BigDecimal> quarterlyTotals = new ArrayList<>();
+        for (int i = 0; i < 4; i++) {
+            quarterlyTotals.add(BigDecimal.ZERO);
+        }
+
+        for (int month = 1; month <= 12; month++) {
+            BigDecimal revenue = monthlyTotals.get(month - 1);
+            monthlyRevenue.add(new RevenuePeriodResponse(
+                    currentYear + "-" + String.format("%02d", month),
+                    "Tháng " + month,
+                    revenue));
+
+            int quarterIndex = (month - 1) / 3;
+            quarterlyTotals.set(quarterIndex, quarterlyTotals.get(quarterIndex).add(revenue));
+        }
+
+        List<RevenuePeriodResponse> quarterlyRevenue = new ArrayList<>();
+        for (int quarter = 1; quarter <= 4; quarter++) {
+            quarterlyRevenue.add(new RevenuePeriodResponse(
+                    currentYear + "-Q" + quarter,
+                    "Quý " + quarter,
+                    quarterlyTotals.get(quarter - 1)));
+        }
+
+        List<RevenuePeriodResponse> yearlyRevenue = new ArrayList<>();
+        for (Object[] row : this.statsRepo.getOrganizerRevenueByYear(organizerId)) {
+            Integer year = ((Number) row[0]).intValue();
+            yearlyRevenue.add(new RevenuePeriodResponse(
+                    year.toString(),
+                    "Năm " + year,
+                    toBigDecimal(row[1])));
+        }
+
+        response.setMonthlyRevenue(monthlyRevenue);
+        response.setQuarterlyRevenue(quarterlyRevenue);
+        response.setYearlyRevenue(yearlyRevenue);
     }
 
     @Override

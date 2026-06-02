@@ -5,6 +5,7 @@ import Header from "./components/Header";
 import Footer from "./components/Footer";
 import EventList from "./screens/events/EventList";
 import EventDetail from "./screens/events/EventDetail";
+import EventCompare from "./screens/events/EventCompare";
 import Register from "./screens/auth/Register";
 import Login from "./screens/auth/Login";
 import Profile from "./screens/account/Profile";
@@ -18,8 +19,8 @@ import ChatRoom from "./screens/chats/ChatRoom";
 import OrganizerEventList from "./screens/organizer/events/OrganizerEventList";
 import OrganizerEventDetail from "./screens/organizer/events/OrganizerEventDetail";
 import OrganizerEventForm from "./screens/organizer/events/OrganizerEventForm";
+import OrganizerEventBookings from "./screens/organizer/events/OrganizerEventBookings";
 import OrganizerStatsOverview from "./screens/organizer/stats/OrganizerStatsOverview";
-import OrganizerEventStats from "./screens/organizer/stats/OrganizerEventStats";
 import MomoReturn from "./screens/payments/MomoReturn";
 import NotFound from "./screens/common/NotFound";
 import { MyUserContext } from "./configs/Contexts";
@@ -42,6 +43,7 @@ const App = () => {
               <Routes>
                 <Route path="/" element={<EventList />} />
                 <Route path="/events" element={<EventList />} />
+                <Route path="/events/compare" element={<EventCompare />} />
                 <Route path="/events/:eventId" element={<EventDetail />} />
                 <Route path="/register" element={<Register />} />
                 <Route path="/login" element={<Login />} />
@@ -57,9 +59,9 @@ const App = () => {
                 <Route path="/organizer/events" element={<OrganizerEventList />} />
                 <Route path="/organizer/events/new" element={<OrganizerEventForm />} />
                 <Route path="/organizer/events/:eventId" element={<OrganizerEventDetail />} />
+                <Route path="/organizer/events/:eventId/bookings" element={<OrganizerEventBookings />} />
                 <Route path="/organizer/events/:eventId/edit" element={<OrganizerEventForm />} />
                 <Route path="/organizer/stats" element={<OrganizerStatsOverview />} />
-                <Route path="/organizer/stats/events/:eventId" element={<OrganizerEventStats />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </Container>
