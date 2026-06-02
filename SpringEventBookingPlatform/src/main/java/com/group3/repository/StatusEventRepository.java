@@ -1,20 +1,19 @@
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Interface.java to edit this template
  */
 package com.group3.repository;
 
-import com.group3.pojo.Event;
-import com.group3.pojo.StatusEvent;
+import com.group3.pojo.StatusUser;
+import com.group3.pojo.User;
 
 /**
  *
  * @author thanh
  */
-public interface StatusEventRepository {
-    StatusEvent findById(Integer id);
+public interface StatusUserRepository {
 
-    StatusEvent getStatusEventById(Integer id);
+    StatusUser getStatusUserById(Integer id);
 
-    void changeStatusEvent(Event event, StatusEvent newStatus);
+    void changeStatusUser(User user);
 }
