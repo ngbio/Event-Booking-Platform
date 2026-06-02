@@ -140,7 +140,7 @@ const BookingList = () => {
                         {b.statusId === 1 && <Button className="btn-pink w-100 mt-3" onClick={() => payWithMomo(b.id)}>
                             Thanh toán MoMo
                         </Button>}
-                        <Button className={b.statusId === 1 ? "btn-outline-pink w-100 mt-2" : "btn-pink w-100 mt-3"} onClick={() => nav(`/bookings/${b.id}`)}>Xem chi tiết</Button>
+                        <Button className={b.statusId === 1 ? "btn-soft-pink w-100 mt-2" : "btn-pink w-100 mt-3"} onClick={() => nav(`/bookings/${b.id}`)}>Xem chi tiết</Button>
                     </article>
                 </Col>)}
             </Row>

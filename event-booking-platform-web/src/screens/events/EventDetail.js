@@ -34,6 +34,44 @@ const EventDetail = () => {
         });
     }
 
+    const getEmbedVideoUrl = (url) => {
+        if (!url)
+            return "";
+
+        const youtubeMatch = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&?/]+)/);
+        if (youtubeMatch)
+            return `https://www.youtube.com/embed/${youtubeMatch[1]}`;
+
+        return url;
+    }
+
+    const isDirectVideoUrl = (url) => /\.(mp4|webm|ogg)(\?.*)?$/i.test(url || "");
+
+    const renderEventMedia = () => {
+        const videoUrl = getEmbedVideoUrl(event.videoUrl);
+
+        return (
+            <div className="event-detail-media">
+                {event.imageUrl ? <img className="event-detail-image" src={event.imageUrl} alt={event.title} /> :
+                    <div className="event-detail-placeholder">EVENT</div>}
+
+                {videoUrl && (
+                    isDirectVideoUrl(videoUrl) ?
+                        <video className="event-detail-video" src={videoUrl} controls poster={event.imageUrl || undefined}>
+                            Trình duyệt của bạn không hỗ trợ video.
+                        </video> :
+                        <iframe
+                            className="event-detail-video"
+                            src={videoUrl}
+                            title={`${event.title} video`}
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowFullScreen
+                        />
+                )}
+            </div>
+        );
+    }
+
     const loadEvent = async () => {
         try {
             setLoading(true);
@@ -150,12 +188,16 @@ const EventDetail = () => {
 
     return (
         <div className="event-detail">
-            <Button className="btn-soft-pink mb-4" onClick={() => nav(-1)}>Quay lại</Button>
+            <div className="organizer-detail-toolbar mb-4">
+                <Button className="btn-soft-pink" onClick={() => nav(-1)}>Quay lại</Button>
+                <Button className="btn-soft-pink" onClick={() => nav(`/events/compare?eventIds=${event.id}`)}>
+                    Thêm vào so sánh
+                </Button>
+            </div>
 
             <Row className="event-detail-layout">
                 <Col lg={7}>
-                    {event.imageUrl ? <img className="event-detail-image" src={event.imageUrl} alt={event.title} /> :
-                        <div className="event-detail-placeholder">EVENT</div>}
+                    {renderEventMedia()}
                 </Col>
 
                 <Col lg={5}>

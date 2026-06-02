@@ -267,9 +267,13 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<EventResponse> getEventsByIds(List<Integer> EventIds) {
-        refreshExpiredPublishedEvents();
         List<Event> events = this.eventRepo.getEventsByIds(EventIds);
+        events.removeIf(event -> event.getStatusId() == null
+                || event.getStatusId().getId() != PUBLISHED
+                || event.getEndTime() == null
+                || event.getEndTime().before(new Date()));
         return DTOMapper.toEventResponseList(events);
     }
 

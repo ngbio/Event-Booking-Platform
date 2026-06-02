@@ -83,7 +83,7 @@ const TicketDetail = () => {
         <div className="ticket-screen">
             <div className="organizer-detail-toolbar">
                 <Button className="btn-soft-pink" onClick={() => nav("/tickets")}>Quay lại</Button>
-                <Button className="btn-outline-pink" onClick={() => nav(`/events/${ticket.eventId}`)}>Xem sự kiện</Button>
+                <Button className="btn-soft-pink" onClick={() => nav(`/events/${ticket.eventId}`)}>Xem sự kiện</Button>
             </div>
 
             {err && <Alert className="alert-dark-pink mt-3">{err}</Alert>}
@@ -143,7 +143,7 @@ const TicketDetail = () => {
                             </div>
                         </dl>
 
-                        <Button className="btn-outline-pink w-100 mt-4" onClick={() => nav(`/bookings/${ticket.bookingId}`)}>
+                        <Button className="btn-soft-pink w-100 mt-4" onClick={() => nav(`/bookings/${ticket.bookingId}`)}>
                             Xem booking
                         </Button>
                     </section>

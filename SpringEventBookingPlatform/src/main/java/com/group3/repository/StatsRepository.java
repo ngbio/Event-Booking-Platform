@@ -9,6 +9,10 @@ public interface StatsRepository {
 
     Object[] getEventFinancialStats(Integer eventId);
 
+    List<Object[]> getOrganizerRevenueByMonth(Integer organizerId, int year);
+
+    List<Object[]> getOrganizerRevenueByYear(Integer organizerId);
+
     BigDecimal getTotalRevenue();
 
     BigDecimal getTotalFees();

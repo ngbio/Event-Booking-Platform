@@ -41,14 +41,16 @@ public class ApiEventController {
         return ResponseEntity.ok(new ApiResponse<>(200, "Lấy thông tin sự kiện thành công", event));
     }
 
+    // UNUSED_BY_CURRENT_FRONTEND: endpoint is declared in React config but no screen calls it.
     @GetMapping("/{id}/available")
     public ResponseEntity<ApiResponse<Integer>> getAvailableTickets(@PathVariable("id") Integer eventId) {
         int availableTickets = eventService.getAvailableTickets(eventId);
         return ResponseEntity.ok(new ApiResponse<>(200, "Lấy thông tin số vé còn lại thành công", availableTickets));
     }
 
+    // UNUSED_BY_CURRENT_FRONTEND: endpoint is declared in React config but no screen calls it.
     @GetMapping("/compare")
-    public ResponseEntity<?> compareEvents(@RequestParam
+    public ResponseEntity<?> compareEvents(@RequestParam("eventIds")
             @Size(min = 2, max = 3, message = "Chọn từ 2 đến 3 sự kiện để so sánh") List<Integer> eventIds) {
         List<EventResponse> events = eventService.getEventsByIds(eventIds);
         return ResponseEntity.ok(new ApiResponse<>(200, "So sánh sự kiện thành công", events));
