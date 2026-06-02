@@ -204,27 +204,27 @@ INSERT INTO `attendee` (`user_id`, `birth_date`, `gender`) VALUES
 
 -- Sự kiện, Đặt vé và Thanh toán
 INSERT INTO `event` (`id`, `organizer_id`, `status_id`, `title`, `description`, `start_time`, `end_time`, `location`, `total_tickets`, `price`, `sold_tickets`, `listing_fee`,`is_settlement`, `settlement_code`) VALUES 
-(1, 2, 1, 'Triển Lãm Tranh Sơn Dầu Việt', 'Trưng bày tác phẩm nghệ thuật.', '2026-10-05 09:00:00', '2026-10-12 18:00:00', 'Bảo tàng Mỹ thuật TP.HCM', 300, 80000.00, 0, 100000.00,0, NULL),
-(2, 2, 1, 'Đại Hội Kpop Dance Cover 2026', 'Sân chơi âm nhạc vũ đạo trẻ.', '2026-07-20 18:00:00', '2026-07-20 22:00:00', 'Nhà thi đấu Phú Thọ', 800, 120000.00, 0, 150000.00, 0, NULL),
-(3, 3, 1, 'Workshop Thiết Kế UI/UX Nâng Cao', 'Học thiết kế cùng chuyên gia.', '2026-06-25 08:30:00', '2026-06-25 12:00:00', 'Toà nhà văn phòng TechHub', 50, 450000.00, 0, 50000.00, 0, NULL),
-(4, 2, 2, 'Đêm Nhạc Hội Indie 2026', 'Sự kiện âm nhạc quy mô lớn.', '2026-07-15 19:00:00', '2026-07-15 23:00:00', 'Sân vận động Hoa Lư', 1000, 500000.00, 5, 200000.00, 0, NULL),
-(5, 2, 2, 'Hội Thảo Khởi Nghiệp Công Nghệ', 'Xu hướng phát triển công nghệ.', '2026-08-10 08:00:00', '2026-08-10 12:00:00', 'Trung tâm Hội nghị SSE', 200, 150000.00, 4, 100000.00, 0, NULL),
-(6, 3, 2, 'Saigon Rock Fest 2026', 'Đại nhạc hội Rock bùng nổ sức trẻ.', '2026-09-01 17:00:00', '2026-09-01 22:30:00', 'Nhà thi đấu Nguyễn Du', 1500, 350000.00, 3, 200000.00, 0, NULL),
+(1, 2, 1, 'Triển Lãm Tranh Sơn Dầu Việt', 'Trưng bày tác phẩm nghệ thuật.', '2026-10-05 09:00:00', '2026-10-12 18:00:00', 'Bảo tàng Mỹ thuật TP.HCM', 300, 1000.00, 0, 100000.00,0, NULL),
+(2, 2, 1, 'Đại Hội Kpop Dance Cover 2026', 'Sân chơi âm nhạc vũ đạo trẻ.', '2026-07-20 18:00:00', '2026-07-20 22:00:00', 'Nhà thi đấu Phú Thọ', 800, 1000.00, 0, 150000.00, 0, NULL),
+(3, 3, 1, 'Workshop Thiết Kế UI/UX Nâng Cao', 'Học thiết kế cùng chuyên gia.', '2026-06-25 08:30:00', '2026-06-25 12:00:00', 'Toà nhà văn phòng TechHub', 50, 1000.00, 0, 50000.00, 0, NULL),
+(4, 2, 2, 'Đêm Nhạc Hội Indie 2026', 'Sự kiện âm nhạc quy mô lớn.', '2026-07-15 19:00:00', '2026-07-15 23:00:00', 'Sân vận động Hoa Lư', 1000, 1000.00, 5, 200000.00, 0, NULL),
+(5, 2, 2, 'Hội Thảo Khởi Nghiệp Công Nghệ', 'Xu hướng phát triển công nghệ.', '2026-08-10 08:00:00', '2026-08-10 12:00:00', 'Trung tâm Hội nghị SSE', 200, 1000.00, 4, 100000.00, 0, NULL),
+(6, 3, 2, 'Saigon Rock Fest 2026', 'Đại nhạc hội Rock bùng nổ sức trẻ.', '2026-09-01 17:00:00', '2026-09-01 22:30:00', 'Nhà thi đấu Nguyễn Du', 1500, 1000.00, 3, 200000.00, 0, NULL),
 (7, 3, 2, 'Giải Chạy Marathon Vì Cộng Đồng', 'Chạy bộ 5km và 10km bảo vệ môi trường.', '2026-06-20 05:00:00', '2026-06-20 10:00:00', 'Công viên Vinhomes Central Park', 500, 0.00, 0, 0.00, 0, NULL),
-(8, 2, 2, 'Giải Đấu Liên Minh Huyền Tao', 'Tranh cúp vô địch.', '2026-07-22 13:00:00', '2026-07-24 20:00:00', 'Vikings Esports Arena', 100, 50000.00, 0, 50000.00, 0, NULL),
+(8, 2, 2, 'Giải Đấu Liên Minh Huyền Tao', 'Tranh cúp vô địch.', '2026-07-22 13:00:00', '2026-07-24 20:00:00', 'Vikings Esports Arena', 100, 1000.00, 0, 50000.00, 0, NULL),
 (9, 2, 2, 'Hội Thảo Xu Hướng Học Tiếng Anh', 'Bí quyết đạt TOEIC 625 nhanh chóng.', '2026-06-05 09:00:00', '2026-06-05 11:30:00', 'Đại Học Mở TP.HCM', 120, 0.00, 0, 0.00, 0, NULL),
-(10, 3, 2, 'Đêm Hài Độc Thoại Sài Gòn tếu', 'Mang lại tiếng cười cuối tuần.', '2026-07-02 20:00:00', '2026-07-02 22:30:00', 'Sân khấu kịch Q1', 80, 200000.00, 0, 50000.00, 0, NULL),
+(10, 3, 2, 'Đêm Hài Độc Thoại Sài Gòn tếu', 'Mang lại tiếng cười cuối tuần.', '2026-07-02 20:00:00', '2026-07-02 22:30:00', 'Sân khấu kịch Q1', 80, 1000.00, 0, 50000.00, 0, NULL),
 (11, 2, 2, 'Lễ Hội Ẩm Thực Đường Phố Á Châu', 'Khám phá các món ăn đặc sắc Châu Á.', '2026-07-10 10:00:00', '2026-07-12 22:00:00', 'Phố đi bộ Nguyễn Huệ', 5000, 0.00, 0, 300000.00, 0, NULL),
-(12, 3, 2, 'Hội Chợ Sách Quốc Tế Sài Gòn', 'Triển lãm và giao lưu tác giả sách.', '2026-08-01 08:00:00', '2026-08-05 21:00:00', 'SECC Quận 7', 3000, 20000.00, 0, 200000.00, 0, NULL),
-(13, 2, 3, 'Workshop Làm Bánh Gối Cổ Truyền', 'Làm bánh gối chuẩn vị.', '2026-06-15 14:00:00', '2026-06-15 17:00:00', 'Bếp Bánh Ngon Q3', 30, 250000.00, 0, 50000.00, 0, NULL),
-(14, 2, 3, 'Đêm Kịch Nói: Lan Và Điệp 2026', 'Vở kịch cải lương cổ truyền tái hiện.', '2026-08-15 19:30:00', '2026-08-15 22:00:00', 'Nhà hát Thành Phố', 400, 300000.00, 0, 100000.00, 0, NULL),
-(15, 3, 3, 'Triển Lãm High-Tech & Giới Thiệu AI', 'Giới thiệu robot và AI thế hệ mới.', '2026-09-10 09:00:00', '2026-09-12 17:00:00', 'Trung tâm Triển lãm Q. Tân Bình', 1000, 50000.00, 0, 150000.00, 0, NULL),
-(16, 3, 4, 'Live Concert Thanh Âm Hoàng Hôn', 'Đêm nhạc acoustic đã kết thúc.', '2026-04-01 18:00:00', '2026-04-01 21:00:00', 'Đà Lạt Mộng Mơ', 150, 450000.00, 150, 150000.00, 1, 'FT260401888'),
-(17, 2, 4, 'Hội Thảo Digital Marketing Quốc Tế', 'Cập nhật xu hướng SEO và Ads 2026.', '2026-05-02 08:00:00', '2026-05-02 17:00:00', 'Khách sạn Caravelle Sài Gòn', 200, 1200000.00, 200, 500000.00, 1, 'ST260502111'),
+(12, 3, 2, 'Hội Chợ Sách Quốc Tế Sài Gòn', 'Triển lãm và giao lưu tác giả sách.', '2026-08-01 08:00:00', '2026-08-05 21:00:00', 'SECC Quận 7', 3000, 1000.00, 0, 200000.00, 0, NULL),
+(13, 2, 3, 'Workshop Làm Bánh Gối Cổ Truyền', 'Làm bánh gối chuẩn vị.', '2026-06-15 14:00:00', '2026-06-15 17:00:00', 'Bếp Bánh Ngon Q3', 30, 1000.00, 0, 50000.00, 0, NULL),
+(14, 2, 3, 'Đêm Kịch Nói: Lan Và Điệp 2026', 'Vở kịch cải lương cổ truyền tái hiện.', '2026-08-15 19:30:00', '2026-08-15 22:00:00', 'Nhà hát Thành Phố', 400, 1000.00, 0, 100000.00, 0, NULL),
+(15, 3, 3, 'Triển Lãm High-Tech & Giới Thiệu AI', 'Giới thiệu robot và AI thế hệ mới.', '2026-09-10 09:00:00', '2026-09-12 17:00:00', 'Trung tâm Triển lãm Q. Tân Bình', 1000, 1000.00, 0, 150000.00, 0, NULL),
+(16, 3, 4, 'Live Concert Thanh Âm Hoàng Hôn', 'Đêm nhạc acoustic đã kết thúc.', '2026-04-01 18:00:00', '2026-04-01 21:00:00', 'Đà Lạt Mộng Mơ', 150, 1000.00, 150, 150000.00, 1, 'FT260401888'),
+(17, 2, 4, 'Hội Thảo Digital Marketing Quốc Tế', 'Cập nhật xu hướng SEO và Ads 2026.', '2026-05-02 08:00:00', '2026-05-02 17:00:00', 'Khách sạn Caravelle Sài Gòn', 200, 1000.00, 200, 500000.00, 1, 'ST260502111'),
 (18, 3, 5, 'Hội Chợ Sách Cũ Sài Gòn', 'Sự kiện bị hủy bỏ.', '2026-05-10 08:00:00', '2026-05-12 21:00:00', 'Nhà văn hóa Thanh Niên', 2000, 0.00, 0, 0.00, 0, NULL),
-(19, 2, 5, 'Giải Marathon Quốc Tế Đà Nẵng', 'Sự kiện bị hủy do thời tiết bất lợi.', '2026-05-14 04:00:00', '2026-05-14 11:00:00', 'Công viên Biển Đông Đà Nẵng', 3000, 600000.00, 0, 400000.00, 0, NULL),
-(20, 2, 2, 'Đêm Nhạc Jazz Độc Bản Tháng 7', 'Thưởng thức nhạc Jazz nguyên bản tinh tế.', '2026-07-05 20:00:00', '2026-07-05 23:00:00', 'Nhà hát lớn Hà Nội', 250, 600000.00, 0, 250000.00, 0, NULL),
-(21, 2, 4, 'Đêm Nhạc Trữ Tình Mùa Thu', 'Sự kiện âm nhạc hoành tráng quy tụ nhiều ngôi sao.', '2026-05-10 19:00:00', '2026-05-10 22:30:00', 'Nhà hát Hòa Bình, TP.HCM', 1000, 500000.00, 800, 20000000.00, 0, NULL),
+(19, 2, 5, 'Giải Marathon Quốc Tế Đà Nẵng', 'Sự kiện bị hủy do thời tiết bất lợi.', '2026-05-14 04:00:00', '2026-05-14 11:00:00', 'Công viên Biển Đông Đà Nẵng', 3000, 1000.00, 0, 400000.00, 0, NULL),
+(20, 2, 2, 'Đêm Nhạc Jazz Độc Bản Tháng 7', 'Thưởng thức nhạc Jazz nguyên bản tinh tế.', '2026-07-05 20:00:00', '2026-07-05 23:00:00', 'Nhà hát lớn Hà Nội', 250, 1000.00, 0, 250000.00, 0, NULL),
+(21, 2, 4, 'Đêm Nhạc Trữ Tình Mùa Thu', 'Sự kiện âm nhạc hoành tráng quy tụ nhiều ngôi sao.', '2026-05-10 19:00:00', '2026-05-10 22:30:00', 'Nhà hát Hòa Bình, TP.HCM', 1000, 1000.00, 800, 20000000.00, 0, NULL),
 
 -- -----------------------------------------------------------------------------------------
 -- KỊCH BẢN 2: Sự kiện quy mô nhỏ, bán cháy vé (Sold Out)
@@ -255,6 +255,19 @@ UPDATE `event` SET `image_url` = 'https://res.cloudinary.com/dprwsgoeg/image/upl
 UPDATE `event` SET `image_url` = 'https://res.cloudinary.com/dprwsgoeg/image/upload/v1780209307/1925959_capfbt.jpg' WHERE `id` = 11 AND `status_id` = 2;
 UPDATE `event` SET `image_url` = 'https://res.cloudinary.com/dprwsgoeg/image/upload/v1780209309/poster-3930_copy_wnoaw2.jpg' WHERE `id` = 12 AND `status_id` = 2;
 UPDATE `event` SET `image_url` = 'https://res.cloudinary.com/dprwsgoeg/image/upload/v1780209309/thumb-1920-1119553_iofbte.jpg' WHERE `id` = 20 AND `status_id` = 2;
+
+-- Video trailer/banner cho cac su kien da published (status_id = 2)
+-- Thay cac link ben duoi bang URL video that cua tung su kien.
+UPDATE `event` SET `video_url` = 'https://res.cloudinary.com/dprwsgoeg/video/upload/v1780398955/15864457_3840_2160_24fps_b565ub.mp4' WHERE `id` = 4 AND `status_id` = 2;
+UPDATE `event` SET `video_url` = 'https://res.cloudinary.com/dprwsgoeg/video/upload/v1780398952/15372903_2160_3840_30fps_kgbehm.mp4' WHERE `id` = 5 AND `status_id` = 2;
+UPDATE `event` SET `video_url` = 'https://player.cloudinary.com/embed/?cloud_name=dprwsgoeg&public_id=samples%2Fcld-sample-video' WHERE `id` = 6 AND `status_id` = 2;
+UPDATE `event` SET `video_url` = 'https://player.cloudinary.com/embed/?cloud_name=dprwsgoeg&public_id=samples%2Fdance-2' WHERE `id` = 7 AND `status_id` = 2;
+UPDATE `event` SET `video_url` = 'https://player.cloudinary.com/embed/?cloud_name=dprwsgoeg&public_id=samples%2Felephants' WHERE `id` = 8 AND `status_id` = 2;
+UPDATE `event` SET `video_url` = 'https://player.cloudinary.com/embed/?cloud_name=dprwsgoeg&public_id=samples%2Felephants' WHERE `id` = 9 AND `status_id` = 2;
+UPDATE `event` SET `video_url` = 'https://res.cloudinary.com/dprwsgoeg/video/upload/v1780398955/15864457_3840_2160_24fps_b565ub.mp4' WHERE `id` = 10 AND `status_id` = 2;
+UPDATE `event` SET `video_url` = 'https://res.cloudinary.com/dprwsgoeg/video/upload/v1780398952/15372903_2160_3840_30fps_kgbehm.mp4' WHERE `id` = 11 AND `status_id` = 2;
+UPDATE `event` SET `video_url` = 'https://player.cloudinary.com/embed/?cloud_name=dprwsgoeg&public_id=samples%2Fcld-sample-video' WHERE `id` = 12 AND `status_id` = 2;
+UPDATE `event` SET `video_url` = 'https://player.cloudinary.com/embed/?cloud_name=dprwsgoeg&public_id=samples%2Fdance-2' WHERE `id` = 20 AND `status_id` = 2;
 
 INSERT INTO `event_category` (`event_id`, `category_id`) VALUES 
 (1, 4), (1, 12), (2, 1), (2, 10), (3, 7), (3, 8), (4, 1), (4, 10), (5, 2), (5, 8), 
