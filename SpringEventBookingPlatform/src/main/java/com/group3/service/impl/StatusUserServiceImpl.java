@@ -26,19 +26,25 @@ public class StatusUserServiceImpl implements StatusUserService{
     
     @Override
     public boolean changeStatusUser(Integer userId, Integer statusId){
+        if (userId==null ||statusId==null) return false;
         User user = this.userRepo.findUserById(userId);
+        if (user==null) return false;
         Integer oldStatusId = user != null && user.getStatusId() != null ? user.getStatusId().getId() : null;
         Integer roleId = user != null && user.getRoleId() != null ? user.getRoleId().getId() : null;
-
-        boolean success = this.statusUserRepo.changeStatusUser(userId, statusId);
-        if (success
-                && Integer.valueOf(ROLE_ORGANIZER).equals(roleId)
-                && Integer.valueOf(STATUS_PENDING).equals(oldStatusId)
-                && Integer.valueOf(STATUS_ACTIVE).equals(statusId)) {
-            ticketEmailService.sendOrganizerApprovedEmail(user.getEmail(), user.getFullName());
+        StatusUser newStatus = this.getStatusUserById(statusId);
+        if (newStatus==null) return false;
+        try {
+            user.setStatusId(newStatus);
+            this.statusUserRepo.changeStatusUser(user);
+            if (Integer.valueOf(ROLE_ORGANIZER).equals(roleId)
+                    && Integer.valueOf(STATUS_PENDING).equals(oldStatusId)
+                    && Integer.valueOf(STATUS_ACTIVE).equals(statusId)) {
+                ticketEmailService.sendOrganizerApprovedEmail(user.getEmail(), user.getFullName());
+            }
+            return true;
+        } catch (Exception e) {
+            return false;
         }
-
-        return success;
     }
     
     @Override

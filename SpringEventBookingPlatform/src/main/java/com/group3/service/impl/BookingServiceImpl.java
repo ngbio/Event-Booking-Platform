@@ -25,7 +25,6 @@ import java.math.BigDecimal;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -159,6 +158,7 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
+    @Transactional
     public BookingResponse createBooking(BookingRequest request, Principal principal) {
         User attendee = validateAndGetAttendee(principal);
         validateAttendee(attendee);
@@ -240,6 +240,7 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
+    @Transactional
     public boolean cancelBooking(Integer bookingId, Principal principal) {
         User attendee = validateAndGetAttendee(principal);
         validateAttendee(attendee);
@@ -360,12 +361,12 @@ public class BookingServiceImpl implements BookingService {
     }
     
     @Override
+    @Transactional
     public int updateStatusByEventId(Integer eventId, Integer oldStatusId, Integer newStatusId) {
-        return bookingRepo.updateStatusByEventId(eventId, oldStatusId, newStatusId);
+        return bookingRepo.updateStatusBookingByEventId(eventId, oldStatusId, newStatusId);
     }
     
     @Override
-    @Transactional(readOnly = true)
     public List<BookingResponse> getBookingsByEventId(Integer eventId, Map<String, String> params) {
         List<BookingResponse> bookings = DTOMapper.toBookingResponseList(this.bookingRepo.getBookingsByEventId(eventId, params));
         return bookings;

@@ -18,12 +18,12 @@ public interface BookingRepository {
 
     Booking updateBooking(Booking booking);
 
-    long countBookingsByUserId(Integer userId, Map<String, String> params);
+//    long countBookingsByUserId(Integer userId, Map<String, String> params);
 
-    long countBookingsByEventId(Integer eventId, Map<String, String> params);
+//    long countBookingsByEventId(Integer eventId, Map<String, String> params);
 
-    boolean existsPaidBooking(Integer eventId, Integer userId);
+//    boolean existsPaidBooking(Integer eventId, Integer userId);
     
-    int updateStatusByEventId(Integer eventId, Integer oldStatusId, Integer newStatusId);
+    int updateStatusBookingByEventId(Integer eventId, Integer oldStatusId, Integer newStatusId);
 
 }

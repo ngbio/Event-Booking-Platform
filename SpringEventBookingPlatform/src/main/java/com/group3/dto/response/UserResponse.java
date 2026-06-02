@@ -4,8 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import java.util.Date;
 
-@JsonInclude(JsonInclude.Include.NON_NULL)
-
+@JsonInclude(JsonInclude.Include.NON_NULL) //trả json có null thì ẩn
 public class UserResponse {
 
     private Integer id;
@@ -27,6 +26,7 @@ public class UserResponse {
     private String statusName;
     private Date createdDate;
     private Date updatedDate;
+
     public UserResponse() {
     }
 
@@ -48,8 +48,6 @@ public class UserResponse {
         this.createdDate = createdDate;
         this.updatedDate = updatedDate;
     }
-
-    
 
     public Integer getId() {
         return id;

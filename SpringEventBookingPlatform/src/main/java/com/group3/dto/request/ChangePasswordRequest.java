@@ -1,20 +1,12 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.group3.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
-/**
- *
- * @author thanh
- */
 public class ChangePasswordRequest {
 
-    @NotBlank(message = "Vui lòng nhập mật khẩu cũ")
+    @NotBlank(message = "Mật khẩu cũ không được trống")
     private String oldPassword;
 
     @Size(min = 6, message = "Mật khẩu phải từ 6 ký tự trở lên")
@@ -22,7 +14,7 @@ public class ChangePasswordRequest {
             message = "Mật khẩu phải từ 6 ký tự, gồm ít nhất một chữ cái và một số")
     private String newPassword;
 
-    @NotBlank(message = "Vui lòng xác nhận mật khẩu mới")
+    @NotBlank(message = "Mật khẩu mới không được trống")
     private String confirmPassword;
 
     public String getOldPassword() {

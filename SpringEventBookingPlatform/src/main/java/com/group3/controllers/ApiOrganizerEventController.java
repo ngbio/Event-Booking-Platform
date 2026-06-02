@@ -27,12 +27,6 @@ import org.springframework.web.multipart.MultipartFile;
 @RestController
 @RequestMapping("/api/secure/organizer/events")
 public class ApiOrganizerEventController {
-//      @RequestMapping("/api/secure/organizer/events")
-//Chứa các API (Nhóm 3 - Đặc quyền của Nhà tổ chức):
-/// (GET: Danh sách sự kiện của mình, POST: Tạo sự kiện mới)
-/// /{id} (GET: Xem chi tiết, PUT: Cập nhật toàn bộ)
-/// /{id}/status (PATCH: Tạm ẩn hoặc Yêu cầu hủy sự kiện)
-/// /{id}/bookings (GET: Xem danh sách khách mua vé của sự kiện)
     @Autowired
     private OrganizerEventService organizerEventService;
     

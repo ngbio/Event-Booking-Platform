@@ -4,6 +4,7 @@
  */
 package com.group3.repository;
 
+import com.group3.pojo.Event;
 import com.group3.pojo.StatusEvent;
 
 /**
@@ -11,8 +12,9 @@ import com.group3.pojo.StatusEvent;
  * @author thanh
  */
 public interface StatusEventRepository {
+    StatusEvent getById(Integer id);
 
     StatusEvent getStatusEventById(Integer id);
 
-    boolean changeStatusEvent(Integer eventId, Integer statusId);
+    void changeStatusEvent(Event event, StatusEvent newStatus);
 }

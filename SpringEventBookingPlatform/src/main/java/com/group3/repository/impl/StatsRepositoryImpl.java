@@ -14,13 +14,14 @@ import org.springframework.stereotype.Repository;
 @Transactional
 public class StatsRepositoryImpl implements StatsRepository {
 
-    private static final int BOOKING_PAID = 2;
-
+    private static final int STATUS_BOOKING_PAID = 2;
+    private static final int STATUS_EVENT_PUBLISHED=2;
     @Autowired
     private LocalSessionFactoryBean factory;
 
     @Override
     public Object[] getOrganizerOverview(Integer organizerId) {
+        Session session = this.factory.getObject().getCurrentSession();
         String hql = "SELECT COUNT(DISTINCT e.id), "
                 + "COUNT(DISTINCT b.id), "
                 + "COALESCE(SUM(b.quantity), 0), "
@@ -28,36 +29,33 @@ public class StatsRepositoryImpl implements StatsRepository {
                 + "FROM Event e "
                 + "LEFT JOIN Booking b ON b.eventId.id = e.id AND b.statusId.id = :paidStatus "
                 + "WHERE e.organizerId.user.id = :organizerId";
-
-        return getCurrentSession().createQuery(hql, Object[].class)
-                .setParameter("paidStatus", BOOKING_PAID)
-                .setParameter("organizerId", organizerId)
-                .getSingleResult();
+        Query<Object[]> q = session.createQuery(hql, Object[].class);
+        q.setParameter("paidStatus", STATUS_BOOKING_PAID);
+        q.setParameter("organizerId", organizerId);
+        return q.getSingleResult();
     }
 
     @Override
     public Object[] getEventFinancialStats(Integer eventId) {
-        String hql = "SELECT COUNT(DISTINCT b.id), "
-                + "COALESCE(SUM(b.quantity), 0), "
-                + "COALESCE(SUM(b.totalPrice), 0) "
+        Session session = this.factory.getObject().getCurrentSession();
+        String hql = "SELECT COUNT(DISTINCT b.id),"
+                + "COALESCE(SUM(b.quantity), 0),"
+                + "COALESCE(SUM(b.totalPrice),0) "
                 + "FROM Booking b "
-                + "WHERE b.eventId.id = :eventId "
-                + "AND b.statusId.id = :paidStatus";
-
-        return getCurrentSession().createQuery(hql, Object[].class)
-                .setParameter("eventId", eventId)
-                .setParameter("paidStatus", BOOKING_PAID)
-                .getSingleResult();
-    }
-
-    private Session getCurrentSession() {
-        return this.factory.getObject().getCurrentSession();
+                + "WHERE b.eventId.id = :eventId AND b.statusId.id = :paidStatus";
+        Query<Object[]> q = session.createQuery(hql, Object[].class);
+        q.setParameter("eventId", eventId);
+        q.setParameter("paidStatus", STATUS_BOOKING_PAID);
+        return q.getSingleResult();
     }
 
     @Override
     public BigDecimal getTotalRevenue() {
         Session session = this.factory.getObject().getCurrentSession();
-        Query<BigDecimal> q = session.createQuery("SELECT SUM(b.totalPrice) FROM Booking b WHERE b.statusId.id = 2", BigDecimal.class);
+        String hql = "SELECT SUM(b.totalPrice) "
+                + "FROM Booking b "
+                + "WHERE b.statusId.id = 2";
+        Query<BigDecimal> q = session.createQuery(hql, BigDecimal.class);
         BigDecimal sum = q.getSingleResult();
         return sum != null ? sum : BigDecimal.ZERO;
     }
@@ -65,7 +63,10 @@ public class StatsRepositoryImpl implements StatsRepository {
     @Override
     public BigDecimal getTotalFees() {
         Session session = this.factory.getObject().getCurrentSession();
-        Query<BigDecimal> q = session.createQuery("SELECT SUM(e.listingFee) FROM Event e WHERE e.isSettlement = true", BigDecimal.class);
+        String hql = "SELECT SUM(e.listingFee) "
+                + "FROM Event e "
+                + "WHERE e.isSettlement = true";
+        Query<BigDecimal> q = session.createQuery(hql, BigDecimal.class);
         BigDecimal sum = q.getSingleResult();
         return sum != null ? sum : BigDecimal.ZERO;
     }
@@ -73,7 +74,11 @@ public class StatsRepositoryImpl implements StatsRepository {
     @Override
     public Long getTotalTicketsSold() {
         Session session = this.factory.getObject().getCurrentSession();
-        Query<Long> q = session.createQuery("SELECT SUM(b.quantity) FROM Booking b WHERE b.statusId.id = 2", Long.class);
+        String hql = "SELECT SUM(b.quantity) "
+                + "FROM Booking b "
+                + "WHERE b.statusId.id = :id";
+        Query<Long> q = session.createQuery(hql, Long.class);
+        q.setParameter("id",STATUS_BOOKING_PAID);
         Long count = q.getSingleResult();
         return count != null ? count : 0L;
     }
@@ -81,7 +86,11 @@ public class StatsRepositoryImpl implements StatsRepository {
     @Override
     public Long getActiveEventsCount() {
         Session session = this.factory.getObject().getCurrentSession();
-        Query<Long> q = session.createQuery("SELECT COUNT(e.id) FROM Event e WHERE e.statusId.id = 2", Long.class);
+        String hql = "SELECT COUNT(e.id) "
+                + "FROM Event e "
+                + "WHERE e.statusId.id = :id";
+        Query<Long> q = session.createQuery(hql, Long.class);
+        q.setParameter("id",STATUS_EVENT_PUBLISHED);
         return q.getSingleResult();
     }
 
@@ -89,22 +98,24 @@ public class StatsRepositoryImpl implements StatsRepository {
     public List<Object[]> getRevenueByMonth(int year) {
         Session session = this.factory.getObject().getCurrentSession();
         String hql = "SELECT MONTH(b.createdDate), SUM(b.totalPrice) FROM Booking b "
-                + "WHERE YEAR(b.createdDate) = :year AND b.statusId.id = 2 "
+                + "WHERE YEAR(b.createdDate) = :year AND b.statusId.id = :id "
                 + "GROUP BY MONTH(b.createdDate)";
         Query<Object[]> q = session.createQuery(hql, Object[].class);
         q.setParameter("year", year);
+        q.setParameter("id",STATUS_BOOKING_PAID);
         return q.getResultList();
     }
 
     @Override
     public List<Object[]> getTicketsByCategory() {
         Session session = this.factory.getObject().getCurrentSession();
-        // Sửa: JOIN e.categoryCollection c để khớp chính xác với entity Event
         String hql = "SELECT c.name, SUM(b.quantity) FROM Booking b "
                 + "JOIN b.eventId e "
                 + "JOIN e.categoryCollection c "
-                + "WHERE b.statusId.id = 2 "
+                + "WHERE b.statusId.id = :id "
                 + "GROUP BY c.name";
-        return session.createQuery(hql, Object[].class).getResultList();
+        Query<Object[]> q = session.createQuery(hql, Object[].class);
+        q.setParameter("id",STATUS_BOOKING_PAID);
+        return q.getResultList();
     }
 }

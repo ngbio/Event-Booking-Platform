@@ -2,8 +2,6 @@ package com.group3.repository.impl;
 
 import com.group3.pojo.Booking;
 import com.group3.repository.BookingRepository;
-import com.group3.repository.StatusBookingRepository;
-import jakarta.persistence.NoResultException;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
@@ -16,6 +14,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import org.hibernate.Session;
+import org.hibernate.query.MutationQuery;
 import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.PropertySource;
@@ -35,9 +34,6 @@ public class BookingRepositoryImpl implements BookingRepository {
 
     @Autowired
     private LocalSessionFactoryBean factory;
-    
-    @Autowired
-    private StatusBookingRepository statusBookingRepo;
 
     @Override
     public Booking addBooking(Booking booking) {
@@ -51,22 +47,17 @@ public class BookingRepositoryImpl implements BookingRepository {
         if (id == null) {
             return null;
         }
-
         Session session = this.factory.getObject().getCurrentSession();
-        String hql = "SELECT DISTINCT b FROM Booking b "
+        String hql = "SELECT b FROM Booking b "
                 + "LEFT JOIN FETCH b.eventId "
                 + "LEFT JOIN FETCH b.attendeeId a "
                 + "LEFT JOIN FETCH a.user "
                 + "LEFT JOIN FETCH b.statusId "
                 + "WHERE b.id = :id";
-
-        try {
-            Query<Booking> q = session.createQuery(hql, Booking.class);
-            q.setParameter("id", id);
-            return q.getSingleResult();
-        } catch (NoResultException ex) {
-            return null;
-        }
+        Query<Booking> q = session.createQuery(hql, Booking.class);
+        q.setParameter("id", id);
+        List<Booking>result=q.getResultList();
+        return result.isEmpty()?null:result.get(0);
     }
 
     @Override
@@ -81,7 +72,7 @@ public class BookingRepositoryImpl implements BookingRepository {
         if (userId != null) {
             predicates.add(b.equal(root.get("attendeeId").get("user").get("id"), userId));
         }
-        
+
         applyWhereAndOrder(q, b, root, predicates);
 
         Query<Booking> query = session.createQuery(q);
@@ -132,76 +123,72 @@ public class BookingRepositoryImpl implements BookingRepository {
     @Override
     public Booking updateBooking(Booking booking) {
         Session session = this.factory.getObject().getCurrentSession();
-        return (Booking) session.merge(booking);
+        session.merge(booking);
+        return booking;
     }
-
-    @Override
-    public long countBookingsByUserId(Integer userId, Map<String, String> params) {
-        Session session = this.factory.getObject().getCurrentSession();
-        CriteriaBuilder b = session.getCriteriaBuilder();
-        CriteriaQuery<Long> q = b.createQuery(Long.class);
-        Root<Booking> root = q.from(Booking.class);
-        q.select(b.countDistinct(root));
-
-        List<Predicate> predicates = buildPredicates(b, root, params);
-        if (userId != null) {
-            predicates.add(b.equal(root.get("attendeeId").get("user").get("id"), userId));
-        }
-        if (!predicates.isEmpty()) {
-            q.where(predicates.toArray(Predicate[]::new));
-        }
-
-        return session.createQuery(q).getSingleResult();
-    }
-
-    @Override
-    public long countBookingsByEventId(Integer eventId, Map<String, String> params) {
-        Session session = this.factory.getObject().getCurrentSession();
-        CriteriaBuilder b = session.getCriteriaBuilder();
-        CriteriaQuery<Long> q = b.createQuery(Long.class);
-        Root<Booking> root = q.from(Booking.class);
-        q.select(b.countDistinct(root));
-
-        List<Predicate> predicates = buildPredicates(b, root, params);
-        if (eventId != null) {
-            predicates.add(b.equal(root.get("eventId").get("id"), eventId));
-        }
-        if (!predicates.isEmpty()) {
-            q.where(predicates.toArray(Predicate[]::new));
-        }
-
-        return session.createQuery(q).getSingleResult();
-    }
-
-    @Override
-    public boolean existsPaidBooking(Integer eventId, Integer userId) {
-        if (eventId == null || userId == null) {
-            return false;
-        }
-
-        Session session = this.factory.getObject().getCurrentSession();
-        String hql = "SELECT COUNT(b.id) FROM Booking b "
-                + "WHERE b.eventId.id = :eventId "
-                + "AND b.attendeeId.user.id = :userId "
-                + "AND b.statusId.id = :statusId";
-
-        Long count = session.createQuery(hql, Long.class)
-                .setParameter("eventId", eventId)
-                .setParameter("userId", userId)
-                .setParameter("statusId", PAID_BOOKING_STATUS)
-                .getSingleResult();
-
-        return count > 0;
-    }
+//
+//    @Override
+//    public long countBookingsByUserId(Integer userId, Map<String, String> params) {
+//        Session session = this.factory.getObject().getCurrentSession();
+//        CriteriaBuilder b = session.getCriteriaBuilder();
+//        CriteriaQuery<Long> q = b.createQuery(Long.class);
+//        Root<Booking> root = q.from(Booking.class);
+//        q.select(b.countDistinct(root));
+//
+//        List<Predicate> predicates = buildPredicates(b, root, params);
+//        if (userId != null) {
+//            predicates.add(b.equal(root.get("attendeeId").get("user").get("id"), userId));
+//        }
+//        if (!predicates.isEmpty()) {
+//            q.where(predicates.toArray(Predicate[]::new));
+//        }
+//
+//        return session.createQuery(q).getSingleResult();
+//    }
+//
+//    @Override
+//    public long countBookingsByEventId(Integer eventId, Map<String, String> params) {
+//        Session session = this.factory.getObject().getCurrentSession();
+//        CriteriaBuilder b = session.getCriteriaBuilder();
+//        CriteriaQuery<Long> q = b.createQuery(Long.class);
+//        Root<Booking> root = q.from(Booking.class);
+//        q.select(b.countDistinct(root));
+//
+//        List<Predicate> predicates = buildPredicates(b, root, params);
+//        if (eventId != null) {
+//            predicates.add(b.equal(root.get("eventId").get("id"), eventId));
+//        }
+//        if (!predicates.isEmpty()) {
+//            q.where(predicates.toArray(Predicate[]::new));
+//        }
+//
+//        return session.createQuery(q).getSingleResult();
+//    }
+//
+//    @Override
+//    public boolean existsPaidBooking(Integer eventId, Integer userId) {
+//        if (eventId == null || userId == null) {
+//            return false;
+//        }
+//        Session session = this.factory.getObject().getCurrentSession();
+//        String hql = "SELECT COUNT(b.id) FROM Booking b "
+//                + "WHERE b.eventId.id = :eventId "
+//                + "AND b.attendeeId.user.id = :userId "
+//                + "AND b.statusId.id = :statusId";
+//        Long count = session.createQuery(hql, Long.class)
+//                .setParameter("eventId", eventId)
+//                .setParameter("userId", userId)
+//                .setParameter("statusId", PAID_BOOKING_STATUS)
+//                .getSingleResult();
+//        return count > 0;
+//    }
 
     private List<Predicate> buildPredicates(CriteriaBuilder b, Root<Booking> root, Map<String, String> params) {
         List<Predicate> predicates = new ArrayList<>();
-
         if (params == null) {
             return predicates;
         }
-
-        String kw = params.get("kw"); 
+        String kw = params.get("kw");
         String statusId = params.get("statusId");
         String eventId = params.get("eventId");
         Date fromDate = parseDate(params.get("fromDate"), false);
@@ -295,24 +282,19 @@ public class BookingRepositoryImpl implements BookingRepository {
         }
     }
 
-    
     @Override
-    public int updateStatusByEventId(Integer eventId, Integer oldStatusId, Integer newStatusId) {
+    public int updateStatusBookingByEventId(Integer eventId, Integer oldStatusId, Integer newStatusId) {
         if (eventId == null || oldStatusId == null || newStatusId == null) {
             return 0;
         }
         Session session = this.factory.getObject().getCurrentSession();
-
-        String hql = "UPDATE Booking b SET b.statusId.id = :newStatusId " +
-                     "WHERE b.eventId.id = :eventId AND b.statusId.id = :oldStatusId";
-
-        org.hibernate.query.MutationQuery query = session.createMutationQuery(hql);
-        
+        String hql = "UPDATE Booking b SET b.statusId.id = :newStatusId "
+                + "WHERE b.eventId.id = :eventId AND b.statusId.id = :oldStatusId";
+        MutationQuery query = session.createMutationQuery(hql);
         query.setParameter("eventId", eventId);
         query.setParameter("oldStatusId", oldStatusId);
         query.setParameter("newStatusId", newStatusId);
-
-        return query.executeUpdate(); 
+        return query.executeUpdate();
     }
 
 }

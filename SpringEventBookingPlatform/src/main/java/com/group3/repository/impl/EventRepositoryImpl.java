@@ -1,20 +1,16 @@
 package com.group3.repository.impl;
 
-import com.group3.pojo.Booking;
 import com.group3.pojo.Category;
 import com.group3.pojo.Event;
 import com.group3.pojo.StatusEvent;
 import com.group3.repository.EventRepository;
-import jakarta.persistence.NoResultException;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.Fetch;
 import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.criteria.Order;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
-import jakarta.persistence.criteria.Subquery;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -28,6 +24,7 @@ import org.springframework.stereotype.Repository;
 import jakarta.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.Date;
+import org.hibernate.query.MutationQuery;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 
@@ -48,102 +45,110 @@ public class EventRepositoryImpl implements EventRepository {
         CriteriaQuery<Event> q = b.createQuery(Event.class);
         Root<Event> root = q.from(Event.class);
         q.select(root).distinct(true);
-
-        List<Predicate> predicates = new ArrayList<>();
-
-        if (params != null) {
-            String kw = params.get("kw");
-            String searchBy = params.get("searchBy");
-            String statusId = params.get("statusId");
-            String organizerId = params.get("organizerId");
-            String categoryId = params.get("categoryId");
-            String activeOnly = params.get("activeOnly");
-            String location = params.get("location");
-            BigDecimal minPrice = parseBigDecimal(params.get("minPrice"));
-            BigDecimal maxPrice = parseBigDecimal(params.get("maxPrice"));
-            Date fromDate = parseDate(params.get("fromDate"), false);
-            Date toDate = parseDate(params.get("toDate"), true);
-
-            if (statusId != null && !statusId.isBlank()) {
-                predicates.add(b.equal(root.get("statusId").get("id"), Integer.parseInt(statusId)));
-            }
-            if ("true".equalsIgnoreCase(activeOnly)) {
-                predicates.add(b.greaterThanOrEqualTo(root.get("endTime"), new Date()));
-            }
-            if (organizerId != null && !organizerId.isBlank()) {
-                predicates.add(b.equal(root.get("organizerId").get("userId"), Integer.parseInt(organizerId)));
-            }
-            if (categoryId != null && !categoryId.isBlank()) {
-                Join<Event, Category> categoryJoin = root.join("categoryCollection", JoinType.INNER);
-                predicates.add(b.equal(categoryJoin.get("id"), Integer.parseInt(categoryId)));
-            }
-            if (location != null && !location.isBlank()) {
-                predicates.add(b.like(b.lower(root.get("location")), "%" + location.trim().toLowerCase() + "%"));
-            }
-            if (minPrice != null) {
-                predicates.add(b.greaterThanOrEqualTo(root.get("price"), minPrice));
-            }
-            if (maxPrice != null) {
-                predicates.add(b.lessThanOrEqualTo(root.get("price"), maxPrice));
-            }
-            if (fromDate != null) {
-                predicates.add(b.greaterThanOrEqualTo(root.get("startTime"), fromDate));
-            }
-            if (toDate != null) {
-                predicates.add(b.lessThanOrEqualTo(root.get("startTime"), toDate));
-            }
-            if (kw != null && !kw.isBlank()) {
-                String t = kw.trim().toLowerCase();
-
-                if (searchBy == null || searchBy.isEmpty()) {
-                    Predicate byTitle = b.like(b.lower(root.get("title")), "%" + t + "%");
-                    Predicate byLocation = b.like(b.lower(root.get("location")), "%" + t + "%");
-                    Join<Event, Category> categoryJoin = root.join("categoryCollection", JoinType.LEFT);
-                    Predicate byCategoryName = b.like(b.lower(categoryJoin.get("name")), "%" + t + "%");
-                    predicates.add(b.or(byTitle, byCategoryName, byLocation));
-                } else if ("title".equals(searchBy)) {
-                    predicates.add(b.like(b.lower(root.get("title")), "%" + t + "%"));
-                } else if ("category".equals(searchBy)) {
-                    Join<Event, Category> categoryJoin = root.join("categoryCollection", JoinType.INNER);
-                    predicates.add(b.like(b.lower(categoryJoin.get("name")), "%" + t + "%"));
-                } else if ("location".equals(searchBy)) {
-                    predicates.add(b.like(b.lower(root.get("location")), "%" + t + "%"));
-                }
-            }
-        }
-
+        List<Predicate> predicates = buildPredicates(b, root, params);
         if (!predicates.isEmpty()) {
             q.where(predicates.toArray(Predicate[]::new));
         }
         q.orderBy(buildEventOrder(params, b, root));
-
         Query query = session.createQuery(q);
 
-        // phan trang
-        int defaultPageSize = Integer.parseInt(this.env.getProperty("event.page_size"));
+        int defaultPageSize = Integer.parseInt(this.env.getProperty("event.page_size", "10"));
         int pageSize = defaultPageSize;
         int page = 1;
         if (params != null) {
             try {
                 page = Integer.parseInt(params.getOrDefault("page", "1"));
-            } catch (NumberFormatException ignored) {
-            }
+            } catch (NumberFormatException ignored) {}
             try {
                 pageSize = Integer.parseInt(params.getOrDefault("size", String.valueOf(defaultPageSize)));
-            } catch (NumberFormatException ignored) {
-            }
+            } catch (NumberFormatException ignored) {}
         }
-        if (page < 1) {
-            page = 1;
-        }
-        if (pageSize < 1) {
-            pageSize = defaultPageSize;
-        }
-
+        if (page < 1) page = 1;
+        if (pageSize < 1) pageSize = defaultPageSize;
         query.setFirstResult((page - 1) * pageSize);
         query.setMaxResults(pageSize);
-
         return query.getResultList();
+    }
+
+    @Override
+    public long countEvents(Map<String, String> params) {
+        Session session = this.factory.getObject().getCurrentSession();
+        CriteriaBuilder b = session.getCriteriaBuilder();
+        CriteriaQuery<Long> q = b.createQuery(Long.class);
+        Root<Event> root = q.from(Event.class);
+        q.select(b.countDistinct(root));
+
+        List<Predicate> predicates = buildPredicates(b, root, params);
+        if (!predicates.isEmpty()) {
+            q.where(predicates.toArray(Predicate[]::new));
+        }
+        Query query = session.createQuery(q);
+        return (long) query.getSingleResult();
+    }
+
+    private List<Predicate> buildPredicates(CriteriaBuilder b, Root<Event> root, Map<String, String> params) {
+        List<Predicate> predicates = new ArrayList<>();
+        if (params == null) {
+            return predicates;
+        }
+        String kw = params.get("kw");
+        String searchBy = params.get("searchBy");
+        String statusId = params.get("statusId");
+        String organizerId = params.get("organizerId");
+        String categoryId = params.get("categoryId");
+        String activeOnly = params.get("activeOnly");
+        String location = params.get("location");
+        BigDecimal minPrice = parseBigDecimal(params.get("minPrice"));
+        BigDecimal maxPrice = parseBigDecimal(params.get("maxPrice"));
+        Date fromDate = parseDate(params.get("fromDate"), false);
+        Date toDate = parseDate(params.get("toDate"), true);
+        if (statusId != null && !statusId.isBlank()) {
+            predicates.add(b.equal(root.get("statusId").get("id"), Integer.parseInt(statusId)));
+        }
+        if ("true".equalsIgnoreCase(activeOnly)) {
+            predicates.add(b.greaterThanOrEqualTo(root.get("endTime"), new Date()));
+        }
+        if (organizerId != null && !organizerId.isBlank()) {
+            predicates.add(b.equal(root.get("organizerId").get("userId"), Integer.parseInt(organizerId)));
+        }
+        if (categoryId != null && !categoryId.isBlank()) {
+            Join<Event, Category> categoryJoin = root.join("categoryCollection", JoinType.INNER);
+            predicates.add(b.equal(categoryJoin.get("id"), Integer.parseInt(categoryId)));
+        }
+        if (location != null && !location.isBlank()) {
+            predicates.add(b.like(b.lower(root.get("location")), "%" + location.trim().toLowerCase() + "%"));
+        }
+        if (minPrice != null) {
+            predicates.add(b.greaterThanOrEqualTo(root.get("price"), minPrice));
+        }
+        if (maxPrice != null) {
+            predicates.add(b.lessThanOrEqualTo(root.get("price"), maxPrice));
+        }
+        if (fromDate != null) {
+            predicates.add(b.greaterThanOrEqualTo(root.get("startTime"), fromDate));
+        }
+        if (toDate != null) {
+            predicates.add(b.lessThanOrEqualTo(root.get("startTime"), toDate));
+        }
+        if (kw != null && !kw.isBlank()) {
+            String t = kw.trim().toLowerCase();
+
+            if (searchBy == null || searchBy.isEmpty()) {
+                Predicate byTitle = b.like(b.lower(root.get("title")), "%" + t + "%");
+                Predicate byLocation = b.like(b.lower(root.get("location")), "%" + t + "%");
+                Join<Event, Category> categoryJoin = root.join("categoryCollection", JoinType.LEFT);
+                Predicate byCategoryName = b.like(b.lower(categoryJoin.get("name")), "%" + t + "%");
+                predicates.add(b.or(byTitle, byCategoryName, byLocation));
+            } else if ("title".equals(searchBy)) {
+                predicates.add(b.like(b.lower(root.get("title")), "%" + t + "%"));
+            } else if ("category".equals(searchBy)) {
+                Join<Event, Category> categoryJoin = root.join("categoryCollection", JoinType.INNER);
+                predicates.add(b.like(b.lower(categoryJoin.get("name")), "%" + t + "%"));
+            } else if ("location".equals(searchBy)) {
+                predicates.add(b.like(b.lower(root.get("location")), "%" + t + "%"));
+            }
+        }
+        return predicates;
     }
 
     @Override
@@ -152,20 +157,15 @@ public class EventRepositoryImpl implements EventRepository {
             return null;
         }
         Session session = this.factory.getObject().getCurrentSession();
-
-        String hql = "SELECT DISTINCT e FROM Event e "
+        String hql = "SELECT e FROM Event e "
                 + "LEFT JOIN FETCH e.categoryCollection "
                 + "LEFT JOIN FETCH e.organizerId o "
                 + "LEFT JOIN FETCH o.user "
                 + "WHERE e.id = :id";
-
-        try {
-            Query<Event> q = session.createQuery(hql, Event.class);
-            q.setParameter("id", id);
-            return q.getSingleResult();
-        } catch (NoResultException e) {
-            return null;
-        }
+        Query<Event> q = session.createQuery(hql, Event.class);
+        q.setParameter("id", id);
+        List<Event> result = q.getResultList();
+        return result.isEmpty() ? null : result.get(0);
     }
 
     @Override
@@ -236,86 +236,6 @@ public class EventRepositoryImpl implements EventRepository {
         return q.list();
     }
 
-    @Override
-    public long countEvents(Map<String, String> params) {
-        Session session = this.factory.getObject().getCurrentSession();
-        CriteriaBuilder b = session.getCriteriaBuilder();
-        CriteriaQuery<Long> q = b.createQuery(Long.class);
-        Root<Event> root = q.from(Event.class);
-
-        q.select(b.countDistinct(root));
-
-        List<Predicate> predicates = new ArrayList<>();
-
-        if (params != null) {
-            String kw = params.get("kw");
-            String searchBy = params.get("searchBy");
-            String statusId = params.get("statusId");
-            String organizerId = params.get("organizerId");
-            String categoryId = params.get("categoryId");
-            String activeOnly = params.get("activeOnly");
-            String location = params.get("location");
-            BigDecimal minPrice = parseBigDecimal(params.get("minPrice"));
-            BigDecimal maxPrice = parseBigDecimal(params.get("maxPrice"));
-            Date fromDate = parseDate(params.get("fromDate"), false);
-            Date toDate = parseDate(params.get("toDate"), true);
-
-            if (statusId != null && !statusId.isBlank()) {
-                predicates.add(b.equal(root.get("statusId").get("id"), Integer.parseInt(statusId)));
-            }
-            if ("true".equalsIgnoreCase(activeOnly)) {
-                predicates.add(b.greaterThanOrEqualTo(root.get("endTime"), new java.util.Date()));
-            }
-            if (organizerId != null && !organizerId.isBlank()) {
-                predicates.add(b.equal(root.get("organizerId").get("userId"), Integer.parseInt(organizerId)));
-            }
-            if (categoryId != null && !categoryId.isBlank()) {
-                Join<Event, Category> categoryJoin = root.join("categoryCollection", JoinType.INNER);
-                predicates.add(b.equal(categoryJoin.get("id"), Integer.parseInt(categoryId)));
-            }
-            if (location != null && !location.isBlank()) {
-                predicates.add(b.like(b.lower(root.get("location")), "%" + location.trim().toLowerCase() + "%"));
-            }
-            if (minPrice != null) {
-                predicates.add(b.greaterThanOrEqualTo(root.get("price"), minPrice));
-            }
-            if (maxPrice != null) {
-                predicates.add(b.lessThanOrEqualTo(root.get("price"), maxPrice));
-            }
-            if (fromDate != null) {
-                predicates.add(b.greaterThanOrEqualTo(root.get("startTime"), fromDate));
-            }
-            if (toDate != null) {
-                predicates.add(b.lessThanOrEqualTo(root.get("startTime"), toDate));
-            }
-            if (kw != null && !kw.isBlank()) {
-                String t = kw.trim().toLowerCase();
-
-                if (searchBy == null || searchBy.isEmpty()) {
-                    Predicate byTitle = b.like(b.lower(root.get("title")), "%" + t + "%");
-                    Predicate byLocation = b.like(b.lower(root.get("location")), "%" + t + "%");
-                    Join<Event, Category> categoryJoin = root.join("categoryCollection", JoinType.LEFT);
-                    Predicate byCategoryName = b.like(b.lower(categoryJoin.get("name")), "%" + t + "%");
-                    predicates.add(b.or(byTitle, byCategoryName, byLocation));
-                } else if ("title".equals(searchBy)) {
-                    predicates.add(b.like(b.lower(root.get("title")), "%" + t + "%"));
-                } else if ("category".equals(searchBy)) {
-                    Join<Event, Category> categoryJoin = root.join("categoryCollection", JoinType.INNER);
-                    predicates.add(b.like(b.lower(categoryJoin.get("name")), "%" + t + "%"));
-                } else if ("location".equals(searchBy)) {
-                    predicates.add(b.like(b.lower(root.get("location")), "%" + t + "%"));
-                }
-            }
-        }
-
-        if (!predicates.isEmpty()) {
-            q.where(predicates.toArray(Predicate[]::new));
-        }
-
-        Query query = session.createQuery(q);
-        return (long) query.getSingleResult();
-    }
-
     private List<Order> buildEventOrder(Map<String, String> params, CriteriaBuilder b, Root<Event> root) {
         String sort = params != null ? params.get("sort") : null;
         if ("dateAsc".equals(sort)) {
@@ -372,23 +292,21 @@ public class EventRepositoryImpl implements EventRepository {
     }
 
     @Override
-    public int updateExpiredPublishedEvents(Integer publishedStatusId, Integer completedStatusId, Date now) {
+    public long updateExpiredPublishedEvents(Integer publishedStatusId, Integer completedStatusId, Date now) {
         if (publishedStatusId == null || completedStatusId == null || now == null) {
             return 0;
         }
-
         Session session = this.factory.getObject().getCurrentSession();
         StatusEvent completedStatus = session.get(StatusEvent.class, completedStatusId);
         if (completedStatus == null) {
             return 0;
         }
-
-        Query<?> q = session.createQuery(
-                "UPDATE Event e "
+        String hql = "UPDATE Event e "
                 + "SET e.statusId = :completedStatus, e.updatedDate = :now "
                 + "WHERE e.statusId.id = :publishedStatusId "
                 + "AND e.endTime IS NOT NULL "
-                + "AND e.endTime < :now");
+                + "AND e.endTime < :now";
+        MutationQuery q = session.createMutationQuery(hql);
         q.setParameter("completedStatus", completedStatus);
         q.setParameter("publishedStatusId", publishedStatusId);
         q.setParameter("now", now);
@@ -399,25 +317,21 @@ public class EventRepositoryImpl implements EventRepository {
     public List<Event> getEventsForRefund() {
         Session session = this.factory.getObject().getCurrentSession();
         String hql = "SELECT DISTINCT e FROM Event e "
-                + "LEFT JOIN FETCH e.organizerId o " //FETCH giup lay luon gia tri cot
+                + "LEFT JOIN FETCH e.organizerId o "
                 + "LEFT JOIN FETCH o.user "
                 + "JOIN e.bookingCollection b "
                 + "WHERE e.statusId.id = 5 AND b.statusId.id = 3";
-
         return session.createQuery(hql, Event.class).getResultList();
     }
 
     @Override
     public List<Event> getEventsForSettlement() {
         Session session = this.factory.getObject().getCurrentSession();
-        String hql = "SELECT DISTINCT e FROM Event e "
+        String hql = "SELECT e FROM Event e "
                 + "LEFT JOIN FETCH e.organizerId o "
                 + "LEFT JOIN FETCH o.user "
-                + "WHERE e.statusId.id = 4 AND e.isSettlement = false "
-                + "AND e.price > 0 "
+                + "WHERE e.statusId.id = 4 AND e.isSettlement = false AND e.price>0"
                 + "ORDER BY e.endTime DESC";
-
         return session.createQuery(hql, Event.class).getResultList();
     }
-
 }

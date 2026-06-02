@@ -62,7 +62,7 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private Cloudinary cloudinary;
-
+  
     @Autowired
     private StatusUserRepository statusUserRepo;
 
@@ -79,7 +79,6 @@ public class UserServiceImpl implements UserService {
         if (avatar == null || avatar.isEmpty()) {
             throw new BusinessException("Avatar bắt buộc không được để trống");
         }
-        //Kiem tra dung luong avatar
         if (avatar.getSize() > 2 * 1024 * 1024) {
             throw new BusinessException("Avatar tối đa 2MB!");
         }
@@ -216,6 +215,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public UserResponse updateProfile(Principal principal, UserUpdateRequest request, MultipartFile avatar) {
         User user = validateAndGetCurrentUser(principal);
         if (user.getRoleId().getId() == ROLE_ATTENDEE) {
@@ -315,6 +315,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public void changePassword(Principal principal, ChangePasswordRequest request) {
         User user = validateAndGetCurrentUser(principal);
         if (!request.getNewPassword().equals(request.getConfirmPassword())) {

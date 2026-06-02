@@ -22,13 +22,6 @@ import org.springframework.web.bind.annotation.RestController;
 @CrossOrigin
 @Validated
 public class ApiEventController {
-//      @RequestMapping("/api/events")
-//Chứa các API (Nhóm 2 - Public Event - Dành cho khách vãng lai):
-
-    /// (GET: Lấy danh sách sự kiện PUBLISHED)
-/// /{id} (GET: Xem chi tiết sự kiện)
-/// /{id}/available (GET: Xem số lượng vé còn lại)
-/// /compare (GET: So sánh các sự kiện)
     @Autowired
     private EventService eventService;
     private static final String PUBLISHED_STATUS_ID = "2";

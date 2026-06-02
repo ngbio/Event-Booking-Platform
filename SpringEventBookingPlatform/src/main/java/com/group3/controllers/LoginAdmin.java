@@ -15,9 +15,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 @RequestMapping("/admin")
 public class LoginAdmin {
-//      @RequestMapping("/admin")
-//Chứa các Routes (Nhóm 8 - Đăng nhập Admin):
-/// /login (GET: Hiển thị trang đăng nhập dành riêng cho Admin)
     @GetMapping("/login")
     public String loginView(){
         return "login";

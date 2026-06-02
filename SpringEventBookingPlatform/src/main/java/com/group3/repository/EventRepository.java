@@ -25,7 +25,7 @@ public interface EventRepository {
 
     long countEvents(Map<String, String> params);
 
-    int updateExpiredPublishedEvents(Integer publishedStatusId, Integer completedStatusId, Date now);
+    long updateExpiredPublishedEvents(Integer publishedStatusId, Integer completedStatusId, Date now);
 
     List<Event> getEventsForRefund();
 

@@ -1,5 +1,6 @@
 package com.group3.repository.impl;
 
+import com.group3.exceptions.BusinessException;
 import com.group3.pojo.Category;
 import com.group3.repository.CategoryRepository;
 import java.util.List;
@@ -12,17 +13,18 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Repository
 @Transactional
-public class CategoryRepositoryImpl implements CategoryRepository{
+public class CategoryRepositoryImpl implements CategoryRepository {
+
     @Autowired
     private LocalSessionFactoryBean factory;
-    
+
     @Override
     public List<Category> getCategories() {
         Session session = this.factory.getObject().getCurrentSession();
-        Query query = session.createQuery("FROM Category",Category.class);
+        Query query = session.createQuery("FROM Category", Category.class);
         return query.getResultList();
     }
-    
+
     @Override
     public Category getCateById(Integer id) {
         Session session = this.factory.getObject().getCurrentSession();
@@ -30,31 +32,20 @@ public class CategoryRepositoryImpl implements CategoryRepository{
         q.setParameter("id", id);
         return q.uniqueResult();
     }
-    
+
     @Override
-    public boolean deleteCategory(Integer id){
-        try {
-            Session session = this.factory.getObject().getCurrentSession();
-            Category category = getCateById(id);
-            if (category!=null){
-                if (category.getEventCollection()!=null&&!category.getEventCollection().isEmpty())
-                    throw new IllegalStateException("Có sự kiện trong danh mục, vui lòng sử dụng nút ẩn danh mục");
-                session.remove(category);
-                return true;
-            }
-        }
-        catch (Exception e){
-            return false;
-        }
-        return false;
-    }
-    
-    @Override
-    public void addOrUpdateCategory(Category cate){
+    public void deleteCategory(Category cate) {
         Session session = this.factory.getObject().getCurrentSession();
-        if (cate.getId()!=null){
+        session.remove(cate);
+    }
+
+    @Override
+    public void addOrUpdateCategory(Category cate) {
+        Session session = this.factory.getObject().getCurrentSession();
+        if (cate.getId() != null) {
             session.merge(cate);
+        } else {
+            session.persist(cate);
         }
-        else session.persist(cate);
     }
 }

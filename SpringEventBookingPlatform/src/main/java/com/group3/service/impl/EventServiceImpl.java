@@ -96,19 +96,16 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
+    @Transactional
     public EventResponse createEvent(EventRequest request, MultipartFile image, MultipartFile video, User organizer) {
         MediaFileValidator.validateEventMedia(image, video);
-
         Event event = DTOMapper.toEventEntity(request);
-        //add Organizer
         event.setOrganizerId(getRequiredOrganizerProfile(organizer));
 
-        //add date
         Date now = new Date();
         event.setCreatedDate(now);
         event.setUpdatedDate(now);
 
-        // Upload image
         if (image != null && !image.isEmpty()) {
             try {
                 Map res = this.cloudinary.uploader().upload(image.getBytes(),
@@ -119,7 +116,6 @@ public class EventServiceImpl implements EventService {
             }
         }
 
-        // Upload video
         if (video != null && !video.isEmpty()) {
             try {
                 Map res = this.cloudinary.uploader().upload(video.getBytes(),
@@ -130,7 +126,6 @@ public class EventServiceImpl implements EventService {
             }
         }
 
-        // Set categories
         if (request.getCategoryIds() != null) {
             String[] categoryIds = request.getCategoryIds().split(",");
             Collection<Category> categories = new ArrayList<>();
@@ -155,6 +150,7 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
+    @Transactional
     public EventResponse updateEvent(Integer id, EventRequest request, MultipartFile image, MultipartFile video) {
         MediaFileValidator.validateEventMedia(image, video);
 
@@ -221,6 +217,7 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
+    @Transactional
     public boolean deleteEvent(Integer eventId) {
         return this.eventRepo.deleteEvent(eventId);
     }
@@ -239,6 +236,7 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
+    @Transactional
     public boolean updateTicketsAfterBooking(Integer eventId, int quantityBooked) {
         Event event = this.eventRepo.getEventById(eventId);
         if (event == null) {

@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 public class PaymentResponse {
+
     private Integer id;
     private Integer bookingId;
     private Integer userId;
@@ -14,19 +15,19 @@ public class PaymentResponse {
     private String transactionId;
     private Integer statusId;
     private String statusName;
-    
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Ho_Chi_Minh")
+
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date createdDate;
-    
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Ho_Chi_Minh")
+
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date updatedDate;
 
     public PaymentResponse() {
     }
 
-    public PaymentResponse(Integer id, Integer bookingId, Integer userId, String email, BigDecimal amount, 
-                        String method, String transactionId, Integer statusId, String statusName, 
-                        Date createdDate, Date updatedDate) {
+    public PaymentResponse(Integer id, Integer bookingId, Integer userId, String email, BigDecimal amount,
+            String method, String transactionId, Integer statusId, String statusName,
+            Date createdDate, Date updatedDate) {
         this.id = id;
         this.bookingId = bookingId;
         this.userId = userId;
@@ -69,7 +70,7 @@ public class PaymentResponse {
     }
 
     public void setUsername(String email) {
-        this.email= email;
+        this.email = email;
     }
 
     public BigDecimal getAmount() {
@@ -95,7 +96,7 @@ public class PaymentResponse {
     public void setTransactionId(String transactionId) {
         this.transactionId = transactionId;
     }
-    
+
     public Integer getStatusId() {
         return statusId;
     }

@@ -19,12 +19,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 @RequestMapping("/admin/users")
 public class UserController {
-//      @RequestMapping("/admin/users")
-//Chứa các Routes (Nhóm 8 - Quản lý Người dùng):
-
-    /// (GET: Hiển thị danh sách và phân trang người dùng)
-/// /detail (GET: Hiển thị trang xem thông tin chi tiết một tài khoản)
-/// /update-status (POST: Form submit Khóa hoạt động hoặc Mở khóa tài khoản)
     @Autowired
     private StatusUserService statusUserService;
     @Autowired

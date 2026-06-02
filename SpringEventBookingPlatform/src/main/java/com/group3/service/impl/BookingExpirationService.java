@@ -1,7 +1,6 @@
 package com.group3.service.impl;
 
 import com.group3.pojo.Booking;
-import com.group3.pojo.Payment;
 import com.group3.pojo.StatusBooking;
 import com.group3.pojo.StatusPay;
 import java.util.Date;

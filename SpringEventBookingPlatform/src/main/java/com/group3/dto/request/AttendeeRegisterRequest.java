@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.group3.dto.request;
 
 import jakarta.validation.constraints.Email;
@@ -12,11 +8,6 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import java.util.Date;
 import org.springframework.format.annotation.DateTimeFormat;
-
-/**
- *
- * @author thanh
- */
 public class AttendeeRegisterRequest {
     @NotBlank(message = "Email không được để trống")
     @Email(message = "Email không hợp lệ")

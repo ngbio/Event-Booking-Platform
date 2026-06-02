@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.group3.dto.request;
 
 import jakarta.validation.constraints.Email;
@@ -9,24 +5,20 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
-/**
- *
- * @author THUAN
- */
 public class OrganizerRegisterRequest {
 
-    @NotBlank(message = "Email không được để trống")
+    @NotBlank(message = "Email không được trống")
     @Email(message = "Email không hợp lệ")
     @Pattern(regexp = ".+@.+\\..+", message = "Email phải có đuôi domain (ví dụ: .com, .vn)")
     private String email;
 
-    @NotBlank(message = "Mật khẩu không được để trống")
+    @NotBlank(message = "Mật khẩu không được trống")
     @Size(min = 6, message = "Mật khẩu phải từ 6 ký tự trở lên")
     @Pattern(regexp = "^(?=.*[A-Za-z])(?=.*\\d)(?!.*\\s)[A-Za-z\\d@$!%*#?&]{6,}$",
             message = "Mật khẩu phải từ 6 ký tự, gồm ít nhất một chữ cái và một số")
     private String password;
 
-    @NotBlank(message = "Họ và tên không được để trống")
+    @NotBlank(message = "Họ và tên không được trống")
     private String fullName;
 
     @NotBlank(message = "Số điện thoại không được để trống")
@@ -38,11 +30,11 @@ public class OrganizerRegisterRequest {
     @Pattern(regexp = "^(\\d{12})$", message = "CCCD phải có đúng 12 chữ số")
     private String identityCard;
 
-    @NotBlank(message = "Bắt buộc phải cung cấp Tên tổ chức/doanh nghiệp")
+    @NotBlank(message = "Tên tổ chức/ doanh nghiệp không được trống")
     @Size(max = 100, message = "Tên tổ chức/doanh nghiệp không được vượt quá 100 ký tự")
     private String organizationName;
 
-    @NotBlank(message = "Bắt buộc phải cung cấp Mã số thuế của doanh nghiệp")
+    @NotBlank(message = "Mã số thuế doanh nghiệp không được trống")
     @Pattern(regexp = "^\\d{10}(\\-\\d{3})?$", message = "Mã số thuế phải là 10 chữ số, hoặc 13 chữ số có gạch nối")
     private String taxCode;
 

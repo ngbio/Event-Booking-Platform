@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.group3.dto.request;
 
 import jakarta.validation.constraints.DecimalMin;
@@ -14,10 +10,6 @@ import java.util.Date;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.multipart.MultipartFile;
 
-/**
- *
- * @author thanh
- */
 public class EventRequest {
     @NotBlank(message = "Tiêu đề sự kiện không được để trống")
     @Size(max = 255, message = "Tiêu đề không được quá 255 ký tự")
@@ -29,26 +21,26 @@ public class EventRequest {
 
     private MultipartFile videoFile;
     
-    @NotNull(message = "Thời gian bắt đầu là bắt buộc")
-    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm") // Khớp với input type="datetime-local" của HTML5
+    @NotNull(message = "Thời gian bắt đầu không được trống")
+    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm") 
     private Date startTime;
 
-    @NotNull(message = "Thời gian kết thúc là bắt buộc")
+    @NotNull(message = "Thời gian kết thúc không được trống")
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
     private Date endTime;
 
-    @NotBlank(message = "Địa điểm tổ chức không được để trống")
+    @NotBlank(message = "Địa điểm tổ chức không được trống")
     private String location;
 
     @Min(value = 1, message = "Số lượng vé ít nhất phải là 1")
     private int totalTickets;
 
-    @NotNull(message = "Vui lòng nhập giá vé")
+    @NotNull(message = "Giá vé không được trống")
     @DecimalMin(value = "0.0", message = "Giá vé không được nhỏ hơn 0")
     private BigDecimal price;
 
-    @NotBlank(message = "Vui lòng chọn ít nhất một danh mục")
-    private String categoryIds; //ds các id của danh mục(dùng forrmater để parse)
+    @NotBlank(message = "Danh mục không được để trống")
+    private String categoryIds; 
 
     public String getTitle() {
         return title;

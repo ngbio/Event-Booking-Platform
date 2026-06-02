@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Map;
 
 import com.group3.dto.response.TicketResponse;
-import com.group3.pojo.User;
 import java.security.Principal;
 
 public interface TicketService {

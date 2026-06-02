@@ -5,6 +5,7 @@
 package com.group3.repository;
 
 import com.group3.pojo.StatusUser;
+import com.group3.pojo.User;
 
 /**
  *
@@ -14,5 +15,5 @@ public interface StatusUserRepository {
 
     StatusUser getStatusUserById(Integer id);
 
-    boolean changeStatusUser(Integer userId, Integer statusId);
+    void changeStatusUser(User user);
 }

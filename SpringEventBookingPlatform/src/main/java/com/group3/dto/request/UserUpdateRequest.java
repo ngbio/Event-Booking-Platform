@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.group3.dto.request;
 
 import jakarta.validation.constraints.Past;
@@ -10,10 +6,6 @@ import jakarta.validation.constraints.Size;
 import java.util.Date;
 import org.springframework.format.annotation.DateTimeFormat;
 
-/**
- *
- * @author thanh
- */
 public class UserUpdateRequest {
     private String fullName;
 
@@ -29,11 +21,11 @@ public class UserUpdateRequest {
     @Pattern(regexp = "^\\d{10}(\\-\\d{3})?$", message = "Mã số thuế phải là 10 chữ số, hoặc 13 chữ số có gạch nối")
     private String taxCode;
     
-    @Past(message = "Ngày sinh phải là một ngày trong quá khứ")
+    @Past(message = "Ngày sinh không hợp lệ")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date birthDate;
     
-    @Pattern(regexp = "^(male|female)$", message = "Giới tính không hợp lệ (chỉ nhận male, female)")
+    @Pattern(regexp = "^(male|female)$", message = "Giới tính không hợp lệ (male, female)")
     private String gender;
 
     public String getFullName() {

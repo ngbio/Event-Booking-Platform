@@ -6,13 +6,13 @@ import jakarta.validation.constraints.Size;
 
 public class BookingRequest {
 
-    @NotNull(message = "Vui long chon su kien")
+    @NotNull(message = "Sự kiện không được trống")
     private Integer eventId;
 
-    @Min(value = 1, message = "So luong ve phai lon hon 0")
+    @Min(value = 1, message = "Số lượng vé không hợp lệ (>0)")
     private int quantity;
 
-    @Size(max = 50, message = "Phuong thuc thanh toan khong duoc qua 50 ky tu")
+    @Size(max = 50, message = "Phương thức thanh toán không hợp lệ")
     private String paymentMethod;
 
     public Integer getEventId() {

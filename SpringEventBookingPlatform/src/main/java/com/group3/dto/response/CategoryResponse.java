@@ -8,10 +8,10 @@ public class CategoryResponse {
     private String name;
     private Boolean active;
     
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Ho_Chi_Minh")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date createdDate;
     
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Ho_Chi_Minh")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date updatedDate;
 
     public CategoryResponse() {

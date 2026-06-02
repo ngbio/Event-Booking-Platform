@@ -120,14 +120,11 @@ public class StatsServiceImpl implements StatsService {
     @Override
     public Map<String, Object> getDashboardStats() {
         Map<String, Object> stats = new HashMap<>();
-
-        // 1. Thống kê thẻ tổng quan
         stats.put("totalRevenue", statsRepo.getTotalRevenue());
         stats.put("totalFees", statsRepo.getTotalFees());
         stats.put("totalTicketsSold", statsRepo.getTotalTicketsSold());
         stats.put("activeEventsCount", statsRepo.getActiveEventsCount());
 
-        // 2. Xử lý biểu đồ doanh thu năm nay (Khởi tạo mảng 12 tháng bằng 0)
         int currentYear = LocalDate.now().getYear();
         List<Object[]> monthlyData = statsRepo.getRevenueByMonth(currentYear);
         List<BigDecimal> revenueMonthList = new ArrayList<>();
@@ -135,7 +132,6 @@ public class StatsServiceImpl implements StatsService {
             revenueMonthList.add(BigDecimal.ZERO);
         }
 
-        // Đổ data từ DB vào đúng vị trí tháng (tháng 1 index là 0)
         for (Object[] row : monthlyData) {
             int month = (Integer) row[0];
             BigDecimal revenue = (BigDecimal) row[1];
@@ -143,18 +139,16 @@ public class StatsServiceImpl implements StatsService {
         }
         stats.put("revenueMonthList", revenueMonthList);
 
-        // 3. Xử lý biểu đồ danh mục
         List<Object[]> categoryData = statsRepo.getTicketsByCategory();
         List<String> categoryNames = new ArrayList<>();
         List<Long> categoryCounts = new ArrayList<>();
 
         for (Object[] row : categoryData) {
-            categoryNames.add((String) row[0]); // Tên danh mục
-            categoryCounts.add((Long) row[1]);  // Số vé
+            categoryNames.add((String) row[0]);
+            categoryCounts.add((Long) row[1]);
         }
         stats.put("categoryNames", categoryNames);
         stats.put("categoryCounts", categoryCounts);
-
         return stats;
     }
 }
