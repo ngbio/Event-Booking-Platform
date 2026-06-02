@@ -75,13 +75,6 @@ public class GlobalExceptionHandler {
         return ResponseEntity.badRequest().body(response);
     }
 
-    // File upload vuot qua gioi han multipart
-    @ExceptionHandler({MaxUploadSizeExceededException.class, MultipartException.class})
-    public ResponseEntity<ApiResponse<Object>> handleMultipartException(Exception ex) {
-        ApiResponse<Object> response = new ApiResponse<>(400, "File upload toi da 20MB moi file va 40MB moi request.", null);
-        return ResponseEntity.badRequest().body(response);
-    }
-
     // Loi he thong -> 500
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponse<Object>> handleGlobalException(Exception ex) {
