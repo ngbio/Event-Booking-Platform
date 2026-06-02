@@ -2,6 +2,8 @@ package com.group3.configs;
 
 import java.util.Properties;
 import javax.sql.DataSource;
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
 import static org.hibernate.cfg.JdbcSettings.DIALECT;
 import static org.hibernate.cfg.JdbcSettings.SHOW_SQL;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,7 +11,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
-import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.orm.hibernate5.HibernateTransactionManager;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 
@@ -31,12 +32,16 @@ public class HibernateConfigs {
 
     @Bean
     public DataSource dataSource() {
-        DriverManagerDataSource dataSource = new DriverManagerDataSource();
-        dataSource.setDriverClassName(env.getProperty("hibernate.connection.driverClass"));
-        dataSource.setUrl(env.getProperty("DB_URL", env.getProperty("hibernate.connection.url")));
-        dataSource.setUsername(env.getProperty("DB_USERNAME", env.getProperty("hibernate.connection.username")));
-        dataSource.setPassword(env.getProperty("DB_PASSWORD", env.getProperty("hibernate.connection.password")));
-        return dataSource;
+        HikariConfig config = new HikariConfig();
+        config.setPoolName(env.getProperty("HIKARI_POOL_NAME", "EventBookingHikariPool"));
+        config.setDriverClassName(env.getProperty("hibernate.connection.driverClass"));
+        config.setJdbcUrl(env.getProperty("DB_URL", env.getProperty("hibernate.connection.url")));
+        config.setUsername(env.getProperty("DB_USERNAME", env.getProperty("hibernate.connection.username")));
+        config.setPassword(env.getProperty("DB_PASSWORD", env.getProperty("hibernate.connection.password")));
+        config.setMaximumPoolSize(getIntProperty("HIKARI_MAXIMUM_POOL_SIZE", "hikari.maximumPoolSize", 10));
+        config.setMinimumIdle(getIntProperty("HIKARI_MINIMUM_IDLE", "hikari.minimumIdle", 2));
+
+        return new HikariDataSource(config);
     }
 
     private Properties hibernateProperties() {
@@ -52,5 +57,9 @@ public class HibernateConfigs {
         transactionManager.setSessionFactory(getSessionFactory().getObject());
         
         return transactionManager;
+    }
+
+    private int getIntProperty(String envKey, String propertyKey, int defaultValue) {
+        return Integer.parseInt(env.getProperty(envKey, env.getProperty(propertyKey, String.valueOf(defaultValue))));
     }
 }
