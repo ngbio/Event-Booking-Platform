@@ -117,7 +117,7 @@ const OrganizerStatsOverview = () => {
             </section>
 
             <div className="organizer-detail-toolbar mt-4">
-                <Button className="btn-outline-pink" onClick={() => nav("/organizer/events")}>Xem sự kiện của tôi</Button>
+                <Button className="btn-soft-pink" onClick={() => nav("/organizer/events")}>Xem sự kiện của tôi</Button>
             </div>
 
             {renderRevenuePeriods("Doanh thu theo tháng", stats?.monthlyRevenue)}

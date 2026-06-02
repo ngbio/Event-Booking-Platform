@@ -102,7 +102,7 @@ const OrganizerEventDetail = () => {
                 {event.statusId === STATUS.PUBLISHED && <Button className="btn-soft-pink" onClick={() => changeStatus(STATUS.COMPLETED)} disabled={savingStatus}>
                     Đánh dấu hoàn thành
                 </Button>}
-                <Button className="btn-outline-pink" onClick={() => changeStatus(STATUS.CANCELLED)} disabled={savingStatus}>
+                <Button className="btn-soft-pink" onClick={() => changeStatus(STATUS.CANCELLED)} disabled={savingStatus}>
                     Hủy sự kiện
                 </Button>
             </div>
@@ -136,8 +136,7 @@ const OrganizerEventDetail = () => {
         <div className="event-detail">
             <div className="organizer-detail-toolbar">
                 <Button className="btn-soft-pink" onClick={() => nav("/organizer/events")}>Quay lại</Button>
-                <Button className="btn-outline-pink" onClick={() => nav(`/organizer/events/${event.id}/edit`)}>Sửa sự kiện</Button>
-                <Button className="btn-outline-pink" onClick={() => nav(`/organizer/events/${event.id}/bookings`)}>Khách mua vé</Button>
+                <Button className="btn-soft-pink" onClick={() => nav(`/organizer/events/${event.id}/edit`)}>Sửa sự kiện</Button>
             </div>
 
             {err && <Alert className="alert-dark-pink mt-3">{err}</Alert>}

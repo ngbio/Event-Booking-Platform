@@ -126,7 +126,7 @@ const ChangePassword = () => {
                         <Button className="btn-pink px-4" type="submit" disabled={loading}>
                             {loading ? <MySpinner /> : "Đổi mật khẩu"}
                         </Button>
-                        <Button as={Link} to="/profile" variant="outline-light" className="px-4">
+                        <Button as={Link} to="/profile" className="btn-soft-pink px-4">
                             Quay lại hồ sơ
                         </Button>
                     </div>

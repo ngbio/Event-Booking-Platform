@@ -1,12 +1,11 @@
 import { Fragment, useEffect, useState } from "react";
-import { Alert, Button, Col, Form, Row } from "react-bootstrap";
+import { Alert, Button } from "react-bootstrap";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import MySpinner from "../../components/MySpinner";
 import Apis, { endpoints } from "../../configs/Apis";
 
 const EventCompare = () => {
     const [q, setSearchParams] = useSearchParams();
-    const [eventIdsInput, setEventIdsInput] = useState(q.getAll("eventIds").join(", "));
     const [events, setEvents] = useState([]);
     const [loading, setLoading] = useState(false);
     const [err, setErr] = useState("");
@@ -34,7 +33,7 @@ const EventCompare = () => {
     const loadCompare = async () => {
         if (eventIds.length < 2) {
             setEvents([]);
-            setErr("Chon tu 2 den 3 su kien de so sanh.");
+            setErr("Chon tu 2 den 3 su kien tu trang danh sach de so sanh.");
             return;
         }
 
@@ -56,23 +55,9 @@ const EventCompare = () => {
     }
 
     useEffect(() => {
-        setEventIdsInput(eventIds.join(", "));
         loadCompare();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [q.toString()]);
-
-    const submitCompare = (e) => {
-        e.preventDefault();
-        const ids = eventIdsInput
-            .split(",")
-            .map(id => id.trim())
-            .filter(Boolean)
-            .slice(0, 3);
-
-        const next = new URLSearchParams();
-        ids.forEach(id => next.append("eventIds", id));
-        setSearchParams(next);
-    }
 
     const removeEvent = (id) => {
         const nextIds = eventIds.filter(eventId => String(eventId) !== String(id));
@@ -101,22 +86,6 @@ const EventCompare = () => {
                 <Button className="btn-soft-pink" onClick={() => nav("/events")}>Chon su kien</Button>
             </div>
 
-            <Form className="event-search-panel glass-panel mt-3" onSubmit={submitCompare}>
-                <Row className="g-3 align-items-end">
-                    <Col lg={9}>
-                        <Form.Label>ID su kien can so sanh</Form.Label>
-                        <Form.Control
-                            value={eventIdsInput}
-                            onChange={e => setEventIdsInput(e.target.value)}
-                            placeholder="VD: 1, 2, 3"
-                        />
-                    </Col>
-                    <Col lg={3}>
-                        <Button className="btn-pink w-100" type="submit">So sanh</Button>
-                    </Col>
-                </Row>
-            </Form>
-
             {err && <Alert className="alert-dark-pink mt-3">{err}</Alert>}
             {loading && <MySpinner />}
 
@@ -125,11 +94,11 @@ const EventCompare = () => {
                     <div className="compare-cell compare-head">Tieu chi</div>
                     {events.map(e => <div className="compare-cell compare-head" key={e.id}>
                         <strong>{e.title}</strong>
-                        <Button className="btn-outline-pink btn-sm mt-2" onClick={() => removeEvent(e.id)}>Bo chon</Button>
+                        <Button className="btn-soft-pink btn-sm mt-2" onClick={() => removeEvent(e.id)}>Bo chon</Button>
                     </div>)}
 
                     {compareRows.map(row => <Fragment key={row.label}>
-                        <div className="compare-cell compare-label" key={`${row.label}-label`}>{row.label}</div>
+                        <div className="compare-cell compare-label">{row.label}</div>
                         {events.map(e => <div className="compare-cell" key={`${row.label}-${e.id}`}>{row.render(e)}</div>)}
                     </Fragment>)}
                 </div>

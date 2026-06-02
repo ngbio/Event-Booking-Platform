@@ -277,7 +277,7 @@ const Home = () => {
                     </Col>
                     <Col lg={2} md={12} className="event-search-actions">
                         <Button className="btn-pink" type="submit">Tìm kiếm</Button>
-                        <Button className="btn-outline-pink" type="button" onClick={clearFilters}>Xóa lọc</Button>
+                        <Button className="btn-soft-pink" type="button" onClick={clearFilters}>Xóa lọc</Button>
                     </Col>
                 </Row>
             </Form>
@@ -286,7 +286,7 @@ const Home = () => {
                 <Button className="btn-pink" onClick={openCompare} disabled={compareIds.length < 2}>
                     So sánh {compareIds.length} sự kiện
                 </Button>
-                <Button className="btn-outline-pink" onClick={() => setCompareIds([])}>Bỏ chọn</Button>
+                <Button className="btn-soft-pink" onClick={() => setCompareIds([])}>Bỏ chọn</Button>
             </div>}
 
             {events.length === 0 && loading === false && <Alert className="alert-dark-pink mt-3">Không có sự kiện nào.</Alert>}

@@ -21,7 +21,6 @@ import OrganizerEventDetail from "./screens/organizer/events/OrganizerEventDetai
 import OrganizerEventForm from "./screens/organizer/events/OrganizerEventForm";
 import OrganizerEventBookings from "./screens/organizer/events/OrganizerEventBookings";
 import OrganizerStatsOverview from "./screens/organizer/stats/OrganizerStatsOverview";
-import OrganizerEventStats from "./screens/organizer/stats/OrganizerEventStats";
 import MomoReturn from "./screens/payments/MomoReturn";
 import NotFound from "./screens/common/NotFound";
 import { MyUserContext } from "./configs/Contexts";
@@ -63,7 +62,6 @@ const App = () => {
                 <Route path="/organizer/events/:eventId/bookings" element={<OrganizerEventBookings />} />
                 <Route path="/organizer/events/:eventId/edit" element={<OrganizerEventForm />} />
                 <Route path="/organizer/stats" element={<OrganizerStatsOverview />} />
-                <Route path="/organizer/stats/events/:eventId" element={<OrganizerEventStats />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </Container>
