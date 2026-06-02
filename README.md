@@ -6,7 +6,7 @@
 | STT | Họ và Tên | MSSV |
 |:---:|:---|:---:|
 | 1 | Mai Thanh Hải | 2351010054 |
-| 2 | Nguyễn Thanh Thuận | [MSSV] |
+| 2 | Nguyễn Thanh Thuận | 2351010203 |
 
 ## 🚀 CÔNG NGHỆ SỬ DỤNG
 
@@ -68,3 +68,12 @@ cd frontend
 npm install
 npm start
 ```
+
+## DEPLOY
+
+Hệ thống hiện đã được deploy tại:
+
+* **Backend API (Render):** https://event-booking-backend-rubp.onrender.com/
+* **Frontend Web (Cloudflare Pages):** https://event-booking-platform.pages.dev/
+
+Frontend React sử dụng backend API trên Render để gọi các endpoint REST của hệ thống.
