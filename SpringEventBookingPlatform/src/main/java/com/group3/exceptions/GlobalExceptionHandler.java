@@ -10,8 +10,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindException;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import org.springframework.web.multipart.MaxUploadSizeExceededException;
-import org.springframework.web.multipart.MultipartException;
+
 import org.springframework.web.servlet.NoHandlerFoundException;
 
 @RestControllerAdvice
@@ -49,7 +48,7 @@ public class GlobalExceptionHandler {
 
     // Sai url -> 404
     @ExceptionHandler(NoHandlerFoundException.class)
-    public ResponseEntity<ApiResponse<Object>> handleNoHandlerFound(org.springframework.web.servlet.NoHandlerFoundException ex) {
+    public ResponseEntity<ApiResponse<Object>> handleNoHandlerFound(NoHandlerFoundException ex) {
         ApiResponse<Object> response = new ApiResponse<>(404, "Không tìm thấy đường dẫn API: " + ex.getRequestURL(), null);
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
     }
@@ -78,7 +77,7 @@ public class GlobalExceptionHandler {
     // Loi he thong -> 500
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponse<Object>> handleGlobalException(Exception ex) {
-        ApiResponse<Object> response = new ApiResponse<>(500, "Lỗi hệ thống: " + ex.getMessage(), null);
+        ApiResponse<Object> response = new ApiResponse<>(500, "Lỗi: " + ex.getMessage(), null);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
     }
     // Loi @Size @NotBlank @NotNull

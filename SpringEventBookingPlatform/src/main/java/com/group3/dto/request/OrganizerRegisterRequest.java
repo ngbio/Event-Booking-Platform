@@ -34,15 +34,15 @@ public class OrganizerRegisterRequest {
     private String phone;
 
     //Cho nha to chuc
-    @NotBlank(message = "Người tổ chức bắt buộc phải cung cấp CCCD")
+    @NotBlank(message = "CCCD không được để trống")
     @Pattern(regexp = "^(\\d{12})$", message = "CCCD phải có đúng 12 chữ số")
     private String identityCard;
 
-    @NotBlank(message = "Bắt buộc phải cung cấp Tên tổ chức/doanh nghiệp")
+    @NotBlank(message = "Tên tổ chức/ doanh nghiệp không được để trống")
     @Size(max = 100, message = "Tên tổ chức/doanh nghiệp không được vượt quá 100 ký tự")
     private String organizationName;
 
-    @NotBlank(message = "Bắt buộc phải cung cấp Mã số thuế của doanh nghiệp")
+    @NotBlank(message = "Mã số thuế doanh nghiệp không được để trống")
     @Pattern(regexp = "^\\d{10}(\\-\\d{3})?$", message = "Mã số thuế phải là 10 chữ số, hoặc 13 chữ số có gạch nối")
     private String taxCode;
 
