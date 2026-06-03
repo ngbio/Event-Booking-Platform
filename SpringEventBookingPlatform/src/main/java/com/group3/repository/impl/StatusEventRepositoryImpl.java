@@ -20,28 +20,21 @@ public class StatusEventRepositoryImpl implements StatusEventRepository {
     private LocalSessionFactoryBean factory;
 
     @Override
+    public StatusEvent findById(Integer id) {
+        Session session = this.factory.getObject().getCurrentSession();
+        Query<StatusEvent> q = session.createNamedQuery("StatusEvent.findById", StatusEvent.class);
+        return q.getSingleResult();
+    }
+
+    @Override
     public StatusEvent getStatusEventById(Integer id) {
         Session session = this.factory.getObject().getCurrentSession();
         return session.get(StatusEvent.class, id);
     }
 
     @Override
-    public boolean changeStatusEvent(Integer eventId, Integer statusId) {
+    public void changeStatusEvent(Event event) {
         Session session = this.factory.getObject().getCurrentSession();
-        try {
-            if (eventId == null || statusId == null) {
-                return false;
-            }
-            Event event = session.get(Event.class, eventId);
-            if (event != null) {
-                StatusEvent newStatus = session.get(StatusEvent.class, statusId);
-                event.setStatusId(newStatus);
-                session.merge(event);
-                return true;
-            }
-            return false;
-        } catch (Exception e) {
-            return false;
-        }
+        session.merge(event);
     }
 }
