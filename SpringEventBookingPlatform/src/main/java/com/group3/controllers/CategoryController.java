@@ -16,13 +16,13 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 @RequestMapping("/admin/categories")
 public class CategoryController {
-//      @RequestMapping("/admin/categories")
-//Chứa các Routes (Nhóm 8 - Quản lý Danh mục):
-/// (GET: Hiển thị danh sách các phân loại danh mục sự kiện)
-/// /add (GET: Hiển thị trang Form để nhập thêm một danh mục mới)
-/// /update/{id} (GET: Hiển thị trang Form chứa sẵn dữ liệu để chỉnh sửa)
-/// /save (POST: Form submit lưu thông tin Thêm mới hoặc Cập nhật)
-/// /delete (POST: Form submit xóa vĩnh viễn một danh mục)
+
+
+
+
+
+
+
     @Autowired
     private CategoryService categoryService;
 

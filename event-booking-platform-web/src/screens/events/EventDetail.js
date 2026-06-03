@@ -90,7 +90,7 @@ const EventDetail = () => {
 
     useEffect(() => {
         loadEvent();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
+        
     }, [eventId]);
 
     const createBooking = async () => {

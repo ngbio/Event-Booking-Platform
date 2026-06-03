@@ -58,7 +58,7 @@ const OrganizerStatsOverview = () => {
     useEffect(() => {
         if (user?.roleId === 2)
             loadStats();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
+        
     }, [user?.id, user?.roleId]);
 
     if (user === null) {

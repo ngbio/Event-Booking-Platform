@@ -56,7 +56,7 @@ const TicketDetail = () => {
     useEffect(() => {
         if (user)
             loadTicket();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
+        
     }, [ticketId, user?.id]);
 
     if (user === null) {

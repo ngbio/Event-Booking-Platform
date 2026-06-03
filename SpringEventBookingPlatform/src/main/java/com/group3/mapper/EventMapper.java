@@ -59,7 +59,7 @@ public class EventMapper {
         }
 
         if (event.getCategoryCollection() != null && !event.getCategoryCollection().isEmpty()) {
-            // Fix an toàn thêm cho Category
+            
             List<Category> catList = new ArrayList<>(event.getCategoryCollection());
             Category firstCat = catList.get(0);
             if (firstCat != null) {

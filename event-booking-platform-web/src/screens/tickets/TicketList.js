@@ -66,7 +66,7 @@ const TicketList = () => {
         loadedRequestRef.current = "";
         if (user?.roleId === 3)
             loadTickets();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
+        
     }, [statusId, user?.id, user?.roleId]);
 
     if (user === null) {

@@ -105,7 +105,7 @@ const OrganizerEventList = () => {
         }
 
         loadEvents();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
+        
     }, [queryString, page, userId]);
 
     const loadMore = () => {

@@ -1,7 +1,4 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
+
 package com.group3.pojo;
 
 import jakarta.persistence.Basic;
@@ -23,10 +20,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
-/**
- *
- * @author thanh
- */
+
 @Entity
 @Table(name = "payment")
 @NamedQueries({
@@ -45,7 +39,7 @@ public class Payment implements Serializable {
     @Basic(optional = false)
     @Column(name = "id")
     private Integer id;
-    // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
+    
     @Basic(optional = false)
     @NotNull
     @Column(name = "amount")
@@ -157,7 +151,7 @@ public class Payment implements Serializable {
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
+        
         if (!(object instanceof Payment)) {
             return false;
         }

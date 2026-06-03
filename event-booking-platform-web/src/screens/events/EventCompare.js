@@ -56,7 +56,7 @@ const EventCompare = () => {
 
     useEffect(() => {
         loadCompare();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
+        
     }, [q.toString()]);
 
     const removeEvent = (id) => {

@@ -1,7 +1,4 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
+
 package com.group3.service.impl;
 
 import com.cloudinary.Cloudinary;
@@ -79,7 +76,7 @@ public class UserServiceImpl implements UserService {
         if (avatar == null || avatar.isEmpty()) {
             throw new BusinessException("Avatar bắt buộc không được để trống");
         }
-        //Kiem tra dung luong avatar
+        
         if (avatar.getSize() > 2 * 1024 * 1024) {
             throw new BusinessException("Avatar tối đa 2MB!");
         }
@@ -224,7 +221,7 @@ public class UserServiceImpl implements UserService {
             }
         }
 
-        //Kiem tra 3 cot cua nha to chuc  co thay doi hay khong
+        
         boolean isLegalDocumentChanged = false;
 
         if (user.getRoleId() != null && user.getRoleId().getId() == ROLE_ORGANIZER) {
@@ -256,7 +253,7 @@ public class UserServiceImpl implements UserService {
                 throw new BusinessException("Cập nhật avatar thất bại!");
             }
         }
-        //Neu 3 truong co thay doi thi chuyen sang Pending
+        
         if (isLegalDocumentChanged) {
             StatusUser pendingStatus = statusUserRepo.getStatusUserById(PENDING);
             user.setStatusId(pendingStatus);

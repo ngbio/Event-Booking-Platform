@@ -119,7 +119,7 @@ public class EventRepositoryImpl implements EventRepository {
 
         Query query = session.createQuery(q);
 
-        // phan trang
+        
         int defaultPageSize = Integer.parseInt(this.env.getProperty("event.page_size"));
         int pageSize = defaultPageSize;
         int page = 1;
@@ -360,7 +360,7 @@ public class EventRepositoryImpl implements EventRepository {
     public List<Event> getEventsForRefund() {
         Session session = this.factory.getObject().getCurrentSession();
         String hql = "SELECT DISTINCT e FROM Event e "
-                + "LEFT JOIN FETCH e.organizerId o " //FETCH giup lay luon gia tri cot
+                + "LEFT JOIN FETCH e.organizerId o " 
                 + "LEFT JOIN FETCH o.user "
                 + "JOIN e.bookingCollection b "
                 + "WHERE e.statusId.id = 5 AND b.statusId.id = 3";

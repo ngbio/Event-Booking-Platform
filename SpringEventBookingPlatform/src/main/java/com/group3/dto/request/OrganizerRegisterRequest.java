@@ -1,7 +1,4 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
+
 package com.group3.dto.request;
 
 import jakarta.validation.constraints.Email;
@@ -9,10 +6,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
-/**
- *
- * @author THUAN
- */
+
 public class OrganizerRegisterRequest {
 
     @NotBlank(message = "Email không được để trống")
@@ -33,7 +27,7 @@ public class OrganizerRegisterRequest {
     @Pattern(regexp = "^0[35789]\\d{8}$", message = "Số điện thoại không hợp lệ")
     private String phone;
 
-    //Cho nha to chuc
+    
     @NotBlank(message = "Người tổ chức bắt buộc phải cung cấp CCCD")
     @Pattern(regexp = "^(\\d{12})$", message = "CCCD phải có đúng 12 chữ số")
     private String identityCard;

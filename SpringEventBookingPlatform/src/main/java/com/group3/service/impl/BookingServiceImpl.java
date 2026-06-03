@@ -290,8 +290,8 @@ public class BookingServiceImpl implements BookingService {
         this.eventRepo.updateEvent(event);
     }
 
-    //hàm này để tạo payment với trạng thái pending, 
-    // chờ thanh toán xong mới chuyển booking sang paid và tạo vé
+    
+    
     private void createPendingPayment(Booking booking, BigDecimal totalPrice, Date now) {
         Payment payment = new Payment();
         payment.setBookingId(booking);

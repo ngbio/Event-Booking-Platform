@@ -52,7 +52,7 @@ const BookingDetail = () => {
     useEffect(() => {
         if (user)
             loadBooking();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
+        
     }, [bookingId, user?.id]);
 
     const cancelBooking = async () => {

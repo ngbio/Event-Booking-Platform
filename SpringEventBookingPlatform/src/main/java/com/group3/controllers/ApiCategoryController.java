@@ -15,9 +15,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api")
 @CrossOrigin
 public class ApiCategoryController {
-//      @RequestMapping("/api/categories")
-//Chứa các API (Bổ sung - Public cho bộ lọc):
-/// (GET: Lấy danh sách các danh mục sự kiện đang hoạt động)
+
+
+
     @Autowired
     private CategoryService cateService;
     

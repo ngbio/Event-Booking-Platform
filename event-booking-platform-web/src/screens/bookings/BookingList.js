@@ -74,7 +74,7 @@ const BookingList = () => {
         loadedRequestRef.current = "";
         if (user?.roleId === 3)
             loadBookings();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
+        
     }, [statusId, user?.id, user?.roleId]);
 
     if (user === null) {

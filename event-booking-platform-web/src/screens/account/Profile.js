@@ -61,7 +61,7 @@ const Profile = () => {
 
     useEffect(() => {
         loadProfile();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
+        
     }, []);
 
     const updateForm = (field, value) => {

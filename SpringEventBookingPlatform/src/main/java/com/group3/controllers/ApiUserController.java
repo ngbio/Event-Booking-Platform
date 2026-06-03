@@ -26,12 +26,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 @RequestMapping("/api/users")
 @CrossOrigin
 public class ApiUserController {
-//      @RequestMapping("/api/users/secure")
-//Chứa các API (Nhóm 1 - Hồ sơ cá nhân):
 
-    /// /profile (GET: Lấy thông tin cá nhân)
-/// /profile (PATCH: Cập nhật hồ sơ/avatar)
-/// /password (PATCH: Thay đổi mật khẩu)
+
+
+    
+
+
     @Autowired
     private UserService userService;
 

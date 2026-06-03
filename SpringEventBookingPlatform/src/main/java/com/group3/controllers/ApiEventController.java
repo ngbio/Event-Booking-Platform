@@ -22,13 +22,13 @@ import org.springframework.web.bind.annotation.RestController;
 @CrossOrigin
 @Validated
 public class ApiEventController {
-//      @RequestMapping("/api/events")
-//Chứa các API (Nhóm 2 - Public Event - Dành cho khách vãng lai):
 
-    /// (GET: Lấy danh sách sự kiện PUBLISHED)
-/// /{id} (GET: Xem chi tiết sự kiện)
-/// /{id}/available (GET: Xem số lượng vé còn lại)
-/// /compare (GET: So sánh các sự kiện)
+
+
+    
+
+
+
     @Autowired
     private EventService eventService;
     private static final String PUBLISHED_STATUS_ID = "2";
@@ -48,14 +48,14 @@ public class ApiEventController {
         return ResponseEntity.ok(new ApiResponse<>(200, "Lấy thông tin sự kiện thành công", event));
     }
 
-    // UNUSED_BY_CURRENT_FRONTEND: endpoint is declared in React config but no screen calls it.
+    
     @GetMapping("/{id}/available")
     public ResponseEntity<ApiResponse<Integer>> getAvailableTickets(@PathVariable("id") Integer eventId) {
         int availableTickets = eventService.getAvailableTickets(eventId);
         return ResponseEntity.ok(new ApiResponse<>(200, "Lấy thông tin số vé còn lại thành công", availableTickets));
     }
 
-    // UNUSED_BY_CURRENT_FRONTEND: endpoint is declared in React config but no screen calls it.
+    
     @GetMapping("/compare")
     public ResponseEntity<?> compareEvents(@RequestParam("eventIds")
             @Size(min = 2, max = 3, message = "Chọn từ 2 đến 3 sự kiện để so sánh") List<Integer> eventIds) {
