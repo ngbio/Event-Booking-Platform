@@ -91,7 +91,7 @@ const OrganizerEventForm = () => {
         }
 
         loadData();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
+        
     }, [eventId, user?.id]);
 
     const validate = () => {

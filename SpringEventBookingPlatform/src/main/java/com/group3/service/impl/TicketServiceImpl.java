@@ -65,8 +65,8 @@ public class TicketServiceImpl implements TicketService {
         return DTOMapper.toTicketResponseList(this.ticketDetailRepo.getTicketsByUser(attendee.getId(), params));
     }
 
-    //lây chi tiết vé, 
-    // chỉ được xem nếu là chủ sở hữu và vé phải hợp lệ (valid hoặc checked-in)
+    
+    
     @Override
     public TicketResponse getTicketDetail(Integer ticketId, Principal principal) {
         User attendee = validateAndGetCurrentUser(principal);

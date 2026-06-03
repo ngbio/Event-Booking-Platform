@@ -144,6 +144,7 @@ public class StatsRepositoryImpl implements StatsRepository {
     @Override
     public List<Object[]> getTicketsByCategory() {
         Session session = this.factory.getObject().getCurrentSession();
+        
         String hql = "SELECT c.name, SUM(b.quantity) FROM Booking b "
                 + "JOIN b.eventId e "
                 + "JOIN e.categoryCollection c "

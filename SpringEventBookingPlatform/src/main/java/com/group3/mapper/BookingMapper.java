@@ -8,9 +8,7 @@ import java.util.stream.Collectors;
 
 public class BookingMapper {
 
-    /**
-     * Convert Booking entity to ResBookingDTO
-     */
+    
     public static BookingResponse toResponse(Booking booking) {
         if (booking == null) {
             return null;
@@ -42,9 +40,7 @@ public class BookingMapper {
         return response;
     }
 
-    /**
-     * Convert List of Bookings to List of ResBookingDTOs
-     */
+    
     public static List<BookingResponse> toResponseList(List<Booking> bookings) {
         if (bookings == null) {
             return new ArrayList<>();

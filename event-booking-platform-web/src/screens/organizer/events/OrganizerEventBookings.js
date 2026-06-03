@@ -60,7 +60,7 @@ const OrganizerEventBookings = () => {
         loadedRequestRef.current = "";
         if (user?.roleId === 2)
             loadBookings();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
+        
     }, [eventId, statusId, user?.id, user?.roleId]);
 
     if (user === null) {

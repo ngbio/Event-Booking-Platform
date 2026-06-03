@@ -10,9 +10,7 @@ import java.util.stream.Collectors;
 
 public class CategoryMapper {
 
-    /**
-     * Convert Category entity to ResCategoryDTO
-     */
+    
     public static CategoryResponse toResponse(Category category) {
         if (category == null) {
             return null;
@@ -27,9 +25,7 @@ public class CategoryMapper {
         );
     }
 
-    /**
-     * Convert List of Categories to List of ResCategoryDTOs
-     */
+    
     public static List<CategoryResponse> toResponseList(List<Category> categories) {
         if (categories == null) {
             return new ArrayList<>();

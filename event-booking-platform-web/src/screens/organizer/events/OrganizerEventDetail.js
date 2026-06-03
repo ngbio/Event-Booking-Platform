@@ -70,7 +70,7 @@ const OrganizerEventDetail = () => {
     useEffect(() => {
         if (user)
             loadEvent();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
+        
     }, [eventId, user?.id]);
 
     const changeStatus = async (statusId) => {

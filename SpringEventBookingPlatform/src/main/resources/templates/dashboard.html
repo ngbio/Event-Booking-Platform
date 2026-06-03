@@ -70,7 +70,7 @@
     <div th:replace="base :: footer"></div>
 
     <script th:inline="javascript">
-        /*<![CDATA[*/
+        
         
         var revenueData = /*[[${revenueMonthList}]]*/ [12000000, 19000000, 3000000, 5000000, 2000000, 3000000, 0, 0, 0, 0, 0, 0];
         var categoryLabels = /*[[${categoryNames}]]*/ ['Âm nhạc', 'Hội thảo', 'Thể thao', 'Nghệ thuật', 'Công nghệ'];
@@ -87,7 +87,7 @@
                     borderColor: '#2c3e50',
                     backgroundColor: 'rgba(44, 62, 80, 0.1)',
                     borderWidth: 3,
-                    tension: 0.3, // Tạo độ cong cho nét vẽ
+                    tension: 0.3, 
                     fill: true
                 }]
             },
@@ -120,7 +120,7 @@
             }
         });
         
-        /*]]>*/
+        
     </script>
 </body>
 </html>

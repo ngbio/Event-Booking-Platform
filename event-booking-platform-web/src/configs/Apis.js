@@ -5,36 +5,36 @@ import cookies from 'react-cookies'
 const BASE_URL = process.env.REACT_APP_API_BASE_URL || "https://event-booking-backend-rubp.onrender.com/api/";
 
 export const endpoints = {
-    // Auth
+    
     'login': '/auth/login',
     'register-attendee': '/auth/register/attendee',
     'register-organizer': '/auth/register/organizer',
 
-    // User
+    
     'profile': '/users/secure/profile',
     'change-password': '/users/secure/password',
 
-    // Categories
+    
     'categories': '/categories',
 
-    // Public events
+    
     'events': '/events',
     'event-details': (eventId) => `/events/${eventId}`,
     'available-tickets': (eventId) => `/events/${eventId}/available`,
     'compare-events': '/events/compare',
 
-    // Bookings
+    
     'bookings': '/secure/bookings',
     'booking-details': (bookingId) => `/secure/bookings/${bookingId}`,
     'cancel-booking': (bookingId) => `/secure/bookings/${bookingId}/cancel`,
     'momo-payment': '/secure/payments/momo',
     'momo-redirect': '/payment/momo/redirect',
 
-    // Tickets
+    
     'tickets': '/secure/tickets',
     'ticket-details': (ticketId) => `/secure/tickets/${ticketId}`,
 
-    // Organizer events
+    
     'organizer-events': '/secure/organizer/events',
     'organizer-event-details': (eventId) => `/secure/organizer/events/${eventId}`,
     'create-organizer-event': '/secure/organizer/events',
@@ -42,7 +42,7 @@ export const endpoints = {
     'change-organizer-event-status': (eventId) => `/secure/organizer/events/${eventId}/status`,
     'organizer-event-bookings': (eventId) => `/secure/organizer/events/${eventId}/bookings`,
 
-    // Organizer stats
+    
     'organizer-stats-overview': '/secure/organizer/stats/overview',
     'organizer-event-stats': (eventId) => `/secure/organizer/stats/events/${eventId}`,
 }

@@ -131,7 +131,7 @@ public class OrganizerEventServiceImpl implements OrganizerEventService {
     }
 
     private void validateEventForPublishing(Event event) {
-        // Validation khắt khe chạy trực tiếp trên dữ liệu Database
+        
         if (event.getTitle() == null || event.getTitle().isBlank()) {
             throw new BusinessException("Sự kiện chưa có tên, không thể gửi duyệt!");
         }
@@ -164,7 +164,7 @@ public class OrganizerEventServiceImpl implements OrganizerEventService {
                 category.setId(catId);
                 categories.add(category);
             } catch (NumberFormatException ignored) {
-                // Bỏ qua nếu có ID rác không phải là số
+                
             }
         }
         event.setCategoryCollection(categories);
@@ -213,12 +213,12 @@ public class OrganizerEventServiceImpl implements OrganizerEventService {
 
         Integer currentStatus = existingEvent.getStatusId() != null ? existingEvent.getStatusId().getId() : DRAFT;
 
-        // ĐÁNH TỤT HẠNG: Đang chờ duyệt mà sửa data -> Bắt làm lại từ Nháp
+        
         if (currentStatus.equals(PENDING)) {
             existingEvent.setStatusId(statusEventRepo.getStatusEventById(DRAFT));
         }
 
-        // BẢO TOÀN DỮ LIỆU: Chỉ đè data mới lên, giữ nguyên ID và các thông tin cũ
+        
         existingEvent = DTOMapper.toEventEntity(request, existingEvent);
         handleCategories(existingEvent, request.getCategoryIds());
         handleMediaUpload(existingEvent, image, video);
@@ -234,21 +234,21 @@ public class OrganizerEventServiceImpl implements OrganizerEventService {
 
         Integer currentStatus = existingEvent.getStatusId() != null ? existingEvent.getStatusId().getId() : DRAFT;
 
-        // Ràng buộc bảo mật: Cấm tự xuất bản
+        
         if (statusId.equals(PUBLISHED)) {
             throw new BusinessException("Nhà tổ chức không có quyền tự mở bán sự kiện. Vui lòng gửi yêu cầu duyệt!");
         }
 
-        // LOGIC GỬI DUYỆT (PENDING)
+        
         if (statusId.equals(PENDING)) {
             if (!currentStatus.equals(DRAFT)) {
                 throw new BusinessException("Chỉ có thể gửi duyệt các sự kiện đang ở trạng thái Nháp (DRAFT)!");
             }
-            // Khởi chạy bộ lọc kiểm định
+            
             validateEventForPublishing(existingEvent);
         }
 
-        // LOGIC HOÀN THÀNH (COMPLETED)
+        
         if (statusId.equals(COMPLETED)) {
             if (!currentStatus.equals(PUBLISHED)) {
                 throw new BusinessException("Chỉ có thể đánh dấu hoàn thành cho sự kiện đang được mở bán (PUBLISHED)!");
@@ -258,7 +258,7 @@ public class OrganizerEventServiceImpl implements OrganizerEventService {
             }
         }
 
-        // LOGIC HUỶ (CANCELLED)
+        
         if (statusId.equals(CANCELLED)) {
             if (currentStatus.equals(COMPLETED)) {
                 throw new BusinessException("Sự kiện đã hoàn thành, không thể hủy!");

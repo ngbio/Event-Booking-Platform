@@ -1,7 +1,4 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
+
 package com.group3.dto.request;
 
 import jakarta.validation.constraints.DecimalMin;
@@ -14,10 +11,7 @@ import java.util.Date;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.multipart.MultipartFile;
 
-/**
- *
- * @author thanh
- */
+
 public class EventRequest {
     @NotBlank(message = "Tiêu đề sự kiện không được để trống")
     @Size(max = 255, message = "Tiêu đề không được quá 255 ký tự")
@@ -30,7 +24,7 @@ public class EventRequest {
     private MultipartFile videoFile;
     
     @NotNull(message = "Thời gian bắt đầu là bắt buộc")
-    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm") // Khớp với input type="datetime-local" của HTML5
+    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm") 
     private Date startTime;
 
     @NotNull(message = "Thời gian kết thúc là bắt buộc")
@@ -48,7 +42,7 @@ public class EventRequest {
     private BigDecimal price;
 
     @NotBlank(message = "Vui lòng chọn ít nhất một danh mục")
-    private String categoryIds; //ds các id của danh mục(dùng forrmater để parse)
+    private String categoryIds; 
 
     public String getTitle() {
         return title;

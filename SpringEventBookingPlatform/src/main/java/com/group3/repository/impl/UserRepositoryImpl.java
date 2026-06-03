@@ -72,7 +72,7 @@ public class UserRepositoryImpl implements UserRepository {
             String kw = params.get("kw");
             if (kw != null && !kw.isBlank()) {
                 String t = kw.trim();
-                Predicate byFullname = b.like(root.get("fullName"), "%" + t + "%"); // Đã sửa thành fullName
+                Predicate byFullname = b.like(root.get("fullName"), "%" + t + "%"); 
                 Predicate byEmail = b.like(root.get("email"), "%" + t + "%");
                 predicates.add(b.or(byFullname, byEmail));
             }
@@ -93,7 +93,7 @@ public class UserRepositoryImpl implements UserRepository {
         }
 
         q.orderBy(
-                b.asc(root.get("statusId").get("id")),//Xep tai khoan chua duyet len truoc
+                b.asc(root.get("statusId").get("id")),
                 b.desc(root.get("id"))
         );
         Query<User> query = s.createQuery(q);
@@ -138,7 +138,7 @@ public class UserRepositoryImpl implements UserRepository {
             String kw = params.get("kw");
             if (kw != null && !kw.isBlank()) {
                 String t = kw.trim();
-                Predicate byFullname = b.like(root.get("fullName"), "%" + t + "%"); // Đã sửa thành fullName
+                Predicate byFullname = b.like(root.get("fullName"), "%" + t + "%"); 
                 Predicate byEmail = b.like(root.get("email"), "%" + t + "%");
                 predicates.add(b.or(byFullname, byEmail));
             }

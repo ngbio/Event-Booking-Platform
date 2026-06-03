@@ -33,7 +33,6 @@ public class WebAppContextConfigs implements WebMvcConfigurer{
          configurer.enable();
     }
 
-    //http://localhost:8080/SpringEventBookingPlatform/swagger-ui/index.html
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/swagger-ui/**")

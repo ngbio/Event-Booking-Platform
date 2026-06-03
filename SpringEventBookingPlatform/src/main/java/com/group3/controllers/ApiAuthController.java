@@ -27,10 +27,10 @@ import org.springframework.web.multipart.MultipartFile;
 @RequestMapping("/api/auth")
 @CrossOrigin
 public class ApiAuthController {
-//      @RequestMapping("/api/auth")
-//Chứa các API (Nhóm 1 - Xác thực):
-/// /login (POST: Đăng nhập hệ thống)
-/// /register (POST: Đăng ký tài khoản Attendee/Organizer)
+
+
+
+
     @Autowired
     private UserService userService;
 
