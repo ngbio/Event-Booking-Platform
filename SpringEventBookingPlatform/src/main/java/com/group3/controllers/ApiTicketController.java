@@ -27,9 +27,6 @@ public class ApiTicketController {
     @Autowired
     private TicketService ticketService;
 
-    @Autowired
-    private UserService userService;
-
     @GetMapping
     public ResponseEntity<ApiResponse<List<TicketResponse>>> getMyTickets(
             Principal principal,
