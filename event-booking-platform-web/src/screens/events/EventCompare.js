@@ -83,7 +83,7 @@ const EventCompare = () => {
                     <div className="page-kicker mb-2">Compare</div>
                     <h1 className="organizer-title">So sanh su kien</h1>
                 </div>
-                <Button className="btn-soft-pink" onClick={() => nav("/events")}>Chon su kien</Button>
+                <Button className="btn-soft-pink" onClick={() => nav("/")}>Chon su kien</Button>
             </div>
 
             {err && <Alert className="alert-dark-pink mt-3">{err}</Alert>}

@@ -42,7 +42,6 @@ const App = () => {
             <Container>
               <Routes>
                 <Route path="/" element={<EventList />} />
-                <Route path="/events" element={<EventList />} />
                 <Route path="/events/compare" element={<EventCompare />} />
                 <Route path="/events/:eventId" element={<EventDetail />} />
                 <Route path="/register" element={<Register />} />
