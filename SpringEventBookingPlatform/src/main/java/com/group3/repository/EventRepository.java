@@ -19,10 +19,6 @@ public interface EventRepository {
 
     boolean deleteEvent(Integer id);
 
-    List<Event> findByCategory(Integer categoryId);
-
-    List<Event> findByParams(Map<String, String> params);
-
     long countEvents(Map<String, String> params);
 
     int updateExpiredPublishedEvents(Integer publishedStatusId, Integer completedStatusId, Date now);

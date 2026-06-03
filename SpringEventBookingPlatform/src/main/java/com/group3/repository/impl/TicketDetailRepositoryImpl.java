@@ -1,6 +1,5 @@
 package com.group3.repository.impl;
 
-import com.group3.pojo.StatusTicket;
 import com.group3.pojo.TicketDetail;
 import com.group3.repository.TicketDetailRepository;
 import jakarta.persistence.NoResultException;
@@ -27,9 +26,6 @@ import org.springframework.stereotype.Repository;
 @Transactional
 @PropertySource("classpath:configs.properties")
 public class TicketDetailRepositoryImpl implements TicketDetailRepository {
-
-    private static final int TICKET_VALID = 1;
-    private static final int TICKET_CHECKED_IN = 2;
 
     @Autowired
     private Environment env;
@@ -63,31 +59,6 @@ public class TicketDetailRepositoryImpl implements TicketDetailRepository {
         try {
             return getCurrentSession().createQuery(hql, TicketDetail.class)
                     .setParameter("id", id)
-                    .getSingleResult();
-        } catch (NoResultException ex) {
-            return null;
-        }
-    }
-
-    @Override
-    public TicketDetail getTicketByQrCode(String qrCode) {
-        if (qrCode == null || qrCode.isBlank()) {
-            return null;
-        }
-
-        String hql = "SELECT DISTINCT t FROM TicketDetail t "
-                + "LEFT JOIN FETCH t.bookingId b "
-                + "LEFT JOIN FETCH b.eventId e "
-                + "LEFT JOIN FETCH e.organizerId o "
-                + "LEFT JOIN FETCH o.user "
-                + "LEFT JOIN FETCH b.attendeeId a "
-                + "LEFT JOIN FETCH a.user "
-                + "LEFT JOIN FETCH t.statusId "
-                + "WHERE t.qrCode = :qrCode";
-
-        try {
-            return getCurrentSession().createQuery(hql, TicketDetail.class)
-                    .setParameter("qrCode", qrCode.trim())
                     .getSingleResult();
         } catch (NoResultException ex) {
             return null;
@@ -135,36 +106,6 @@ public class TicketDetailRepositoryImpl implements TicketDetailRepository {
         Query<TicketDetail> query = session.createQuery(q);
         applyPagination(query, params);
         return query.getResultList();
-    }
-
-    @Override
-    public TicketDetail updateTicket(TicketDetail ticket) {
-        ticket.setUpdatedDate(new Date());
-        return (TicketDetail) getCurrentSession().merge(ticket);
-    }
-
-    @Override
-    public boolean checkIn(String qrCode, Integer organizerId) {
-        if (organizerId == null) {
-            return false;
-        }
-
-        TicketDetail ticket = getTicketByQrCode(qrCode);
-        if (ticket == null
-                || ticket.getStatusId() == null
-                || ticket.getStatusId().getId() != TICKET_VALID
-                || ticket.getBookingId() == null
-                || ticket.getBookingId().getEventId() == null
-                || ticket.getBookingId().getEventId().getOrganizerId() == null
-                || !organizerId.equals(ticket.getBookingId().getEventId().getOrganizerId().getUserId())) {
-            return false;
-        }
-
-        StatusTicket checkedInStatus = getCurrentSession().get(StatusTicket.class, TICKET_CHECKED_IN);
-        ticket.setStatusId(checkedInStatus);
-        ticket.setUpdatedDate(new Date());
-        getCurrentSession().merge(ticket);
-        return true;
     }
 
     private List<Predicate> buildPredicates(CriteriaBuilder b, Root<TicketDetail> root, Map<String, String> params) {

@@ -1,13 +1,10 @@
 package com.group3.service;
 
-import com.group3.dto.request.EventRequest;
 import com.group3.dto.response.EventRefundResponse;
 import com.group3.dto.response.EventResponse;
 import com.group3.dto.response.EventSettlementResponse;
-import com.group3.pojo.User;
 import java.util.List;
 import java.util.Map;
-import org.springframework.web.multipart.MultipartFile;
 
 public interface EventService {
 
@@ -15,15 +12,9 @@ public interface EventService {
 
     EventResponse getEventById(Integer eventId);
 
-    EventResponse createEvent(EventRequest request, MultipartFile image, MultipartFile video, User organizer);
-
-    EventResponse updateEvent(Integer id, EventRequest request, MultipartFile image, MultipartFile video);
-
     boolean deleteEvent(Integer eventId);
 
     int getAvailableTickets(Integer eventId);
-
-    boolean updateTicketsAfterBooking(Integer eventId, int quantityBooked);
 
     Long countEvents(Map<String, String> params);
 

@@ -198,45 +198,6 @@ public class EventRepositoryImpl implements EventRepository {
     }
 
     @Override
-    public List<Event> findByCategory(Integer categoryId) {
-        Session session = this.factory.getObject().getCurrentSession();
-        String hql = "SELECT DISTINCT e FROM Event e JOIN e.categoryCollection c WHERE c.id = :categoryId";
-        Query<Event> q = session.createQuery(hql, Event.class);
-        q.setParameter("categoryId", categoryId);
-        return q.list();
-    }
-
-    @Override
-    public List<Event> findByParams(Map<String, String> params) {
-        Session session = this.factory.getObject().getCurrentSession();
-        String hql = "SELECT e FROM Event e WHERE 1=1";
-
-        if (params.containsKey("title") && !params.get("title").isEmpty()) {
-            hql += " AND e.title LIKE :title";
-        }
-        if (params.containsKey("location") && !params.get("location").isEmpty()) {
-            hql += " AND e.location LIKE :location";
-        }
-        if (params.containsKey("categoryId") && !params.get("categoryId").isEmpty()) {
-            hql += " AND :categoryId IN (SELECT c.id FROM e.categoryCollection c)";
-        }
-
-        Query<Event> q = session.createQuery(hql, Event.class);
-
-        if (params.containsKey("title") && !params.get("title").isEmpty()) {
-            q.setParameter("title", "%" + params.get("title") + "%");
-        }
-        if (params.containsKey("location") && !params.get("location").isEmpty()) {
-            q.setParameter("location", "%" + params.get("location") + "%");
-        }
-        if (params.containsKey("categoryId") && !params.get("categoryId").isEmpty()) {
-            q.setParameter("categoryId", Integer.parseInt(params.get("categoryId")));
-        }
-
-        return q.list();
-    }
-
-    @Override
     public long countEvents(Map<String, String> params) {
         Session session = this.factory.getObject().getCurrentSession();
         CriteriaBuilder b = session.getCriteriaBuilder();
