@@ -21,13 +21,7 @@ public interface UserService extends UserDetailsService {
 
     UserResponse getUserById(int id);
 
-    UserResponse getUserByEmail(String email);
-
     User getUserEntityByEmail(String email);
-
-    boolean checkExistEmail(String email);
-
-    void deleteUser(int id);
 
     Long countUsers();
 

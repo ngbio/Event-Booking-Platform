@@ -2,7 +2,6 @@ package com.group3.repository.impl;
 
 import com.group3.pojo.Booking;
 import com.group3.repository.BookingRepository;
-import com.group3.repository.StatusBookingRepository;
 import jakarta.persistence.NoResultException;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
@@ -28,16 +27,11 @@ import org.springframework.stereotype.Repository;
 @PropertySource("classpath:configs.properties")
 public class BookingRepositoryImpl implements BookingRepository {
 
-    private static final int PAID_BOOKING_STATUS = 2;
-
     @Autowired
     private Environment env;
 
     @Autowired
     private LocalSessionFactoryBean factory;
-    
-    @Autowired
-    private StatusBookingRepository statusBookingRepo;
 
     @Override
     public Booking addBooking(Booking booking) {
@@ -110,88 +104,9 @@ public class BookingRepositoryImpl implements BookingRepository {
     }
 
     @Override
-    public List<Booking> getBookingsByOrganizer(Integer organizerId, Map<String, String> params) {
-        Session session = this.factory.getObject().getCurrentSession();
-        CriteriaBuilder b = session.getCriteriaBuilder();
-        CriteriaQuery<Booking> q = b.createQuery(Booking.class);
-        Root<Booking> root = q.from(Booking.class);
-        q.select(root).distinct(true);
-
-        List<Predicate> predicates = buildPredicates(b, root, params);
-        if (organizerId != null) {
-            predicates.add(b.equal(root.get("eventId").get("organizerId").get("user").get("id"), organizerId));
-        }
-
-        applyWhereAndOrder(q, b, root, predicates);
-
-        Query<Booking> query = session.createQuery(q);
-        applyPagination(query, params);
-        return query.getResultList();
-    }
-
-    @Override
     public Booking updateBooking(Booking booking) {
         Session session = this.factory.getObject().getCurrentSession();
         return (Booking) session.merge(booking);
-    }
-
-    @Override
-    public long countBookingsByUserId(Integer userId, Map<String, String> params) {
-        Session session = this.factory.getObject().getCurrentSession();
-        CriteriaBuilder b = session.getCriteriaBuilder();
-        CriteriaQuery<Long> q = b.createQuery(Long.class);
-        Root<Booking> root = q.from(Booking.class);
-        q.select(b.countDistinct(root));
-
-        List<Predicate> predicates = buildPredicates(b, root, params);
-        if (userId != null) {
-            predicates.add(b.equal(root.get("attendeeId").get("user").get("id"), userId));
-        }
-        if (!predicates.isEmpty()) {
-            q.where(predicates.toArray(Predicate[]::new));
-        }
-
-        return session.createQuery(q).getSingleResult();
-    }
-
-    @Override
-    public long countBookingsByEventId(Integer eventId, Map<String, String> params) {
-        Session session = this.factory.getObject().getCurrentSession();
-        CriteriaBuilder b = session.getCriteriaBuilder();
-        CriteriaQuery<Long> q = b.createQuery(Long.class);
-        Root<Booking> root = q.from(Booking.class);
-        q.select(b.countDistinct(root));
-
-        List<Predicate> predicates = buildPredicates(b, root, params);
-        if (eventId != null) {
-            predicates.add(b.equal(root.get("eventId").get("id"), eventId));
-        }
-        if (!predicates.isEmpty()) {
-            q.where(predicates.toArray(Predicate[]::new));
-        }
-
-        return session.createQuery(q).getSingleResult();
-    }
-
-    @Override
-    public boolean existsPaidBooking(Integer eventId, Integer userId) {
-        if (eventId == null || userId == null) {
-            return false;
-        }
-
-        Session session = this.factory.getObject().getCurrentSession();
-        String hql = "SELECT COUNT(b.id) FROM Booking b "
-                + "WHERE b.eventId.id = :eventId "
-                + "AND b.attendeeId.user.id = :userId "
-                + "AND b.statusId.id = :statusId";
-
-        Long count = session.createQuery(hql, Long.class)
-                .setParameter("eventId", eventId)
-                .setParameter("userId", userId)
-                .setParameter("statusId", PAID_BOOKING_STATUS)
-                .getSingleResult();
-
-        return count > 0;
     }
 
     private List<Predicate> buildPredicates(CriteriaBuilder b, Root<Booking> root, Map<String, String> params) {

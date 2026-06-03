@@ -108,30 +108,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void deleteUser(int id) {
-        this.userRepo.deleteUser(id);
-    }
-
-    @Override
     public UserResponse getUserById(int id) {
         User user = this.userRepo.findUserById(id);
         return DTOMapper.toUserResponse(user);
     }
 
     @Override
-    public UserResponse getUserByEmail(String email) {
-        User user = this.userRepo.findUserByEmail(email);
-        return DTOMapper.toUserResponse(user);
-    }
-
-    @Override
     public User getUserEntityByEmail(String email) {
         return this.userRepo.findUserByEmail(email);
-    }
-
-    @Override
-    public boolean checkExistEmail(String email) {
-        return this.userRepo.existEmail(email);
     }
 
     @Override

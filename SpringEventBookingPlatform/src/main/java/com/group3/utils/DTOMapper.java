@@ -8,23 +8,17 @@ import com.group3.dto.request.UserUpdateRequest;
 import com.group3.pojo.Booking;
 import com.group3.pojo.Category;
 import com.group3.pojo.Event;
-import com.group3.pojo.Payment;
-import com.group3.pojo.Role;
 import com.group3.pojo.User;
 import com.group3.dto.response.BookingResponse;
 import com.group3.dto.response.CategoryResponse;
 import com.group3.dto.response.EventRefundResponse;
 import com.group3.dto.response.EventResponse;
 import com.group3.dto.response.EventSettlementResponse;
-import com.group3.dto.response.PaymentResponse;
-import com.group3.dto.response.RoleResponse;
 import com.group3.dto.response.TicketResponse;
 import com.group3.dto.response.UserResponse;
 import com.group3.mapper.BookingMapper;
 import com.group3.mapper.CategoryMapper;
 import com.group3.mapper.EventMapper;
-import com.group3.mapper.PaymentMapper;
-import com.group3.mapper.RoleMapper;
 import com.group3.mapper.TicketMapper;
 import com.group3.mapper.UserMapper;
 import com.group3.pojo.TicketDetail;
@@ -44,16 +38,8 @@ public class DTOMapper {
         return CategoryMapper.toResponse(category);
     }
 
-    public static RoleResponse toRoleResponse(Role role) {
-        return RoleMapper.toResponse(role);
-    }
-
     public static BookingResponse toBookingResponse(Booking booking) {
         return BookingMapper.toResponse(booking);
-    }
-
-    public static PaymentResponse toPaymentResponse(Payment payment) {
-        return PaymentMapper.toResponse(payment);
     }
 
     public static TicketResponse toTicketResponse(TicketDetail ticket) {
@@ -76,16 +62,8 @@ public class DTOMapper {
         return BookingMapper.toResponseList(bookings);
     }
 
-    public static List<PaymentResponse> toPaymentResponseList(List<Payment> payments) {
-        return PaymentMapper.toResponseList(payments);
-    }
-
     public static List<TicketResponse> toTicketResponseList(List<TicketDetail> tickets) {
         return TicketMapper.toResponseList(tickets);
-    }
-
-    public static List<RoleResponse> toRoleResponseList(List<Role> roles) {
-        return RoleMapper.toResponseList(roles);
     }
 
     public static Event toEventEntity(EventRequest request) {

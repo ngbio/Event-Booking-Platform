@@ -14,16 +14,8 @@ public interface BookingRepository {
 
     List<Booking> getBookingsByEventId(Integer eventId, Map<String, String> params);
 
-    List<Booking> getBookingsByOrganizer(Integer organizerId, Map<String, String> params);
-
     Booking updateBooking(Booking booking);
 
-    long countBookingsByUserId(Integer userId, Map<String, String> params);
-
-    long countBookingsByEventId(Integer eventId, Map<String, String> params);
-
-    boolean existsPaidBooking(Integer eventId, Integer userId);
-    
     int updateStatusByEventId(Integer eventId, Integer oldStatusId, Integer newStatusId);
 
 }

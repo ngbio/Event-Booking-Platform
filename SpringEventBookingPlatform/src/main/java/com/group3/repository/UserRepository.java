@@ -24,15 +24,11 @@ public interface UserRepository {
 
     User updateUser(User user);
 
-    void deleteUser(Integer id);
-
     Long count();
 
     User addUser(User u);
         
     boolean authenticate(String email, String password);
-    
-    String getEncryptedPasswordById(Integer userId);
     
     boolean changePassword(Integer userId, String newEncryptedPassword);
 }

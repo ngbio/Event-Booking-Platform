@@ -52,15 +52,6 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public void deleteUser(Integer id) {
-        Session s = currentSession();
-        User u = s.get(User.class, id);
-        if (u != null) {
-            s.remove(u);
-        }
-    }
-
-    @Override
     public User findUserByEmail(String email) {
         Session s = currentSession();
         Query<User> q = s.createNamedQuery("User.findByEmail", User.class);
@@ -200,17 +191,6 @@ public class UserRepositoryImpl implements UserRepository {
             return false;
         }
         return this.bCryptPasswordEncoder.matches(password, user.getPassword());
-    }
-
-    @Override
-    public String getEncryptedPasswordById(Integer userId) {
-        if (userId == null) {
-            return null;
-        }
-        Session session = this.currentSession();
-        Query<String> q = session.createQuery("SELECT u.password FROM User u WHERE u.id:id", String.class);
-        q.setParameter("id", userId);
-        return q.uniqueResult();
     }
 
     @Override
