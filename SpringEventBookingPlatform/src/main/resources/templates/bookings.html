@@ -17,17 +17,17 @@
                 <form th:action="@{''}" method="GET" class="d-flex gap-2 justify-content-end align-items-center">
 
                     <select name="statusId" class="form-select" style="width: auto;">
-                        <option value="2,3,4" th:selected="${param.statusId == null or param.statusId[0] == '2,3,4'}">--Tất cả--</option>
-                        <option value="2" th:selected="${param.statusId != null and param.statusId[0] == '2'}">Đã thanh toán</option>
-                        <option value="3" th:selected="${param.statusId != null and param.statusId[0] == '3'}">Chờ hoàn tiền</option>
-                        <option value="4" th:selected="${param.statusId != null and param.statusId[0] == '4'}">Đã hoàn tiền</option>
+                        <option value="2,3,4" th:selected="${statusId == '2,3,4'}">--Tất cả--</option>
+                        <option value="2" th:selected="${statusId == '2'}">Đã thanh toán</option>
+                        <option value="3" th:selected="${statusId == '3'}">Chờ hoàn tiền</option>
+                        <option value="4" th:selected="${statusId == '4'}">Đã hoàn tiền</option>
                     </select>
 
                     <input type="text" name="kw" class="form-control" style="width: 250px;" placeholder="Tìm tên người đặt..." th:value="${param.kw}">
 
                     <button type="submit" class="btn btn-outline-secondary text-nowrap">Tìm</button>
 
-                    <a th:if="${(param.kw != null and param.kw[0] != '') or (param.statusId != null and param.statusId[0] != '3,4')}" 
+                    <a th:if="${(param.kw != '') or (param.statusId != '2,3,4')}" 
                        th:href="@{''(statusId='3,4')}" class="btn btn-danger text-nowrap">Xóa lọc</a>
 
                     <a th:href="@{/admin/finance/pending-refund}" class="btn btn-secondary text-nowrap">Quay lại</a>
