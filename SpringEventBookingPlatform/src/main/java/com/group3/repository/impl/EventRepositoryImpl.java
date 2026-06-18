@@ -21,6 +21,7 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Map;
 import org.hibernate.Session;
+import org.hibernate.query.MutationQuery;
 import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
@@ -337,19 +338,17 @@ public class EventRepositoryImpl implements EventRepository {
         if (publishedStatusId == null || completedStatusId == null || now == null) {
             return 0;
         }
-
         Session session = this.factory.getObject().getCurrentSession();
         StatusEvent completedStatus = session.get(StatusEvent.class, completedStatusId);
         if (completedStatus == null) {
             return 0;
         }
-
-        Query<?> q = session.createQuery(
-                "UPDATE Event e "
+        String hql = "UPDATE Event e "
                 + "SET e.statusId = :completedStatus, e.updatedDate = :now "
                 + "WHERE e.statusId.id = :publishedStatusId "
                 + "AND e.endTime IS NOT NULL "
-                + "AND e.endTime < :now");
+                + "AND e.endTime < :now";
+        MutationQuery q = session.createMutationQuery(hql);
         q.setParameter("completedStatus", completedStatus);
         q.setParameter("publishedStatusId", publishedStatusId);
         q.setParameter("now", now);
@@ -371,7 +370,7 @@ public class EventRepositoryImpl implements EventRepository {
     @Override
     public List<Event> getEventsForSettlement() {
         Session session = this.factory.getObject().getCurrentSession();
-        String hql = "SELECT DISTINCT e FROM Event e "
+        String hql = "SELECT e FROM Event e "
                 + "LEFT JOIN FETCH e.organizerId o "
                 + "LEFT JOIN FETCH o.user "
                 + "WHERE e.statusId.id = 4 AND e.isSettlement = false "

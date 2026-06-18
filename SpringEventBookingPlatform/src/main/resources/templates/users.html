@@ -16,9 +16,9 @@
 
                     <select name="statusId" class="form-select" style="width: 180px;">
                         <option value="">-- Tất cả trạng thái --</option>
-                        <option value="1" th:selected="${param.statusId != null and param.statusId[0] == '1'}">Chờ Duyệt</option>
-                        <option value="2" th:selected="${param.statusId != null and param.statusId[0] == '2'}">Hoạt động</option>
-                        <option value="3" th:selected="${param.statusId != null and param.statusId[0] == '3'}">Bị Khóa</option>
+                        <option value="1" th:selected="${statusId == '1'}">Chờ Duyệt</option>
+                        <option value="2" th:selected="${statusId == '2'}">Hoạt động</option>
+                        <option value="3" th:selected="${statusId == '3'}">Bị Khóa</option>
                     </select>
 
                     <select name="roleId" class="form-select" style="width: 180px;">
@@ -34,7 +34,7 @@
 
                     <button type="submit" class="btn btn-outline-secondary text-nowrap">Tìm</button>
 
-                    <a th:if="${(param.kw != null and param.kw[0] != '') or (selectedRole != '') or (param.statusId != null and param.statusId[0] != '')}" 
+                    <a th:if="${(param.kw != '') or (selectedRole != '') or (param.statusId != '')}" 
                        th:href="@{/admin/users}" class="btn btn-danger text-nowrap">Xóa lọc</a>
 
                     <a th:href="@{/admin/users(roleId=2, statusId=1)}" class="btn btn-warning text-dark text-nowrap fw-bold">

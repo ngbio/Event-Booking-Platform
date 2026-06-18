@@ -22,11 +22,11 @@
 
                     <select name="statusId" class="form-select" style="width: 180px;">
                         <option value="">-- Tất cả trạng thái --</option>
-                        <option value="1" th:selected="${param.statusId != null and param.statusId[0] == '1'}">Chờ Duyệt</option>
-                        <option value="2" th:selected="${param.statusId != null and param.statusId[0] == '2'}">Đang Mở Bán</option>
-                        <option value="3" th:selected="${param.statusId != null and param.statusId[0] == '3'}">Nháp</option>
-                        <option value="4" th:selected="${param.statusId != null and param.statusId[0] == '4'}">Hoàn Thành</option>
-                        <option value="5" th:selected="${param.statusId != null and param.statusId[0] == '5'}">Đã Hủy</option>
+                        <option value="1" th:selected="${statusId == '1'}">Chờ Duyệt</option>
+                        <option value="2" th:selected="${statusId == '2'}">Đang Mở Bán</option>
+                        <option value="3" th:selected="${statusId == '3'}">Nháp</option>
+                        <option value="4" th:selected="${statusId == '4'}">Hoàn Thành</option>
+                        <option value="5" th:selected="${statusId == '5'}">Đã Hủy</option>
                     </select>
 
                     <select name="searchBy" class="form-select" style="width: 180px;">
@@ -40,7 +40,7 @@
 
                     <button type="submit" class="btn btn-outline-secondary text-nowrap">Tìm</button>
 
-                    <a th:if="${(param.kw != null and param.kw[0] != '') or (param.statusId != null and param.statusId[0] != '') or (param.searchBy != null and param.searchBy[0] != 'title')}" 
+                    <a th:if="${(param.kw != '') or (param.statusId != '') or (param.searchBy != 'title')}" 
                        th:href="@{''(organizerId=${param.organizerId})}" class="btn btn-danger text-nowrap">Xóa lọc</a>
 
                     <a th:href="@{/admin/events(statusId=1)}" class="btn btn-warning text-dark text-nowrap fw-bold">

@@ -59,9 +59,9 @@ public class FinanceController {
     }
 
     @PostMapping("/process-settlement")
-    public String processSettlement(@RequestParam("id") Integer eventId, 
-                                    @RequestParam("settlementCode") String settlementCode, 
-                                    RedirectAttributes redirectAttributes) {
+    public String processSettlement(@RequestParam("id") Integer eventId,
+            @RequestParam("settlementCode") String settlementCode,
+            RedirectAttributes redirectAttributes) {
         try {
             if (settlementCode == null || settlementCode.trim().isEmpty()) {
                 redirectAttributes.addFlashAttribute("errMsg", "Lỗi: Vui lòng nhập mã giao dịch ngân hàng!");
@@ -69,7 +69,7 @@ public class FinanceController {
             }
 
             boolean isSuccess = eventService.processSettlement(eventId, settlementCode);
-            
+
             if (isSuccess) {
                 redirectAttributes.addFlashAttribute("successMsg", "Thành công! Đã quyết toán với mã giao dịch: " + settlementCode);
             } else {
@@ -89,6 +89,8 @@ public class FinanceController {
         if (event == null) {
             return "redirect:/admin/finance/pending-refund";
         }
+        model.addAttribute("statusId", "2,3,4");
+        model.addAttribute("kw", "");
         model.addAttribute("event", event);
         model.addAttribute("bookings", bookingService.getBookingsByEventId(eventId, params));
         model.addAttribute("activePage", "finance");
