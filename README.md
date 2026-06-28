@@ -73,7 +73,7 @@ npm start
 
 Hệ thống hiện đã được deploy tại:
 
-* **Backend API (Render):** https://event-booking-backend-rubp.onrender.com/
+* **Backend API (Render):** https://event-booking-backend-5x8l.onrender.com/
 * **Frontend Web (Cloudflare Pages):** https://event-booking-platform.pages.dev/
 
 Frontend React sử dụng backend API trên Render để gọi các endpoint REST của hệ thống.
